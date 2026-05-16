@@ -1,8 +1,10 @@
-// app.js - Main Application Logic
+// app.js - Main Application with Real Data, Time, and Alerts
 class WeatherApp {
     constructor() {
         this.weatherService = weatherService;
         this.radar = null;
+        this.refreshInterval = null;
+        this.clockInterval = null;
         this.init();
     }
     
@@ -12,27 +14,60 @@ class WeatherApp {
         try {
             // Get location
             await this.weatherService.getLocation();
+            const location = this.weatherService.currentLocation;
+            
+            // Initialize real-time clock
+            this.startRealTimeClock();
             
             // Load all weather data
             await this.loadDashboardData();
             await this.loadForecastData();
             
-            // Initialize radar
+            // Initialize NWS Ridge2 Radar
             setTimeout(() => {
-                this.radar = new NEXRADRadar('radarCanvas');
-                window.radar = this.radar;
+                this.radar = initRadar(location.lat, location.lon);
+                window.radarInstance = this.radar;
             }, 500);
+            
+            // Initialize alerts
+            await alertsService.renderAlerts('alertsContainer');
             
             // Setup settings listeners
             this.setupSettings();
             
+            // Setup tab navigation
+            this.tabNav = new TabNavigation();
+            
             // Start auto-refresh
-            this.startAutoRefresh();
+            this.startAutoRefresh(30 * 60 * 1000);
+            
+            // Request notification permission
+            this.requestNotificationPermission();
             
             this.hideLoading();
+            
         } catch (error) {
             console.error('App init failed:', error);
             this.hideLoading();
+            this.showErrorMessage();
+        }
+    }
+    
+    startRealTimeClock() {
+        this.updateClock();
+        this.clockInterval = setInterval(() => this.updateClock(), 1000);
+    }
+    
+    updateClock() {
+        const now = new Date();
+        const clockEl = document.getElementById('realTimeClock');
+        if (clockEl) {
+            clockEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        
+        const lastUpdatedEl = document.getElementById('lastUpdated');
+        if (lastUpdatedEl && this.weatherService.lastUpdate) {
+            lastUpdatedEl.textContent = `Updated: ${this.weatherService.lastUpdate.toLocaleTimeString()}`;
         }
     }
     
@@ -40,9 +75,9 @@ class WeatherApp {
         const weather = await this.weatherService.getCurrentWeather();
         const location = this.weatherService.currentLocation;
         
-        // Update UI
+        // Update UI elements
         document.getElementById('locationName').innerText = `${location.city}, ${location.state}`;
-        document.getElementById('locationTime').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('locationCoords').innerText = `${location.lat.toFixed(4)}°, ${location.lon.toFixed(4)}°`;
         document.getElementById('temperature').innerText = weather.temperature;
         document.getElementById('feelsLike').innerText = weather.feelsLike;
         document.getElementById('humidity').innerText = weather.humidity;
@@ -51,14 +86,17 @@ class WeatherApp {
         document.getElementById('pressure').innerText = weather.pressure;
         document.getElementById('conditionText').innerText = weather.condition.toLowerCase().replace(/_/g, ' ');
         document.getElementById('uvIndex').innerText = weather.uvIndex;
-        document.getElementById('sunTimes').innerText = `${weather.sunrise} / ${weather.sunset}`;
+        document.getElementById('sunrise').innerText = weather.sunrise;
+        document.getElementById('sunset').innerText = weather.sunset;
+        document.getElementById('precipChance').innerText = `${weather.precipChance}%`;
         
         // Update icon
         const iconUrl = weatherIcons.getIconUrl(weather.condition, weather.isDaytime);
         document.getElementById('mainWeatherIcon').src = iconUrl;
         
-        // Update background based on condition
-        this.updateBackground(weather.condition, weather.isDaytime);
+        // Update last update time
+        this.weatherService.lastUpdate = new Date();
+        this.updateClock();
     }
     
     async loadForecastData() {
@@ -69,9 +107,11 @@ class WeatherApp {
             hourlyContainer.innerHTML = hourly.map(h => `
                 <div class="hour-card">
                     <div><strong>${h.hour === 0 ? '12 AM' : h.hour < 12 ? `${h.hour} AM` : h.hour === 12 ? '12 PM' : `${h.hour - 12} PM`}</strong></div>
-                    <img src="${weatherIcons.getIconUrl(h.condition, h.hour > 6 && h.hour < 18)}" style="width: 40px; height: 40px; margin: 8px 0;">
+                    <img src="${weatherIcons.getIconUrl(h.condition, h.hour > 6 && h.hour < 18)}" alt="${h.condition}">
                     <div><strong>${h.temp}°</strong></div>
-                    <div style="font-size: 0.75rem;">🌧️ ${Math.round(h.precipChance)}%</div>
+                    <div style="font-size: 0.7rem;">💧 ${h.humidity}%</div>
+                    <div style="font-size: 0.7rem;">🌧️ ${Math.round(h.precipChance)}%</div>
+                    <div style="font-size: 0.7rem;">💨 ${h.windSpeed}</div>
                 </div>
             `).join('');
         }
@@ -83,27 +123,12 @@ class WeatherApp {
             dailyContainer.innerHTML = daily.map(d => `
                 <div class="day-card">
                     <div><strong>${d.day}</strong></div>
-                    <img src="${weatherIcons.getIconUrl(d.condition, true)}" style="width: 50px; height: 50px; margin: 8px 0;">
+                    <img src="${weatherIcons.getIconUrl(d.condition, true)}" alt="${d.condition}">
                     <div><strong>${d.high}°</strong> / ${d.low}°</div>
-                    <div style="font-size: 0.75rem;">🌧️ ${Math.round(d.precipChance)}%</div>
+                    <div style="font-size: 0.7rem;">🌧️ ${Math.round(d.precipChance)}%</div>
                 </div>
             `).join('');
         }
-    }
-    
-    updateBackground(condition, isDaytime) {
-        const body = document.body;
-        const gradients = {
-            CLEAR: isDaytime ? 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)' : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-            RAIN: 'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)',
-            SNOW: 'linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)',
-            THUNDERSTORM: 'linear-gradient(135deg, #1a1a2e 0%, #4a4a4a 100%)',
-            CLOUDY: 'linear-gradient(135deg, #757f9a 0%, #d7dde8 100%)'
-        };
-        
-        let gradient = gradients[condition] || gradients.CLEAR;
-        body.style.background = gradient;
-        body.style.transition = 'background 0.5s ease';
     }
     
     setupSettings() {
@@ -113,22 +138,35 @@ class WeatherApp {
             darkToggle.addEventListener('change', (e) => {
                 if (e.target.checked) {
                     document.body.classList.add('dark-mode');
+                    document.body.classList.remove('light-mode');
                     weatherIcons.setDarkMode(true);
                 } else {
                     document.body.classList.remove('dark-mode');
+                    document.body.classList.add('light-mode');
                     weatherIcons.setDarkMode(false);
                 }
-                this.loadDashboardData(); // Refresh icons
+                this.loadDashboardData();
+                if (this.radar) this.radar.refreshRadar();
             });
         }
         
-        // Alert toggle
-        const alertToggle = document.getElementById('alertToggle');
-        if (alertToggle) {
-            alertToggle.addEventListener('change', (e) => {
-                if (e.target.checked && window.alertsService) {
-                    alertsService.renderAlerts('alertsContainer');
+        // Notification toggle
+        const notifToggle = document.getElementById('notificationToggle');
+        if (notifToggle) {
+            notifToggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    this.requestNotificationPermission();
                 }
+            });
+        }
+        
+        // Unit select
+        const unitSelect = document.getElementById('unitSelect');
+        if (unitSelect) {
+            unitSelect.addEventListener('change', (e) => {
+                this.weatherService.units = e.target.value;
+                this.loadDashboardData();
+                this.loadForecastData();
             });
         }
         
@@ -136,16 +174,45 @@ class WeatherApp {
         const refreshSelect = document.getElementById('refreshSelect');
         if (refreshSelect) {
             refreshSelect.addEventListener('change', (e) => {
-                this.startAutoRefresh(parseInt(e.target.value) * 60000);
+                const minutes = parseInt(e.target.value);
+                this.startAutoRefresh(minutes * 60 * 1000);
+            });
+        }
+        
+        // Radar product select
+        const radarProduct = document.getElementById('radarProductSelect');
+        if (radarProduct) {
+            radarProduct.addEventListener('change', (e) => {
+                if (this.radar) {
+                    this.radar.switchProduct(e.target.value);
+                }
+            });
+        }
+        
+        // Refresh radar button
+        const refreshBtn = document.getElementById('refreshRadarBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                if (this.radar) {
+                    this.radar.refreshRadar();
+                }
             });
         }
     }
     
-    startAutoRefresh(interval = 300000) {
+    requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission();
+        }
+    }
+    
+    startAutoRefresh(interval) {
         if (this.refreshInterval) clearInterval(this.refreshInterval);
-        this.refreshInterval = setInterval(() => {
-            this.loadDashboardData();
-            this.loadForecastData();
+        this.refreshInterval = setInterval(async () => {
+            await this.loadDashboardData();
+            await this.loadForecastData();
+            if (this.radar) this.radar.refreshRadar();
+            alertsService.renderAlerts('alertsContainer');
         }, interval);
     }
     
@@ -154,7 +221,7 @@ class WeatherApp {
         loader.id = 'app-loader';
         loader.style.cssText = `
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: center;
             z-index: 9999;
         `;
@@ -166,23 +233,22 @@ class WeatherApp {
         const loader = document.getElementById('app-loader');
         if (loader) loader.remove();
     }
-}
-
-// Function to render all 56 icons in the icons tab
-function renderAllIcons() {
-    const container = document.getElementById('allIconsGrid');
-    if (!container) return;
     
-    const allIcons = weatherIcons.getAllIcons(true);
-    container.innerHTML = allIcons.map(icon => `
-        <div class="icon-card">
-            <img src="${icon.url}" alt="${icon.name}">
-            <div class="icon-name">${icon.name}</div>
-        </div>
-    `).join('');
+    showErrorMessage() {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'expressive-card';
+        errorDiv.style.cssText = 'text-align: center; background: #ff4444; color: white;';
+        errorDiv.innerHTML = `
+            <span class="material-symbols-outlined" style="font-size: 48px;">error</span>
+            <h3>Unable to load weather data</h3>
+            <p>Please check your internet connection and refresh the page.</p>
+            <button onclick="location.reload()" class="material-btn-sm">Retry</button>
+        `;
+        document.querySelector('.app-container')?.prepend(errorDiv);
+    }
 }
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new WeatherApp();
+    window.weatherApp = new WeatherApp();
 });
