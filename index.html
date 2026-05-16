@@ -19,7 +19,7 @@
             padding: 16px;
         }
         
-        /* Vintage CRT Scanline Effect */
+        /* Vintage CRT Effect */
         body::before {
             content: '';
             position: fixed;
@@ -127,7 +127,8 @@
         .stat-label { font-size: 8px; color: #6a8a8a; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 18px; font-weight: 600; font-family: 'Courier Prime', monospace; }
         
-        /* Icon Sprite System - Using IMG_2772.png */
+        /* Icon Sprite System - IMG_2772.png */
+        /* Each icon is approximately 64x64 pixels */
         .weather-icon {
             width: 64px;
             height: 64px;
@@ -137,23 +138,35 @@
             image-rendering: crisp-edges;
         }
         
-        /* Icon positions - ADJUST THESE COORDINATES based on your sprite sheet layout */
-        /* Each icon is 64x64 pixels. Update the pixel offsets as needed */
-        .icon-clear_day { background-position: 0px 0px; }
-        .icon-clear_night { background-position: -64px 0px; }
-        .icon-mostly_sunny { background-position: -128px 0px; }
-        .icon-partly_cloudy_day { background-position: -192px 0px; }
-        .icon-partly_cloudy_night { background-position: -256px 0px; }
-        .icon-cloudy { background-position: -320px 0px; }
-        .icon-overcast { background-position: -384px 0px; }
-        .icon-rain { background-position: -448px 0px; }
-        .icon-light_rain { background-position: -512px 0px; }
-        .icon-heavy_rain { background-position: -576px 0px; }
-        .icon-thunderstorm { background-position: -640px 0px; }
-        .icon-snow { background-position: -704px 0px; }
-        .icon-light_snow { background-position: -768px 0px; }
-        .icon-fog { background-position: -832px 0px; }
-        .icon-windy { background-position: -896px 0px; }
+        /* Row 1 (Y: 0px) */
+        .icon-sunny { background-position: 0px 0px; }
+        .icon-partly_cloudy_day { background-position: -64px 0px; }
+        .icon-mostly_cloudy { background-position: -128px 0px; }
+        .icon-overcast { background-position: -192px 0px; }
+        .icon-light_rain { background-position: -256px 0px; }
+        .icon-rain { background-position: -320px 0px; }
+        .icon-heavy_rain { background-position: -384px 0px; }
+        .icon-showers { background-position: -448px 0px; }
+        
+        /* Row 2 (Y: -64px) */
+        .icon-thunderstorm { background-position: -512px -64px; }
+        .icon-scattered { background-position: -576px -64px; }
+        .icon-rain_hail { background-position: -640px -64px; }
+        .icon-freezing_rain { background-position: -704px -64px; }
+        .icon-sleet { background-position: -768px -64px; }
+        .icon-light_snow { background-position: -832px -64px; }
+        .icon-thundershowers { background-position: -896px -64px; }
+        .icon-snow_showers { background-position: -960px -64px; }
+        
+        /* Row 3 (Y: -128px) */
+        .icon-windy { background-position: 0px -128px; }
+        .icon-fog { background-position: -64px -128px; }
+        .icon-haze { background-position: -128px -128px; }
+        .icon-hot { background-position: -192px -128px; }
+        .icon-clear_night { background-position: -256px -128px; }
+        .icon-snow { background-position: -320px -128px; }
+        
+        /* Default fallback */
         .icon-default { background-position: 0px 0px; }
         
         /* Hourly */
@@ -191,8 +204,6 @@
         
         /* Alerts */
         .alert-item { border-left: 3px solid #ff6644; padding: 12px; margin-bottom: 8px; background: #0a0c10; }
-        .alert-item.warning { border-left-color: #ffaa44; }
-        .alert-item.info { border-left-color: #44aaff; }
         
         /* Tab System */
         .tab-pane { display: none; }
@@ -224,7 +235,6 @@
 </head>
 <body>
 <div class="app-container">
-    <!-- Vintage Header -->
     <div class="vintage-header">
         <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
             <div>
@@ -243,7 +253,6 @@
         </div>
     </div>
 
-    <!-- Navigation -->
     <div class="vintage-nav">
         <button class="nav-btn active" data-tab="current">⌂ CURRENT</button>
         <button class="nav-btn" data-tab="hourly">◷ HOURLY</button>
@@ -253,9 +262,7 @@
         <button class="nav-btn" data-tab="spc">⚡ SPC OUTLOOK</button>
     </div>
 
-    <!-- Tab Panes -->
     <div class="tab-content">
-        <!-- CURRENT TAB -->
         <div class="tab-pane active" id="currentTab">
             <div class="weather-grid">
                 <div class="vintage-card">
@@ -292,7 +299,6 @@
             </div>
         </div>
 
-        <!-- HOURLY TAB -->
         <div class="tab-pane" id="hourlyTab">
             <div class="vintage-card">
                 <div class="card-header"><h3>HOURLY FORECAST</h3><span>Next 48 Hours</span></div>
@@ -300,7 +306,6 @@
             </div>
         </div>
 
-        <!-- DAILY TAB -->
         <div class="tab-pane" id="dailyTab">
             <div class="vintage-card">
                 <div class="card-header"><h3>7-DAY OUTLOOK</h3><span>NWS Digital Forecast</span></div>
@@ -308,7 +313,6 @@
             </div>
         </div>
 
-        <!-- RADAR TAB -->
         <div class="tab-pane" id="radarTab">
             <div class="radar-container">
                 <div id="radarMap" class="radar-map"></div>
@@ -327,7 +331,6 @@
             </div>
         </div>
 
-        <!-- ALERTS TAB -->
         <div class="tab-pane" id="alertsTab">
             <div class="vintage-card">
                 <div class="card-header"><h3>NWS ACTIVE ALERTS</h3><span>Illinois Region</span></div>
@@ -335,7 +338,6 @@
             </div>
         </div>
 
-        <!-- SPC TAB -->
         <div class="tab-pane" id="spcTab">
             <div class="vintage-card">
                 <div class="card-header"><h3>SPC CONVECTIVE OUTLOOKS</h3><span>Storm Prediction Center</span></div>
