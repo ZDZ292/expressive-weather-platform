@@ -1,67 +1,71 @@
 // engine.js - Complete Weather Platform
-// APIs: Open-Meteo, NWS Alerts, NEXRAD Radar, SPC Outlooks
+// APIs: Open-Meteo, NWS Alerts, NEXRAD Radar
 // Icons: IMG_2772.png sprite sheet
 
 // ============================================
-// ICON MAPPING (for IMG_2772.png)
+// ICON MAPPING for IMG_2772.png
 // ============================================
-// Each icon is 64x64 pixels.
-// UPDATE THESE COORDINATES based on your actual sprite sheet layout!
-// The numbers represent pixel offsets: X: column * 64, Y: row * 64
-
-const ICON_MAP = {
-    // Row 1 (Y: 0px)
-    'clear_day': '0px 0px',
-    'clear_night': '-64px 0px',
-    'mostly_sunny': '-128px 0px',
-    'partly_cloudy_day': '-192px 0px',
-    'partly_cloudy_night': '-256px 0px',
-    'cloudy': '-320px 0px',
-    'overcast': '-384px 0px',
-    
-    // Row 2 (Y: -64px)
-    'rain': '-448px -64px',
-    'light_rain': '-512px -64px',
-    'heavy_rain': '-576px -64px',
-    'thunderstorm': '-640px -64px',
-    'snow': '-704px -64px',
-    'light_snow': '-768px -64px',
-    
-    // Row 3 (Y: -128px)
-    'fog': '-832px -128px',
-    'windy': '-896px -128px',
-    'haze': '-960px -128px',
-    
-    // Default fallback
-    'default': '0px 0px'
-};
 
 function setWeatherIcon(element, conditionCode, isDay = true) {
     if (!element) return;
     
-    // Map weather condition to icon key
-    let iconKey = 'default';
     const cond = (conditionCode || '').toUpperCase();
+    let iconClass = 'icon-default';
     
-    if (cond.includes('CLEAR')) iconKey = isDay ? 'clear_day' : 'clear_night';
-    else if (cond.includes('PARTLY_CLOUDY')) iconKey = isDay ? 'partly_cloudy_day' : 'partly_cloudy_night';
-    else if (cond.includes('MOSTLY_CLEAR')) iconKey = isDay ? 'mostly_sunny' : 'clear_night';
-    else if (cond.includes('CLOUDY') || cond.includes('OVERCAST')) iconKey = 'cloudy';
-    else if (cond.includes('RAIN') && !cond.includes('LIGHT')) iconKey = 'rain';
-    else if (cond.includes('LIGHT_RAIN')) iconKey = 'light_rain';
-    else if (cond.includes('HEAVY_RAIN')) iconKey = 'heavy_rain';
-    else if (cond.includes('THUNDER')) iconKey = 'thunderstorm';
-    else if (cond.includes('SNOW') && !cond.includes('LIGHT')) iconKey = 'snow';
-    else if (cond.includes('LIGHT_SNOW')) iconKey = 'light_snow';
-    else if (cond.includes('FOG')) iconKey = 'fog';
-    else if (cond.includes('WIND')) iconKey = 'windy';
+    // Map weather conditions to icon classes based on your sprite sheet
+    if (cond.includes('CLEAR') || cond === 'CLEAR') {
+        iconClass = isDay ? 'icon-sunny' : 'icon-clear_night';
+    }
+    else if (cond.includes('PARTLY_CLOUDY')) {
+        iconClass = 'icon-partly_cloudy_day';
+    }
+    else if (cond.includes('MOSTLY_CLOUDY')) {
+        iconClass = 'icon-mostly_cloudy';
+    }
+    else if (cond.includes('OVERCAST') || cond === 'CLOUDY') {
+        iconClass = 'icon-overcast';
+    }
+    else if (cond.includes('LIGHT_RAIN')) {
+        iconClass = 'icon-light_rain';
+    }
+    else if (cond === 'RAIN' || cond.includes('MODERATE_RAIN')) {
+        iconClass = 'icon-rain';
+    }
+    else if (cond.includes('HEAVY_RAIN')) {
+        iconClass = 'icon-heavy_rain';
+    }
+    else if (cond.includes('SHOWERS')) {
+        iconClass = 'icon-showers';
+    }
+    else if (cond.includes('THUNDERSTORM') || cond.includes('THUNDER')) {
+        iconClass = 'icon-thunderstorm';
+    }
+    else if (cond.includes('FREEZING_RAIN')) {
+        iconClass = 'icon-freezing_rain';
+    }
+    else if (cond.includes('SLEET')) {
+        iconClass = 'icon-sleet';
+    }
+    else if (cond.includes('LIGHT_SNOW') && !cond.includes('HEAVY')) {
+        iconClass = 'icon-light_snow';
+    }
+    else if (cond.includes('SNOW') && !cond.includes('LIGHT')) {
+        iconClass = 'icon-snow';
+    }
+    else if (cond.includes('SNOW_SHOWERS')) {
+        iconClass = 'icon-snow_showers';
+    }
+    else if (cond.includes('WINDY') || cond.includes('WIND')) {
+        iconClass = 'icon-windy';
+    }
+    else if (cond.includes('FOG')) {
+        iconClass = 'icon-fog';
+    }
+    else if (cond.includes('HAZE')) {
+        iconClass = 'icon-haze';
+    }
     
-    const position = ICON_MAP[iconKey] || ICON_MAP['default'];
-    
-    element.style.backgroundImage = "url('IMG_2772.png')";
-    element.style.backgroundPosition = position;
-    element.style.backgroundRepeat = "no-repeat";
-    element.style.backgroundSize = "auto 100%";
+    element.className = `weather-icon ${iconClass}`;
 }
 
 // ============================================
@@ -97,7 +101,7 @@ async function fetchCurrentWeather() {
 
 function mapWMO(code) {
     const map = {
-        0:"CLEAR", 1:"MOSTLY_CLEAR", 2:"PARTLY_CLOUDY", 3:"CLOUDY",
+        0:"CLEAR", 1:"MOSTLY_CLEAR", 2:"PARTLY_CLOUDY", 3:"MOSTLY_CLOUDY",
         45:"FOG", 48:"FOG", 51:"LIGHT_RAIN", 53:"RAIN", 55:"HEAVY_RAIN",
         61:"RAIN", 63:"HEAVY_RAIN", 65:"HEAVY_RAIN", 71:"SNOW", 73:"SNOW",
         75:"HEAVY_SNOW", 77:"HAIL", 80:"RAIN_SHOWERS", 81:"HEAVY_RAIN_SHOWERS",
@@ -252,12 +256,108 @@ async function refreshAllData() {
         setWeatherIcon(iconContainer.querySelector('.weather-icon'), currentWeatherData.condition, currentWeatherData.isDay);
     }
     
-    document.getElementById('summaryText').innerHTML = `Currently ${currentWeatherData.temp}°F with ${currentWeatherData.condition.toLowerCase()}. Humidity at ${currentWeatherData.humidity}%, wind ${currentWeatherData.wind} mph. ${currentWeatherData.precip > 30 ? `Precipitation chance ${currentWeatherData.precip}%.` : 'No significant precipitation expected.'}`;
+    document.getElementById('summaryText').innerHTML = `Currently ${currentWeatherData.temp}°F with ${currentWeatherData.condition.toLowerCase().replace('_',' ')}. Humidity at ${currentWeatherData.humidity}%, wind ${currentWeatherData.wind} mph. ${currentWeatherData.precip > 30 ? `Precipitation chance ${currentWeatherData.precip}%.` : 'No significant precipitation expected.'}`;
     
     // Hourly
     const hourly = await fetchHourly();
     const hourlyContainer = document.getElementById('hourlyList');
     hourlyContainer.innerHTML = hourly.map(h => {
-        const iconDiv = `<div class="weather-icon" style="width:40px;height:40px;margin:8px auto;"></div>`;
-        return `<div class="hour-block"><div><strong>${h.hour === 0 ? '12A' : h.hour < 12 ? `${h.hour}A` : h.hour === 12 ? '12P' : `${h.hour-12}P`}</strong></div>${iconDiv}<div><strong>${h.temp}°</strong></div><div style="font-size:9px;">🌧️${Math.round(h.precip)}%</div><div style="font-size:9px;">💨${h.wind}</div></div>`;
+        return `<div class="hour-block">
+            <div><strong>${h.hour === 0 ? '12A' : h.hour < 12 ? `${h.hour}A` : h.hour === 12 ? '12P' : `${h.hour-12}P`}</strong></div>
+            <div class="weather-icon" style="width:40px;height:40px;margin:8px auto;"></div>
+            <div><strong>${h.temp}°</strong></div>
+            <div style="font-size:9px;">🌧️${Math.round(h.precip)}%</div>
+            <div style="font-size:9px;">💨${h.wind}</div>
+        </div>`;
     }).join('');
+    
+    // Apply icons to hourly blocks
+    document.querySelectorAll('#hourlyList .hour-block').forEach((block, idx) => {
+        if (hourly[idx]) {
+            const iconDiv = block.querySelector('.weather-icon');
+            setWeatherIcon(iconDiv, hourly[idx].condition, hourly[idx].isDay);
+        }
+    });
+    
+    // Daily
+    const daily = await fetchDaily();
+    const dailyContainer = document.getElementById('dailyList');
+    dailyContainer.innerHTML = daily.map(d => {
+        return `<div class="daily-row">
+            <div><strong>${d.name}</strong></div>
+            <div class="weather-icon" style="width:40px;height:40px;"></div>
+            <div>${d.condition}</div>
+            <div><strong>${d.high}°</strong> / ${d.low}°</div>
+            <div>🌧️${Math.round(d.precip)}%</div>
+        </div>`;
+    }).join('');
+    
+    document.querySelectorAll('#dailyList .daily-row').forEach((row, idx) => {
+        if (daily[idx]) {
+            const iconDiv = row.querySelector('.weather-icon');
+            setWeatherIcon(iconDiv, daily[idx].condition, true);
+        }
+    });
+    
+    // Alerts
+    const alerts = await fetchAlerts();
+    const alertsContainer = document.getElementById('alertsList');
+    if (alerts.length === 0) {
+        alertsContainer.innerHTML = '<div class="alert-item" style="border-left-color:#4a8a6a;"><strong>✅ NO ACTIVE ALERTS</strong><br>No watches, warnings, or advisories for Illinois.</div>';
+    } else {
+        alertsContainer.innerHTML = alerts.map(a => `
+            <div class="alert-item">
+                <strong>⚠️ ${a.event}</strong> - ${a.severity || 'Unknown'}
+                <div style="font-size: 11px; margin-top: 6px;">${a.headline?.substring(0, 150) || 'No description'}</div>
+                <div style="font-size: 9px; color: #6a8a8a; margin-top: 6px;">Expires: ${a.expires.toLocaleTimeString()}</div>
+            </div>
+        `).join('');
+    }
+    
+    // SPC Outlooks
+    const spc = await fetchSPCOutlooks();
+    const spcContainer = document.getElementById('spcGrid');
+    spcContainer.innerHTML = spc.map(s => `
+        <div class="spc-card">
+            <div style="font-size: 10px; color:#6a8a8a;">${s.day}</div>
+            <div class="risk ${s.riskClass}">${s.risk}</div>
+        </div>
+    `).join('');
+}
+
+// ============================================
+// TAB NAVIGATION
+// ============================================
+function setupTabs() {
+    const btns = document.querySelectorAll('.nav-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.getAttribute('data-tab');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            panes.forEach(p => p.classList.remove('active'));
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            if (tab === 'radar') {
+                setTimeout(() => { if (radarMap) radarMap.invalidateSize(); refreshRadar(); }, 100);
+            }
+        });
+    });
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+async function init() {
+    setupTabs();
+    await refreshAllData();
+    initRadar();
+    
+    document.getElementById('refreshRadar').addEventListener('click', refreshRadar);
+    document.getElementById('centerRadar').addEventListener('click', centerRadar);
+    document.getElementById('radarProduct').addEventListener('change', (e) => switchProduct(e.target.value));
+    
+    setInterval(refreshAllData, 5 * 60 * 1000);
+}
+
+init();
