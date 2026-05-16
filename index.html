@@ -3,603 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VINTAGE WEATHER OBSERVATORY | NWS RIDGE2</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+    <title>Analog Weather // Expressive Weather Platform</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-color: #0b0c10;
+            --panel-color: #1f2833;
+            --text-color: #c5a059;
+            --accent-color: #45f3ff;
+            --alert-color: #ff3333;
         }
-        
+
         body {
-            background: #0a0e12;
-            font-family: 'DM Mono', 'Inter', monospace;
+            margin: 0;
             padding: 20px;
-            color: #c8d0d8;
+            background-color: var(--bg-color);
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text-color);
         }
-        
-        /* Vintage CRT effect */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.02) 0px, rgba(0, 255, 0, 0.02) 2px, transparent 2px, transparent 4px);
-            pointer-events: none;
-            z-index: 9999;
-        }
-        
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Header */
-        .header {
-            background: #0d1218;
-            border: 1px solid #1e2a2e;
-            padding: 20px 24px;
-            margin-bottom: 20px;
-            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4);
-        }
-        
-        .header-badge {
-            background: #1a2a2a;
-            display: inline-block;
-            padding: 4px 12px;
-            font-size: 10px;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            border-left: 3px solid #5ab0d0;
-            font-weight: 500;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            font-weight: 500;
-            letter-spacing: -0.5px;
-            margin-bottom: 6px;
-        }
-        
-        .header-sub {
-            font-size: 11px;
-            color: #6a8090;
-        }
-        
-        .header-right {
-            text-align: right;
-            font-family: monospace;
-            font-size: 12px;
-        }
-        
-        .flex-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        
-        /* Navigation */
-        .nav {
-            background: #0d1218;
-            border: 1px solid #1e2a2e;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            padding: 8px 12px;
-            margin-bottom: 20px;
-        }
-        
-        .nav-btn {
-            background: transparent;
-            border: none;
-            padding: 10px 20px;
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            color: #7a8a98;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .nav-btn.active {
-            background: #1a252a;
-            color: #6ac8e0;
-            border-bottom: 2px solid #6ac8e0;
-        }
-        
-        .nav-btn:hover {
-            color: #a0c0d0;
-        }
-        
-        /* Cards */
-        .card {
-            background: #0d1218;
-            border: 1px solid #1e2a2e;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-        }
-        
-        .card-header {
-            border-bottom: 1px solid #1e2a2e;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
+
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-        
-        .card-header h3 {
-            font-size: 12px;
-            letter-spacing: 1.5px;
-            color: #7a9aaa;
-            font-weight: 500;
-        }
-        
-        /* Current Weather */
-        .weather-grid {
-            display: grid;
-            grid-template-columns: 1fr 0.8fr;
-            gap: 20px;
-        }
-        
-        @media (max-width: 800px) {
-            .weather-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .temp-main {
-            font-size: 72px;
-            font-weight: 500;
-            letter-spacing: -2px;
-            line-height: 1;
-        }
-        
-        .condition-text {
-            font-size: 14px;
-            margin: 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .weather-icon {
-            width: 80px;
-            height: 80px;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #1e2a2e;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-label {
-            font-size: 9px;
-            color: #6a8090;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-        }
-        
-        .stat-value {
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        /* Alerts inside current card */
-        .alert-inline {
-            background: #1a2028;
-            border-left: 3px solid #e06040;
-            padding: 12px;
-            margin-top: 20px;
-            font-size: 11px;
-        }
-        
-        .alert-inline.warning {
-            border-left-color: #e0a040;
-        }
-        
-        /* SPC Grid */
-        .spc-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        
-        @media (max-width: 700px) {
-            .spc-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .spc-card {
-            background: #0a0e14;
-            border: 1px solid #1e2a2e;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .risk {
-            display: inline-block;
-            padding: 6px 16px;
-            font-size: 11px;
-            font-weight: 600;
-            margin: 12px 0;
-        }
-        
-        .risk-tstm { background: #1a3a2a; color: #8aca8a; }
-        .risk-mrgl { background: #3a3a1a; color: #dada7a; }
-        .risk-slight { background: #6a4a1a; color: #f0b060; }
-        .risk-enh { background: #8a5a1a; color: #f0c070; }
-        .risk-mdt { background: #8a3a2a; color: #ffa080; }
-        .risk-high { background: #aa2a2a; color: #ffc0c0; }
-        
-        .prob-row {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid #1e2a2e;
-        }
-        
-        .prob-item {
-            text-align: center;
-        }
-        
-        .prob-value {
-            font-size: 20px;
-            font-weight: 600;
-            display: block;
-        }
-        
-        .prob-label {
-            font-size: 8px;
-            color: #6a8090;
-        }
-        
-        /* Hourly */
-        .hourly-scroll {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-        
-        .hour-block {
-            background: #0a0e14;
-            border: 1px solid #1e2a2e;
-            padding: 12px;
-            text-align: center;
-            min-width: 80px;
-        }
-        
-        .hour-block img {
-            width: 40px;
-            height: 40px;
-            margin: 8px 0;
-        }
-        
-        /* Daily */
-        .daily-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .daily-row {
-            display: grid;
-            grid-template-columns: 100px 60px 1fr 100px 80px;
-            align-items: center;
-            padding: 10px 12px;
-            background: #0a0e14;
-            border: 1px solid #1e2a2e;
-            gap: 12px;
-        }
-        
-        .daily-row img {
-            width: 36px;
-            height: 36px;
-        }
-        
-        @media (max-width: 600px) {
-            .daily-row {
-                grid-template-columns: 70px 50px 1fr 70px 60px;
-                font-size: 10px;
-            }
-        }
-        
-        /* Mesoscale Discussions */
-        .meso-item {
-            background: #0a0e14;
-            border-left: 3px solid #5ab0d0;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-        
-        .meso-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-        
-        .meso-desc {
-            font-size: 11px;
-            color: #8a9aaa;
-            line-height: 1.5;
-        }
-        
-        /* Alerts List */
-        .alert-item {
-            border-left: 3px solid #e06040;
-            padding: 12px;
-            margin-bottom: 8px;
-            background: #0a0e14;
-        }
-        
-        .alert-title {
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        
-        /* Radar */
-        .radar-container {
-            background: #000;
-            border: 1px solid #1e2a2e;
-        }
-        
-        .radar-map {
-            height: 500px;
-            width: 100%;
-            background: #04080c;
-        }
-        
-        .radar-controls {
-            display: flex;
-            gap: 12px;
-            padding: 12px;
-            background: #0d1218;
-            border-top: 1px solid #1e2a2e;
-        }
-        
-        /* Buttons & Inputs */
-        button, select, .vintage-btn {
-            background: #1a252a;
-            border: 1px solid #2a3a3e;
-            padding: 8px 16px;
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: #c8d0d8;
-            cursor: pointer;
-        }
-        
-        button:hover {
-            background: #2a3a3e;
-        }
-        
-        .search-area {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        
-        .search-area input {
-            background: #0a0e14;
-            border: 1px solid #1e2a2e;
-            padding: 8px 12px;
-            font-family: monospace;
-            color: #c8d0d8;
-            flex: 1;
-            outline: none;
-        }
-        
-        /* Tabs */
-        .tab-pane {
+
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+
+        /* Real-Time NWS Live Ticker Banner */
+        #ticker-banner {
+            background: #111;
+            border: 1px solid var(--alert-color);
+            padding: 10px;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: bold;
             display: none;
         }
-        
-        .tab-pane.active {
-            display: block;
-            animation: fade 0.25s;
+
+        /* Matrix Verification Controls */
+        .matrix-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        
-        @keyframes fade {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .matrix-btn {
+            background: var(--panel-color);
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
+
+        .matrix-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
-        
-        .spinner {
-            width: 36px;
-            height: 36px;
-            border: 2px solid #1e2a2e;
-            border-top-color: #6ac8e0;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
+
+        .matrix-btn.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        /* The Main Display Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
         }
-        
-        hr {
-            border-color: #1e2a2e;
-            margin: 16px 0;
+
+        .panel {
+            background-color: var(--panel-color);
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
         }
-        
-        .text-muted {
-            color: #6a8090;
-            font-size: 10px;
+
+        .panel-header {
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .media-container img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #000;
+        }
+
+        .raw-feed {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            color: #39ff14; /* Retro Green Terminal */
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <!-- Header -->
-    <div class="header">
-        <div class="flex-header">
-            <div>
-                <div class="header-badge">NOAA / NWS / SPC</div>
-                <h1>VINTAGE WEATHER OBSERVATORY</h1>
-                <div class="header-sub">NEXRAD RADAR | REAL-TIME DATA | NWS RIDGE2</div>
-            </div>
-            <div class="header-right">
-                <div id="datetime"></div>
-                <div id="updateTime" class="text-muted" style="margin-top: 4px;"></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Search -->
-    <div class="search-area">
-        <input type="text" id="locationInput" placeholder="Enter city or ZIP code..." value="Chicago, IL">
-        <button id="searchLocation">UPDATE LOCATION</button>
-    </div>
-    
-    <!-- Navigation Tabs -->
-    <div class="nav">
-        <button class="nav-btn active" data-tab="current">CURRENT</button>
-        <button class="nav-btn" data-tab="hourly">72H HOURLY</button>
-        <button class="nav-btn" data-tab="daily">7 DAY</button>
-        <button class="nav-btn" data-tab="spc">SPC OUTLOOK</button>
-        <button class="nav-btn" data-tab="meso">MESOSCALE</button>
-        <button class="nav-btn" data-tab="alerts">NWS ALERTS</button>
-        <button class="nav-btn" data-tab="radar">RIDGE2 RADAR</button>
-    </div>
-    
-    <!-- Tab Content -->
-    <div class="tab-content">
-        
-        <!-- CURRENT TAB -->
-        <div class="tab-pane active" id="currentTab">
-            <div class="card">
-                <div class="card-header">
-                    <h3 id="stationName">CHICAGO, ILLINOIS</h3>
-                    <span id="obsTimestamp"></span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-                    <div>
-                        <div class="temp-main"><span id="temp">--</span>°F</div>
-                        <div class="condition-text" id="conditionText">---</div>
-                        <div>FEELS LIKE <span id="feelsLike">--</span>°F</div>
-                    </div>
-                    <img id="weatherIcon" class="weather-icon" src="" alt="weather icon">
-                </div>
-                <div class="stats">
-                    <div class="stat"><div class="stat-label">HUMIDITY</div><div class="stat-value"><span id="humidity">--</span>%</div></div>
-                    <div class="stat"><div class="stat-label">WIND</div><div class="stat-value"><span id="wind">--</span> MPH</div></div>
-                    <div class="stat"><div class="stat-label">PRESSURE</div><div class="stat-value"><span id="pressure">--</span> MB</div></div>
-                    <div class="stat"><div class="stat-label">VISIBILITY</div><div class="stat-value"><span id="visibility">--</span> MI</div></div>
-                    <div class="stat"><div class="stat-label">DEW POINT</div><div class="stat-value"><span id="dewpoint">--</span>°F</div></div>
-                    <div class="stat"><div class="stat-label">PRECIPITATION</div><div class="stat-value"><span id="precip">--</span>%</div></div>
-                    <div class="stat"><div class="stat-label">SUNRISE</div><div class="stat-value"><span id="sunrise">--</span></div></div>
-                    <div class="stat"><div class="stat-label">SUNSET</div><div class="stat-value"><span id="sunset">--</span></div></div>
-                </div>
-                <div id="inlineAlert" class="alert-inline" style="display: none;">
-                    <strong>⚠ ACTIVE ALERT</strong>
-                    <div id="inlineAlertText"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 72H HOURLY TAB -->
-        <div class="tab-pane" id="hourlyTab">
-            <div class="card">
-                <div class="card-header"><h3>72 HOUR FORECAST</h3><span>Hourly conditions</span></div>
-                <div id="hourlyContainer" class="hourly-scroll"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-        </div>
-        
-        <!-- 7 DAY TAB -->
-        <div class="tab-pane" id="dailyTab">
-            <div class="card">
-                <div class="card-header"><h3>7 DAY FORECAST</h3><span>Daily outlook</span></div>
-                <div id="dailyContainer" class="daily-list"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-        </div>
-        
-        <!-- SPC OUTLOOK TAB -->
-        <div class="tab-pane" id="spcTab">
-            <div class="card">
-                <div class="card-header"><h3>DAY 1 CONVECTIVE OUTLOOK</h3><span id="day1Date"></span></div>
-                <div id="spcDay1"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-            <div class="card">
-                <div class="card-header"><h3>DAY 2 CONVECTIVE OUTLOOK</h3><span id="day2Date"></span></div>
-                <div id="spcDay2"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-            <div class="card">
-                <div class="card-header"><h3>DAY 3 CONVECTIVE OUTLOOK</h3><span id="day3Date"></span></div>
-                <div id="spcDay3"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-            <div class="card">
-                <div class="card-header"><h3>DAYS 4-8 OUTLOOK</h3><span>15-30% risk</span></div>
-                <div id="spcDays48" class="spc-grid"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-        </div>
-        
-        <!-- MESOSCALE DISCUSSIONS TAB -->
-        <div class="tab-pane" id="mesoTab">
-            <div class="card">
-                <div class="card-header"><h3>ACTIVE MESOSCALE DISCUSSIONS</h3><span>SPC Mesoscale Analysis</span></div>
-                <div id="mesoContainer"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-        </div>
-        
-        <!-- NWS ALERTS TAB -->
-        <div class="tab-pane" id="alertsTab">
-            <div class="card">
-                <div class="card-header"><h3>NWS ACTIVE ALERTS</h3><span id="cwaDisplay">Chicago CWA</span></div>
-                <div id="alertsContainer"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-        </div>
-        
-        <!-- RADAR TAB -->
-        <div class="tab-pane" id="radarTab">
-            <div class="radar-container">
-                <div id="radarMap" class="radar-map"></div>
-                <div class="radar-controls">
-                    <select id="radarTypeSelect">
-                        <option value="reflectivity">Base Reflectivity (N0Q)</option>
-                        <option value="velocity">Base Velocity (N0V)</option>
-                    </select>
-                    <button id="radarRefreshBtn">REFRESH RADAR</button>
-                    <button id="radarCenterBtn">CENTER ON CHICAGO</button>
-                </div>
-            </div>
-            <div class="card" style="margin-top: 16px;">
-                <div class="card-header"><h3>NEXRAD INFORMATION</h3></div>
-                <div class="text-muted">NWS Ridge2 Radar | 5-minute refresh | KLOT - Chicago (Romeoville) | NEXRAD Level 3</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script src="engine.js"></script>
+    <header>
+        <div>
+            <h1>EXPRESSIVE WEATHER PLATFORM</h1>
+            <small>ANALOG MONITORING STATION // EVANSTON, IL</small>
+        </div>
+        <div id="clock">00:00:00 UTC</div>
+    </header>
+
+    <div id="ticker-banner">🚨 HAZARD ALERT STATUS: ACTIVE CRITICAL OUTLOOK BULLETINS DETECTED</div>
+
+    <div class="matrix-controls">
+        <span style="align-self: center; font-weight: bold;">INITIALIZATION MATRIX:</span>
+        <button class="matrix-btn" onclick="setScenario(1)">[ 1 ] RRFS Double-Barrel</button>
+        <button class="matrix-btn" onclick="setScenario(2)">[ 2 ] HRRR Contamination</button>
+        <button class="matrix-btn" onclick="setScenario(3)">[ 3 ] Delayed Cap-Breaker</button>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="panel">
+            <div class="panel-header">SPC Convective Stream (Auto-Overwriting Asset)</div>
+            <div class="media-container">
+                <img id="spc-outlook" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Outlook">
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Regional High-Resolution Multi-Pane Target</div>
+            <div class="media-container">
+                <img id="meso-sector" src="https://www.spc.noaa.gov/exper/mesoanalysis/s11/sbcape.gif" alt="Live SBCAPE Sector 11">
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Raw NWS Text Stream (Cook County JSON Parse)</div>
+            <div id="nws-terminal" class="raw-feed">Initializing active alert data pipelines...</div>
+        </div>
+    </div>
+
+    <script src="engine.js"></script>
 </body>
 </html>
