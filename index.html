@@ -3,386 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Synoptic Weather | Professional Vintage Platform</title>
+    <title>Synoptic Weather | NWS SPC Open-Meteo</title>
     
-    <!-- Google Fonts + Vintage Monospace -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
-    
-    <!-- Leaflet for Radar -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'IBM Plex Mono', 'Inter', monospace;
-            background: #1a1a1a;
-            color: #d4d4d4;
+            background: #0a0c10;
+            color: #c0c8d0;
             padding: 20px;
         }
-
-        /* Vintage Paper Texture Overlay */
+        
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.05"><path d="M0 0 L200 0 L200 200 L0 200 Z" fill="none" stroke="%23ffffff" stroke-width="0.5"/><path d="M50 0 L50 200 M100 0 L100 200 M150 0 L150 200 M0 50 L200 50 M0 100 L200 100 M0 150 L200 150" stroke="%23ffffff" stroke-width="0.3"/></svg>');
-            background-repeat: repeat;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(64, 128, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
             pointer-events: none;
-            z-index: 999;
+            z-index: 0;
         }
-
+        
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
-
+        
         /* Vintage Header */
         .vintage-header {
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
-            border-radius: 0;
+            background: #0d1015;
+            border: 1px solid #2a3040;
             padding: 20px 24px;
             margin-bottom: 24px;
-            box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.4);
         }
-
+        
         .title-section h1 {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
+            font-size: 11px;
             letter-spacing: 2px;
-            color: #8b8b8b;
-            margin-bottom: 8px;
+            color: #4a6080;
+            margin-bottom: 6px;
         }
-
+        
         .title-section h2 {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
             letter-spacing: -0.5px;
-            color: #e0e0e0;
+            color: #d0d8e8;
         }
-
+        
         .datetime-section {
             text-align: right;
-            font-family: 'IBM Plex Mono', monospace;
             font-size: 12px;
-            color: #6b6b6b;
+            color: #4a6080;
         }
-
-        /* Vintage Weather Grid */
-        .weather-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+        
+        /* Navigation */
+        .vintage-nav {
+            background: #0d1015;
+            border: 1px solid #2a3040;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 12px;
             margin-bottom: 24px;
         }
-
-        @media (max-width: 768px) {
-            .weather-grid { grid-template-columns: 1fr; }
+        
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #6a7080;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-
-        /* Vintage Card */
+        
+        .nav-btn.active {
+            background: #1a2030;
+            color: #80c0ff;
+            border-left: 2px solid #80c0ff;
+        }
+        
+        .nav-btn:hover { color: #a0b0d0; background: #141820; }
+        
+        /* Cards */
         .vintage-card {
-            background: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background: #0d1015;
+            border: 1px solid #2a3040;
             padding: 20px;
+            margin-bottom: 24px;
             box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
         }
-
+        
         .card-header {
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #2a3040;
             padding-bottom: 12px;
             margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-
+        
         .card-header h3 {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            letter-spacing: 1px;
-            color: #6b6b6b;
-            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: #6a8090;
         }
-
-        .card-header .timestamp {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            color: #4a4a4a;
+        
+        /* Weather Grid */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
         }
-
-        /* Current Weather Display */
+        @media (max-width: 768px) { .weather-grid { grid-template-columns: 1fr; } }
+        
         .temp-large {
-            font-family: 'IBM Plex Mono', monospace;
             font-size: 64px;
             font-weight: 700;
             letter-spacing: -2px;
         }
-
-        .condition-text {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
-            color: #8b8b8b;
-            text-transform: uppercase;
-        }
-
+        
         .weather-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
             margin: 20px 0;
             padding: 16px 0;
-            border-top: 1px solid #2a2a2a;
-            border-bottom: 1px solid #2a2a2a;
+            border-top: 1px solid #2a3040;
+            border-bottom: 1px solid #2a3040;
         }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            color: #6b6b6b;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        /* SPC Outlook Section */
+        
+        .stat-item { text-align: center; }
+        .stat-label { font-size: 9px; color: #6a8090; text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-size: 18px; font-weight: 600; }
+        
+        /* SPC Grid */
         .spc-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
-            margin-bottom: 24px;
         }
-
-        @media (max-width: 768px) {
-            .spc-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
+        @media (max-width: 768px) { .spc-grid { grid-template-columns: repeat(2, 1fr); } }
+        
         .spc-card {
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
-            padding: 16px;
+            background: #0a0c10;
+            border: 1px solid #2a3040;
+            padding: 12px;
             text-align: center;
         }
-
-        .spc-day {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: #6b6b6b;
-            margin-bottom: 8px;
-        }
-
+        
         .spc-risk {
-            font-family: 'IBM Plex Mono', monospace;
             font-size: 10px;
             font-weight: 600;
             padding: 4px 8px;
             display: inline-block;
             margin: 8px 0;
+            border-radius: 2px;
         }
-
-        .risk-none { background: #1a3a1a; color: #4a8a4a; }
-        .risk-mrgl { background: #3a3a1a; color: #aaaa4a; }
-        .risk-slight { background: #4a3a1a; color: #e0b05a; }
-        .risk-enhanced { background: #6a4a1a; color: #f0a050; }
-        .risk-moderate { background: #8a3a1a; color: #ff6633; }
-        .risk-high { background: #aa2a2a; color: #ff5555; }
-
-        /* Hourly Scroll */
-        .hourly-container {
-            overflow-x: auto;
-            margin: 16px 0;
-        }
-
+        .risk-tstm { background: #1a3a2a; color: #6aaa6a; }
+        .risk-mrgl { background: #3a3a1a; color: #c0c060; }
+        .risk-slight { background: #4a3a1a; color: #e0b06a; }
+        .risk-enh { background: #6a4a1a; color: #f0a060; }
+        .risk-mdt { background: #8a3a1a; color: #ff8866; }
+        .risk-high { background: #aa2a2a; color: #ff8888; }
+        
+        /* Hourly */
         .hourly-track {
             display: flex;
             gap: 12px;
-            min-width: min-content;
+            overflow-x: auto;
+            padding-bottom: 8px;
         }
-
         .hour-block {
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
+            background: #0a0c10;
+            border: 1px solid #2a3040;
             padding: 12px;
             text-align: center;
-            min-width: 70px;
+            min-width: 80px;
         }
-
-        .hour-block img { width: 32px; height: 32px; margin: 8px 0; }
-
-        /* Daily Grid */
+        .hour-block img { width: 40px; height: 40px; margin: 8px 0; }
+        
+        /* Daily */
         .daily-grid {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-
         .daily-row {
             display: grid;
-            grid-template-columns: 100px 1fr 80px 80px 60px;
+            grid-template-columns: 100px 60px 1fr 100px 80px;
             align-items: center;
             padding: 12px;
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
+            background: #0a0c10;
+            border: 1px solid #2a3040;
             gap: 12px;
         }
-
         @media (max-width: 600px) {
-            .daily-row { grid-template-columns: 80px 1fr 60px 60px 50px; font-size: 12px; }
+            .daily-row { grid-template-columns: 80px 50px 1fr 80px 60px; font-size: 11px; }
         }
-
-        /* Radar Container */
+        
+        /* Radar */
         .radar-container {
             background: #000;
-            border: 1px solid #2a2a2a;
-            margin-bottom: 24px;
+            border: 1px solid #2a3040;
         }
-
-        .radar-map {
-            height: 500px;
-            width: 100%;
-            background: #0a0a1a;
-        }
-
+        .radar-map { height: 500px; width: 100%; background: #05080c; }
         .radar-controls {
             display: flex;
             gap: 12px;
             padding: 12px;
-            background: #0a0a0a;
-            border-top: 1px solid #2a2a2a;
+            background: #0d1015;
+            border-top: 1px solid #2a3040;
         }
-
         .radar-select, .vintage-btn {
-            background: #1a1a1a;
-            border: 1px solid #3a3a3a;
+            background: #1a2030;
+            border: 1px solid #3a4050;
             padding: 8px 16px;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: monospace;
             font-size: 11px;
-            color: #d4d4d4;
+            color: #c0c8d0;
             cursor: pointer;
         }
-
-        .radar-select:hover, .vintage-btn:hover {
-            background: #2a2a2a;
-        }
-
-        /* Alert Container */
-        .alert-container {
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-
+        .radar-select:hover, .vintage-btn:hover { background: #2a3045; }
+        
+        /* Alerts */
         .alert-item {
-            border-left: 3px solid #ff4444;
+            border-left: 3px solid #ff6644;
             padding: 12px;
             margin-bottom: 8px;
-            background: #111111;
+            background: #0a0c10;
         }
-
-        /* Bottom Navigation */
-        .vintage-nav {
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px;
-            margin-top: 24px;
-            position: sticky;
-            bottom: 20px;
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            padding: 8px 16px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: #8b8b8b;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .nav-btn.active {
-            color: #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .nav-btn:hover {
-            color: #ffffff;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #2a2a2a;
-            border-top-color: #8b8b8b;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        hr {
-            border-color: #2a2a2a;
-            margin: 16px 0;
-        }
+        
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; animation: fade 0.3s; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        
+        hr { border-color: #2a3040; margin: 16px 0; }
+        .loading { text-align: center; padding: 40px; }
+        .spinner { width: 40px; height: 40px; border: 2px solid #2a3040; border-top-color: #80c0ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <!-- Vintage Header -->
+    <!-- Header -->
     <div class="vintage-header">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
             <div class="title-section">
-                <h1>NOAA / NWS / SPC</h1>
+                <h1>NOAA / NWS / SPC / OPEN-METEO</h1>
                 <h2>SYNOPTIC WEATHER PLATFORM</h2>
-                <div style="font-family: monospace; font-size: 10px; color: #4a4a4a; margin-top: 8px;">REAL-TIME DATA | NEXRAD RADAR | SPC OUTLOOKS</div>
+                <div style="font-size: 10px; color: #4a6080; margin-top: 8px;">REAL-TIME | NEXRAD RADAR | SPC OUTLOOKS | NWS ALERTS</div>
             </div>
             <div class="datetime-section">
                 <div id="currentDateTime"></div>
@@ -398,27 +281,18 @@
         <button class="nav-btn" data-tab="daily">7-DAY</button>
         <button class="nav-btn" data-tab="radar">RADAR</button>
         <button class="nav-btn" data-tab="alerts">ALERTS</button>
+        <button class="nav-btn" data-tab="spc">SPC OUTLOOKS</button>
     </div>
 
-    <!-- Tab Panes -->
-    <div class="tab-content" style="margin-top: 24px;">
-
+    <div class="tab-content">
         <!-- CURRENT TAB -->
         <div class="tab-pane active" id="currentTab">
             <div class="weather-grid">
-                <!-- Current Conditions -->
                 <div class="vintage-card">
-                    <div class="card-header">
-                        <h3>CURRENT CONDITIONS</h3>
-                        <span class="timestamp" id="obsTime">--</span>
-                    </div>
+                    <div class="card-header"><h3>CURRENT CONDITIONS - CHICAGO, IL</h3><span id="obsTime" class="timestamp"></span></div>
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                        <div>
-                            <div class="temp-large"><span id="temp">--</span>°F</div>
-                            <div class="condition-text" id="condition">---</div>
-                            <div style="margin-top: 8px;">Feels Like: <span id="feelsLike">--</span>°F</div>
-                        </div>
-                        <img id="weatherIcon" style="width: 80px; height: 80px;" src="">
+                        <div><div class="temp-large"><span id="temp">--</span>°F</div><div id="condition" style="font-size: 14px;">---</div><div>Feels: <span id="feelsLike">--</span>°F</div></div>
+                        <img id="weatherIcon" style="width: 80px; height: 80px;">
                     </div>
                     <div class="weather-stats">
                         <div class="stat-item"><div class="stat-label">HUMIDITY</div><div class="stat-value"><span id="humidity">--</span>%</div></div>
@@ -428,24 +302,16 @@
                         <div class="stat-item"><div class="stat-label">VISIBILITY</div><div class="stat-value"><span id="visibility">--</span> mi</div></div>
                         <div class="stat-item"><div class="stat-label">DEW POINT</div><div class="stat-value"><span id="dewpoint">--</span>°F</div></div>
                     </div>
-                    <hr>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <div><span style="color:#6b6b6b;">SUNRISE</span><br><span id="sunrise">--</span></div>
-                        <div><span style="color:#6b6b6b;">SUNSET</span><br><span id="sunset">--</span></div>
-                        <div><span style="color:#6b6b6b;">UV INDEX</span><br><span id="uv">--</span></div>
-                        <div><span style="color:#6b6b6b;">PRECIP</span><br><span id="precip">--%</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>🌅 SUNRISE: <span id="sunrise">--</span></div><div>🌇 SUNSET: <span id="sunset">--</span></div>
+                        <div>☀️ UV INDEX: <span id="uv">--</span></div><div>🌧️ PRECIP: <span id="precip">--</span>%</div>
                     </div>
                 </div>
-
-                <!-- SPC Outlooks Days 1-8 -->
                 <div class="vintage-card">
-                    <div class="card-header">
-                        <h3>SPC CONVECTIVE OUTLOOKS</h3>
-                        <span class="timestamp">Storm Prediction Center</span>
-                    </div>
-                    <div id="spcContainer" class="spc-grid"></div>
+                    <div class="card-header"><h3>QUICK SUMMARY</h3></div>
+                    <div id="summaryText" style="font-size: 13px; line-height: 1.6;">Loading...</div>
                     <hr>
-                    <div style="font-size: 10px; color: #4a4a4a; text-align: center;">Categorical Risk: TSTM → MRGL → SLGT → ENH → MDT → HIGH</div>
+                    <div style="font-size: 11px; color: #6a8090;">Data: Open-Meteo API | NWS Chicago</div>
                 </div>
             </div>
         </div>
@@ -453,15 +319,15 @@
         <!-- HOURLY TAB -->
         <div class="tab-pane" id="hourlyTab">
             <div class="vintage-card">
-                <div class="card-header"><h3>HOURLY FORECAST</h3><span class="timestamp">Next 48 Hours</span></div>
-                <div class="hourly-container"><div id="hourlyList" class="hourly-track"></div></div>
+                <div class="card-header"><h3>HOURLY FORECAST</h3><span>Next 48 Hours</span></div>
+                <div id="hourlyList" class="hourly-track"></div>
             </div>
         </div>
 
         <!-- DAILY TAB -->
         <div class="tab-pane" id="dailyTab">
             <div class="vintage-card">
-                <div class="card-header"><h3>7-DAY FORECAST</h3><span class="timestamp">NWS Digital Forecast</span></div>
+                <div class="card-header"><h3>7-DAY FORECAST</h3><span>Open-Meteo / NWS</span></div>
                 <div id="dailyList" class="daily-grid"></div>
             </div>
         </div>
@@ -476,20 +342,34 @@
                         <option value="velocity">Base Velocity (N0V)</option>
                     </select>
                     <button id="refreshRadar" class="vintage-btn">REFRESH</button>
-                    <button id="centerRadar" class="vintage-btn">CENTER ON CHICAGO</button>
+                    <button id="centerRadar" class="vintage-btn">CENTER CHICAGO</button>
                 </div>
             </div>
             <div class="vintage-card" style="margin-top: 16px;">
-                <div class="card-header"><h3>RADAR INFO</h3></div>
-                <div style="font-size: 11px; color: #8b8b8b;">NEXRAD Level 3 | NWS Ridge2 Tiles | 5-minute refresh | Chicago - Central ILNEXRAD</div>
+                <div class="card-header"><h3>NEXRAD INFO</h3></div>
+                <div style="font-size: 11px;">NWS Ridge2 Tiles | 5-min refresh | Chicago - LOT Radar</div>
             </div>
         </div>
 
         <!-- ALERTS TAB -->
         <div class="tab-pane" id="alertsTab">
             <div class="vintage-card">
-                <div class="card-header"><h3>NWS ACTIVE ALERTS</h3><span class="timestamp" id="alertTimestamp">--</span></div>
-                <div id="alertsList" class="alert-container" style="margin-top: 0;"></div>
+                <div class="card-header"><h3>NWS ACTIVE ALERTS - ILLINOIS</h3><span id="alertTime"></span></div>
+                <div id="alertsList"></div>
+            </div>
+        </div>
+
+        <!-- SPC OUTLOOKS TAB -->
+        <div class="tab-pane" id="spcTab">
+            <div class="vintage-card">
+                <div class="card-header"><h3>SPC CONVECTIVE OUTLOOKS</h3><span>Storm Prediction Center</span></div>
+                <div id="spcGrid" class="spc-grid"></div>
+                <hr>
+                <div style="font-size: 10px; color: #6a8090; text-align: center;">TSTM → MRGL → SLGT → ENH → MDT → HIGH</div>
+            </div>
+            <div class="vintage-card">
+                <div class="card-header"><h3>DAY 4-8 OUTLOOK</h3></div>
+                <div id="spcExtended" style="font-size: 12px; line-height: 1.6;"></div>
             </div>
         </div>
     </div>
