@@ -1,4 +1,4 @@
-// tabs.js - 7-Tab Navigation System
+// tabs.js - 6-Tab Navigation System (No Icons Tab)
 class TabNavigation {
     constructor() {
         this.tabs = document.querySelectorAll('.nav-tab');
@@ -35,19 +35,16 @@ class TabNavigation {
             }
         });
         
-        // Trigger refresh for radar tab when activated
-        if (tabId === 'radar' && window.radar) {
-            setTimeout(() => window.radar.refresh(), 100);
+        // Trigger radar refresh when radar tab is activated
+        if (tabId === 'radar' && window.radarInstance) {
+            setTimeout(() => {
+                window.radarInstance.refreshRadar();
+            }, 100);
         }
         
-        // Render alerts when alerts tab is activated
+        // Refresh alerts when alerts tab is activated
         if (tabId === 'alerts') {
             alertsService.renderAlerts('alertsContainer');
-        }
-        
-        // Render all icons when icons tab is activated
-        if (tabId === 'icons' && typeof renderAllIcons === 'function') {
-            renderAllIcons();
         }
         
         // Save to localStorage
@@ -59,8 +56,3 @@ class TabNavigation {
         this.activateTab(savedTab);
     }
 }
-
-// Initialize tabs when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    window.tabNavigation = new TabNavigation();
-});
