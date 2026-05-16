@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Material Expressive 3 Weather</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Google Sans', Roboto, system-ui;
+      background: #f5f5f5;
+      color: #1f1f1f;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    body.dark-mode {
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+    weather-app {
+      display: block;
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .expressive-card {
+      background: white;
+      border-radius: 32px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      animation: fadeUp 0.5s ease;
+      transition: background 0.3s;
+    }
+    body.dark-mode .expressive-card {
+      background: #2c2c2c;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .condition-chip {
+      background: rgba(0,0,0,0.05);
+      border-radius: 40px;
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.2s;
+    }
+    body.dark-mode .condition-chip {
+      background: rgba(255,255,255,0.1);
+    }
+    .condition-chip:hover {
+      transform: translateY(-4px);
+    }
+    .condition-chip img {
+      width: 48px;
+      height: 48px;
+    }
+    .mode-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .current-weather-icon {
+      width: 120px;
+      height: 120px;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .temp { font-size: 4rem; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <button class="mode-toggle" onclick="toggleDarkMode()">🌓 Dark/Light</button>
+  <weather-app>
+    <div class="expressive-card" id="currentWeather"></div>
+    <h2 style="margin-top: 2rem;">5-Day Forecast</h2>
+    <div id="forecast" class="conditions-grid"></div>
+    <h2 style="margin-top: 3rem;">All 56 Google Weather Icons</h2>
+    <div id="allConditions" class="conditions-grid"></div>
+  </weather-app>
+  
+  <script src="current.js"></script>
+  <script src="icons.js"></script>
+  <script src="extended.js"></script>
+  <script src="structure.js"></script>
+  
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      // Re-render icons with new dark mode setting
+      if(window.weatherApp) {
+        window.weatherApp.refreshIcons();
+      }
+    }
+  </script>
+</body>
+</html>
