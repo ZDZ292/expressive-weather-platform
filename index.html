@@ -169,6 +169,11 @@
             border: 1px solid var(--onyx-border);
         }
 
+        /* Full Screen Card Variant specifically for the Radar viewport expansion */
+        .weather-card.full-viewport-card {
+            padding: 10px;
+        }
+
         .card-title {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -218,7 +223,7 @@
             border: 1px solid rgba(255,165,0,0.1);
         }
 
-        /* Dynamic Media Elements */
+        /* Dynamic Media Viewports */
         .media-viewport {
             width: 100%;
             background: var(--radar-bg);
@@ -231,6 +236,13 @@
             align-items: center;
             justify-content: center;
         }
+        
+        /* Maximized viewport scaling rule to expand the Radar module layout */
+        .media-viewport.maximized-radar-frame {
+            aspect-ratio: auto;
+            height: calc(100vh - 220px);
+        }
+
         .media-viewport iframe {
             width: 100%;
             height: 100%;
@@ -362,9 +374,9 @@
         </div>
 
         <div id="view-radar" class="app-view-panel">
-            <div class="weather-card">
-                <div class="card-title"><i class="fa-solid fa-crosshairs"></i> Interactive NEXRAD Viewport</div>
-                <div class="media-viewport">
+            <div class="weather-card full-viewport-card">
+                <div class="card-title" style="padding-left: 8px; padding-top: 4px;"><i class="fa-solid fa-crosshairs"></i> Interactive NEXRAD Viewport</div>
+                <div class="media-viewport maximized-radar-frame">
                     <iframe id="radar-frame-engine" src="https://radar.weather.gov/"></iframe>
                 </div>
             </div>
@@ -377,7 +389,7 @@
             </div>
 
             <div class="matrix-segment-bar">
-                <button class="segment-btn hazard-btn active-segment" onclick="toggleHazardLayer('cat', this)">Categorial</button>
+                <button class="segment-btn hazard-btn active-segment" onclick="toggleHazardLayer('cat', this)">Categorical</button>
                 <button class="segment-btn hazard-btn" onclick="toggleHazardLayer('torn', this)">Tornado</button>
                 <button class="segment-btn hazard-btn" onclick="toggleHazardLayer('wind', this)">Wind</button>
                 <button class="segment-btn hazard-btn" onclick="toggleHazardLayer('hail', this)">Hail</button>
@@ -387,21 +399,22 @@
                 <div class="card-title" id="storm-matrix-title"><i class="fa-solid fa-radiation"></i> SPC Day 1 Convective Matrix</div>
                 <div class="media-viewport">
                     <img id="spc-layer-cat" class="sub-layer-panel active-layer" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Categorical">
-                    <img id="spc-layer-torn" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1probotlk_0200_torn.gif" alt="Tornado">
-                    <img id="spc-layer-wind" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1probotlk_0200_wind.gif" alt="Wind">
-                    <img id="spc-layer-hail" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1probotlk_0200_hail.gif" alt="Hail">
+                    <img id="spc-layer-torn" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1torn.gif" alt="Tornado">
+                    <img id="spc-layer-wind" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1wind.gif" alt="Wind">
+                    <img id="spc-layer-hail" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1hail.gif" alt="Hail">
                 </div>
             </div>
         </div>
 
         <div id="view-extended" class="app-view-panel">
             <div class="matrix-segment-bar">
-                <button class="segment-btn active-segment" onclick="toggleExtendedDay('d3', this)">Day 3 Prob</button>
-                <button class="segment-btn" onclick="toggleExtendedDay('d48', this)">Day 4-8 Extended</button>
+                <button class="segment-btn active-segment" onclick="toggleExtendedDay('d3cat', this)">Day 3 Cat</button>
+                <button class="segment-btn" onclick="toggleExtendedDay('d3prob', this)">Day 3 Prob</button>
+                <button class="segment-btn" onclick="toggleExtendedDay('d48', this)">Day 4-8</button>
             </div>
 
             <div class="weather-card">
-                <div class="card-title" id="extended-matrix-title"><i class="fa-solid fa-calendar-plus"></i> SPC Day 3 Probabilistic Outlook</div>
+                <div class="card-title" id="extended-matrix-title"><i class="fa-solid fa-calendar-plus"></i> SPC Day 3 Categorical Outlook</div>
                 <div class="media-viewport">
                     <img id="spc-extended-view" src="https://www.spc.noaa.gov/products/outlook/day3otlk.gif" alt="Extended Outlook">
                 </div>
@@ -426,7 +439,9 @@
     </div>
 
     <script>
+        // Default execution pipeline variables
         const endpointParameters = new URLSearchParams(window.location.search);
+        // Fallback key configured to ensure seamless automated parsing if query token is omitted
         const SECURE_OPEN_KEY = endpointParameters.get('OPEN') || "ebba6df21a50b73c4f98a274e1e072b2"; 
         
         let globalLat = null;
@@ -441,13 +456,11 @@
             document.getElementById(targetId).classList.add('active-view');
             buttonElement.classList.add('active-tab');
 
-            // Force automatic cache-busting pipeline on structural maps when opening graphics panels
             if (targetId === 'view-storms' || targetId === 'view-extended') {
                 refreshConvectiveImageAssets();
             }
         }
 
-        // Convective Day Navigation Engine (Day 1 vs Day 2)
         function toggleStormDay(day, btn) {
             btn.parentElement.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active-segment'));
             btn.classList.add('active-segment');
@@ -457,7 +470,6 @@
             refreshConvectiveImageAssets();
         }
 
-        // Hazard Categorical Matrix Multiplexor
         function toggleHazardLayer(hazard, btn) {
             btn.parentElement.querySelectorAll('.hazard-btn').forEach(b => b.classList.remove('active-segment'));
             btn.classList.add('active-segment');
@@ -470,7 +482,7 @@
             refreshConvectiveImageAssets();
         }
 
-        // Extended Matrix Controller (Day 3 vs Day 4-8)
+        // Updated Extended Toggles to separate Day 3 Categorical, Day 3 Probabilistic, and Day 4-8
         function toggleExtendedDay(mode, btn) {
             btn.parentElement.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active-segment'));
             btn.classList.add('active-segment');
@@ -479,16 +491,19 @@
             const titleElement = document.getElementById('extended-matrix-title');
             const buster = new Date().getTime();
 
-            if (mode === 'd3') {
-                titleElement.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> SPC Day 3 Probabilistic Outlook`;
+            if (mode === 'd3cat') {
+                titleElement.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> SPC Day 3 Categorical Outlook`;
                 viewElement.src = `https://www.spc.noaa.gov/products/outlook/day3otlk.gif?cache=${buster}`;
-            } else {
+            } else if (mode === 'd3prob') {
+                titleElement.innerHTML = `<i class="fa-solid fa-percent"></i> SPC Day 3 Probabilistic Outlook`;
+                viewElement.src = `https://www.spc.noaa.gov/products/outlook/day3prob.gif?cache=${buster}`;
+            } else if (mode === 'd48') {
                 titleElement.innerHTML = `<i class="fa-solid fa-calendar-days"></i> SPC Day 4-8 Convective Outlook`;
                 viewElement.src = `https://www.spc.noaa.gov/products/outlook/day48otlk.gif?cache=${buster}`;
             }
         }
 
-        // Core Image Pipeline Builder - Safely pulls production tracks without layout clipping
+        // Standardizing URLs to use static direct server endpoints to guarantee live imagery injection
         function refreshConvectiveImageAssets() {
             const buster = new Date().getTime();
             
@@ -499,23 +514,15 @@
 
             if (currentActiveStormDay === 'd1') {
                 catImg.src = `https://www.spc.noaa.gov/products/outlook/day1otlk.gif?cache=${buster}`;
-                tornImg.src = `https://www.spc.noaa.gov/products/outlook/day1probotlk_1300_torn.gif?cache=${buster}`;
-                windImg.src = `https://www.spc.noaa.gov/products/outlook/day1probotlk_1300_wind.gif?cache=${buster}`;
-                hailImg.src = `https://www.spc.noaa.gov/products/outlook/day1probotlk_1300_hail.gif?cache=${buster}`;
+                tornImg.src = `https://www.spc.noaa.gov/products/outlook/day1torn.gif?cache=${buster}`;
+                windImg.src = `https://www.spc.noaa.gov/products/outlook/day1wind.gif?cache=${buster}`;
+                hailImg.src = `https://www.spc.noaa.gov/products/outlook/day1hail.gif?cache=${buster}`;
             } else {
                 catImg.src = `https://www.spc.noaa.gov/products/outlook/day2otlk.gif?cache=${buster}`;
-                tornImg.src = `https://www.spc.noaa.gov/products/outlook/day2probotlk_1730_torn.gif?cache=${buster}`;
-                windImg.src = `https://www.spc.noaa.gov/products/outlook/day2probotlk_1730_wind.gif?cache=${buster}`;
-                hailImg.src = `https://www.spc.noaa.gov/products/outlook/day2probotlk_1730_hail.gif?cache=${buster}`;
+                tornImg.src = `https://www.spc.noaa.gov/products/outlook/day2torn.gif?cache=${buster}`;
+                windImg.src = `https://www.spc.noaa.gov/products/outlook/day2wind.gif?cache=${buster}`;
+                hailImg.src = `https://www.spc.noaa.gov/products/outlook/day2hail.gif?cache=${buster}`;
             }
-
-            // Fallback rules to intercept intermediate update delays from the SPC servers
-            document.querySelectorAll('.sub-layer-panel').forEach(img => {
-                img.onerror = function() {
-                    if(this.id === 'spc-layer-cat') this.src = `https://www.spc.noaa.gov/products/outlook/${currentActiveStormDay}otlk_otlk.gif`;
-                    else this.src = "https://www.spc.noaa.gov/products/outlook/day1otlk.gif";
-                };
-            });
         }
 
         async function triggerGeocodePipeline() {
@@ -528,7 +535,7 @@
                 const data = await res.json();
 
                 if (!data || data.length === 0) {
-                    alert("Telemetry frame mapping error. Station remained offline.");
+                    alert("Telemetry location mapping failure.");
                     return;
                 }
 
@@ -541,7 +548,7 @@
 
                 executeUnifiedForecastPipeline();
             } catch (err) {
-                console.error("Geocode processing pipeline interrupt: ", err);
+                console.error("Geocode error: ", err);
             }
         }
 
@@ -549,7 +556,6 @@
             if (!globalLat || !globalLon) return;
 
             try {
-                // Interactive Radar Center Sync
                 document.getElementById('radar-frame-engine').src = `https://radar.weather.gov/index.html#/?zoom=8&center=${globalLat},${globalLon}`;
 
                 const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${globalLat}&lon=${globalLon}&units=imperial&appid=${SECURE_OPEN_KEY}`);
@@ -563,7 +569,7 @@
                 renderAppDailyStack(forecastData.list);
 
             } catch (err) {
-                console.error("Unified telemetry streaming failure: ", err);
+                console.error("Unified data ingestion error: ", err);
             }
         }
 
