@@ -7,73 +7,74 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <style>
         :root {
-            --bg-color: #0c1020;
-            --twc-blue: #1e3c72;
-            --twc-dark-blue: #0f2042;
-            --panel-bg: #152238;
-            --vintage-gold: #f39c12;
-            --vintage-teal: #00a8ff;
-            --alert-red: #e74c3c;
-            --terminal-green: #2ecc71;
-            --text-light: #ffffff;
+            --bg-deep: #060a14;
+            --twc-blue-top: #183059;
+            --twc-blue-bot: #0a1424;
+            --card-border: #d4af37; /* Metallic Weather Gold */
+            --intel-teal: #00bcd4;
+            --alert-warn: #e67e22;
+            --alert-crit: #d32f2f;
+            --terminal-glow: #00ff66;
+            --text-main: #ffffff;
         }
 
         body {
             margin: 0;
             padding: 20px;
-            background-color: var(--bg-color);
+            background-color: var(--bg-deep);
             font-family: 'Courier New', Courier, monospace;
-            color: var(--text-light);
+            color: var(--text-main);
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px double var(--vintage-teal);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            border-bottom: 3px double var(--intel-teal);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
         }
 
-        h1 { margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--text-light); text-shadow: 2px 2px #000; }
-        #clock { font-weight: bold; color: var(--vintage-gold); }
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; text-shadow: 2px 2px #000; }
+        #clock { font-weight: bold; color: var(--card-border); }
 
-        /* Navigation Tabs Bar */
+        /* Vintage 2000s Tab Navigation Engine Bar */
         .tab-bar {
             display: flex;
-            background: linear-gradient(to bottom, var(--twc-blue), var(--twc-dark-blue));
-            border: 2px solid #34495e;
-            padding: 4px;
-            gap: 5px;
-            margin-bottom: 20px;
-            box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+            background: linear-gradient(to bottom, var(--twc-blue-top), var(--twc-blue-bot));
+            border: 2px solid #2c3e50;
+            padding: 5px;
+            gap: 6px;
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.15);
         }
 
         .tab-btn {
             background: transparent;
             border: 1px solid transparent;
-            color: #bdc3c7;
-            padding: 8px 16px;
+            color: #a0aab5;
+            padding: 10px 20px;
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 1px;
             transition: all 0.2s ease;
         }
 
         .tab-btn:hover {
-            color: var(--text-light);
-            background: rgba(255,255,255,0.1);
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .tab-btn.active {
-            background: var(--panel-bg);
-            border: 1px solid var(--vintage-teal);
-            color: var(--vintage-teal);
-            text-shadow: 0 0 5px rgba(0, 168, 255, 0.5);
+            background: #111a2e;
+            border: 1px solid var(--intel-teal);
+            color: var(--intel-teal);
+            text-shadow: 0 0 4px rgba(0, 188, 212, 0.4);
         }
 
-        /* Tab Content Panel Controls */
+        /* Tab Content Panel Switches */
         .tab-content {
             display: none;
         }
@@ -82,146 +83,160 @@
             display: block;
         }
 
-        /* Real-Time NWS Watch/Warning Banner */
+        /* Live Automated NWS Warning Header Ticker */
         #alert-banner {
-            background: var(--alert-red);
+            background: var(--alert-crit);
             border: 2px solid #fff;
             color: #fff;
             padding: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: bold;
             text-align: center;
             display: none;
-            animation: blinker 1.5s linear infinite;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        @keyframes blinker {
-            50% { opacity: 0.7; }
-        }
-
-        /* Vintage IntelliStar Weather Card Design */
+        /* Authentic TWC Vintage IntelliStar System Card */
         .vintage-card {
-            background: linear-gradient(135deg, #102a45 0%, #051329 100%);
-            border: 4px double var(--vintage-gold);
-            border-radius: 6px;
-            padding: 20px;
-            max-width: 650px;
-            margin: 0 auto 25px auto;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+            background: radial-gradient(circle at top, #16325c 0%, #081426 100%);
+            border: 4px double var(--card-border);
+            border-radius: 4px;
+            padding: 24px;
+            max-width: 680px;
+            margin: 0 auto 30px auto;
+            box-shadow: 6px 6px 20px rgba(0,0,0,0.6);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
-            border-bottom: 2px solid var(--vintage-gold);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            border-bottom: 2px solid var(--card-border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
             font-size: 1.1rem;
             font-weight: bold;
-            color: var(--vintage-gold);
+            color: var(--card-border);
+            text-shadow: 1px 1px #000;
         }
 
         .card-body {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 20px;
         }
 
         .weather-core {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 30px;
         }
 
-        /* Erik Flowers Font Icon Formatting Scaling */
+        /* Weather Icons Integration Sizing */
         .twc-icon {
-            font-size: 4.5rem;
-            color: var(--text-light);
+            font-size: 5rem;
+            color: var(--text-main);
             text-shadow: 3px 3px 0px #000;
+            display: inline-block;
+            width: 80px;
+            text-align: center;
         }
 
         .temp-display {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: bold;
-            text-shadow: 2px 2px 0px #000;
+            text-shadow: 3px 3px 0px #000;
         }
 
         .card-details {
             text-align: right;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 1rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
         }
 
         .detail-item span {
-            color: var(--vintage-teal);
+            color: var(--intel-teal);
             font-weight: bold;
         }
 
-        /* Synoptic and Raw Diagnostics Displays */
+        /* Layout Framework Panels */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
         .panel {
-            background-color: var(--panel-bg);
-            border: 1px solid #2c3e50;
-            padding: 15px;
+            background-color: #0e1726;
+            border: 1px solid #23334d;
+            padding: 20px;
             border-radius: 4px;
         }
 
         .panel-header {
-            border-bottom: 1px solid var(--vintage-teal);
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
+            border-bottom: 1px solid var(--intel-teal);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
             text-transform: uppercase;
             font-weight: bold;
-            color: var(--vintage-teal);
+            color: var(--intel-teal);
+            letter-spacing: 1px;
         }
 
         .media-box img {
             width: 100%;
             height: auto;
-            border: 1px solid #000;
+            border: 2px solid #000;
         }
 
         .raw-stream {
             background: #000;
-            padding: 12px;
+            padding: 15px;
             border-radius: 4px;
-            height: 350px;
+            height: 380px;
             overflow-y: auto;
             font-size: 0.85rem;
-            color: var(--terminal-green);
+            color: var(--terminal-glow);
             white-space: pre-wrap;
-            border: 1px solid #222;
+            border: 1px solid #1a2436;
+            box-shadow: inset 0 0 10px rgba(0,255,102,0.1);
         }
 
         .location-prompt {
             text-align: center;
-            background: var(--panel-bg);
-            border: 1px solid #333;
-            padding: 15px;
-            margin-bottom: 20px;
+            background: #0e1726;
+            border: 1px solid #23334d;
+            padding: 20px;
+            margin-bottom: 25px;
         }
 
         input[type="text"] {
             background: #000;
-            border: 1px solid var(--vintage-teal);
+            border: 1px solid var(--intel-teal);
             color: #fff;
-            padding: 6px;
+            padding: 8px;
             font-family: inherit;
+            font-size: 0.9rem;
+            text-align: center;
+            width: 220px;
         }
 
         button.ui-btn {
-            background: var(--vintage-gold);
+            background: var(--card-border);
             border: none;
-            padding: 6px 12px;
+            padding: 8px 16px;
             font-family: inherit;
             font-weight: bold;
             cursor: pointer;
+            text-transform: uppercase;
+            margin-left: 10px;
+            transition: background 0.2s;
+        }
+        
+        button.ui-btn:hover {
+            background: #b8952e;
         }
     </style>
 </head>
@@ -230,30 +245,30 @@
     <header>
         <div>
             <h1>EXPRESSIVE WEATHER PLATFORM</h1>
-            <small>DYNAMIC MESOSCALE INTEL SYSTEMS</small>
+            <small>MESOSCALE AUTOMATED INTELLIGENT STREAM</small>
         </div>
         <div id="clock">00:00:00 UTC</div>
     </header>
 
-    <div id="alert-banner">CRITICAL MESOSCALE HIGH-END HAZARD ACTIVE</div>
+    <div id="alert-banner">CRITICAL HAZARD LEVEL BANNER INFRASTRUCTURE</div>
 
     <div id="loc-prompt" class="location-prompt">
-        <span>🛰️ INITIALIZING DATA VECTOR. CAPTURING REGIONAL COORDINATES... </span>
-        <input type="text" id="manual-coords" placeholder="Lat, Lon (e.g. 41.87, -87.62)">
-        <button class="ui-btn" onclick="initManualLocation()">TARGET</button>
+        <span>🛰️ INITIALIZING SATELLITE TELEMETRY VECTOR. CAPTURING COORDINATES... </span>
+        <input type="text" id="manual-coords" placeholder="Latitude, Longitude">
+        <button class="ui-btn" onclick="initManualLocation()">Target</button>
     </div>
 
     <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('local-view')">Current Conditions</button>
-        <button class="tab-btn" onclick="switchTab('synoptic-view')">Synoptic Feeds</button>
-        <button class="tab-btn" onclick="switchTab('terminal-view')">NWS Raw Alerts</button>
+        <button class="tab-btn active" onclick="switchTab('local-view')">Local Conditions</button>
+        <button class="tab-btn" onclick="switchTab('synoptic-view')">Synoptic Layers</button>
+        <button class="tab-btn" onclick="switchTab('terminal-view')">Hazard Warnings</button>
     </div>
 
     <div id="local-view" class="tab-content active">
         <div class="vintage-card">
             <div class="card-header">
-                <span id="station-display">SELECTING COORDINATE TARGET MATRIX...</span>
-                <span style="font-size: 0.8rem; letter-spacing: 1px;">LOCAL REFRESH ACTIVE</span>
+                <span id="station-display">ACQUIRING REGIONAL RADAR COORDINATES...</span>
+                <span style="font-size: 0.8rem; letter-spacing: 1px; color: var(--intel-teal);">INTELLISTAR ACTIVE</span>
             </div>
             <div class="card-body">
                 <div class="weather-core">
@@ -261,10 +276,10 @@
                     <div id="current-temp" class="temp-display">--°F</div>
                 </div>
                 <div class="card-details">
-                    <div class="detail-item">COND: <span id="condition-txt">LOADING...</span></div>
-                    <div class="detail-item">WIND: <span id="wind-txt">-- MPH</span></div>
+                    <div class="detail-item">CURRENTLY: <span id="condition-txt">AWAITING ADDR...</span></div>
+                    <div class="detail-item">WIND VEC: <span id="wind-txt">-- MPH</span></div>
                     <div class="detail-item">HUMIDITY: <span id="humidity-txt">--%</span></div>
-                    <div class="detail-item">LAT/LON: <span id="coord-txt">--</span></div>
+                    <div class="detail-item">COORDS  : <span id="coord-txt">--</span></div>
                 </div>
             </div>
         </div>
@@ -273,15 +288,15 @@
     <div id="synoptic-view" class="tab-content">
         <div class="dashboard-grid">
             <div class="panel">
-                <div class="panel-header">SPC Convective Stream (Auto-Overwriting Tracking Layer)</div>
+                <div class="panel-header">SPC Severe Convective Outlook (Auto-Overwriting Tracking Web-Asset)</div>
                 <div class="media-box">
-                    <img id="spc-outlook" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Outlook">
+                    <img id="spc-outlook" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Outlook Layer">
                 </div>
             </div>
             <div class="panel">
-                <div class="panel-header">Regional High-Resolution Multi-Pane Target</div>
+                <div class="panel-header">Regional High-Resolution Mesoanalysis Stream</div>
                 <div class="media-box">
-                    <img id="meso-sector" src="https://www.spc.noaa.gov/exper/mesoanalysis/s11/sbcape.gif" alt="Mesoanalysis Stream">
+                    <img id="meso-sector" src="https://www.spc.noaa.gov/exper/mesoanalysis/s11/sbcape.gif" alt="Mesoanalysis Operational Display">
                 </div>
             </div>
         </div>
@@ -289,8 +304,8 @@
 
     <div id="terminal-view" class="tab-content">
         <div class="panel">
-            <div class="panel-header">Live NWS Hazardous Text Scrape Terminal</div>
-            <div id="nws-terminal" class="raw-stream">Awaiting coordinate parameters to hook live NWS API data streams...</div>
+            <div class="panel-header">Live National Weather Service Hazard Ingest Text Feed</div>
+            <div id="nws-terminal" class="raw-stream">Establishing coordinate handshake protocol...</div>
         </div>
     </div>
 
