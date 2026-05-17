@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SlateWeather PRO Workstation v4.0</title>
+    <title>SlateWeather PRO Workstation v4.1</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,6 @@
             overflow-y: auto;
         }
 
-        /* 4K Isolated Thunderstorm Backdrop Image and Overlay Animations */
         .weather-canvas {
             position: fixed;
             top: 0;
@@ -65,7 +64,6 @@
             gap: 14px;
         }
 
-        /* AccuWeather Style Top Location Header Bar */
         .location-header {
             display: flex;
             flex-direction: column;
@@ -112,7 +110,6 @@
             border: 1px solid var(--desert-border);
         }
 
-        /* AccuWeather Hero Layout Framework */
         .current-hero {
             background: var(--desert-card);
             border-radius: 16px;
@@ -177,7 +174,6 @@
             border-top: 1px solid rgba(224, 169, 109, 0.1);
         }
 
-        /* AccuWeather Card Profiles */
         .weather-card {
             background: var(--desert-card);
             border-radius: 16px;
@@ -199,7 +195,6 @@
             gap: 6px;
         }
 
-        /* Control Segment Multiplexor Matrix */
         .matrix-segment-bar {
             display: flex;
             background: rgba(14, 13, 12, 0.9);
@@ -230,7 +225,6 @@
             color: var(--desert-base);
         }
 
-        /* Media Viewports layout structures */
         .media-viewport {
             width: 100%;
             background: var(--radar-bg);
@@ -249,9 +243,9 @@
             height: 100%;
             border: none;
             background: var(--radar-bg);
+            object-fit: contain;
         }
 
-        /* Extended 72 Hour Chrono Scrubber Layout */
         .hourly-scrubber {
             display: flex;
             gap: 8px;
@@ -259,13 +253,8 @@
             padding-bottom: 6px;
             scrollbar-width: auto;
         }
-        .hourly-scrubber::-webkit-scrollbar {
-            height: 4px;
-        }
-        .hourly-scrubber::-webkit-scrollbar-thumb {
-            background: var(--desert-border);
-            border-radius: 2px;
-        }
+        .hourly-scrubber::-webkit-scrollbar { height: 4px; }
+        .hourly-scrubber::-webkit-scrollbar-thumb { background: var(--desert-border); border-radius: 2px; }
 
         .hourly-item {
             display: flex;
@@ -282,7 +271,6 @@
         .hourly-item .hourly-vector-icon { width: 32px; height: 32px; margin: 6px 0; }
         .hourly-item .temp { font-size: 1rem; font-weight: 800; color: white; }
 
-        /* AccuWeather Day/Night Diurnal Split Rows */
         .daily-list { display: flex; flex-direction: column; gap: 10px; }
         
         .diurnal-card {
@@ -299,29 +287,14 @@
             border-bottom: 1px solid rgba(224, 169, 109, 0.08);
             padding-bottom: 4px;
         }
-        .diurnal-split-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .diurnal-half {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 48%;
-        }
-        .diurnal-half.night-side {
-            justify-content: flex-end;
-            text-align: right;
-            border-left: 1px solid rgba(255,255,255,0.04);
-            padding-left: 8px;
-        }
+        .diurnal-split-row { display: flex; justify-content: space-between; align-items: center; }
+        .diurnal-half { display: flex; align-items: center; gap: 10px; width: 48%; }
+        .diurnal-half.night-side { justify-content: flex-end; text-align: right; border-left: 1px solid rgba(255,255,255,0.04); padding-left: 8px; }
         .diurnal-icon { width: 36px; height: 36px; object-fit: contain; }
         .diurnal-info { display: flex; flex-direction: column; }
         .diurnal-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-sub); font-weight: 700; }
         .diurnal-temp { font-size: 1.1rem; font-weight: 800; color: white; }
 
-        /* Text Feed Structuring Modules */
         .text-feed-container {
             display: flex;
             flex-direction: column;
@@ -351,14 +324,12 @@
             white-space: pre-wrap;
         }
 
-        /* App Structural Master Layout View Frames */
         .app-view-panel { display: none; flex-direction: column; gap: 14px; }
         .app-view-panel.active-view { display: flex; }
         
         .sub-layer-panel { display: none; width: 100%; height: 100%; }
         .sub-layer-panel.active-layer { display: block; }
 
-        /* Navigation Layout Framework Dock Component */
         .bottom-nav-dock {
             position: fixed;
             bottom: 0;
@@ -433,23 +404,23 @@
             <div class="weather-card">
                 <div class="card-title"><i class="fa-solid fa-clock"></i> 72-Hour Chrono Sequence</div>
                 <div class="hourly-scrubber" id="container-hourly-scrubber">
-                    <div class="null-state-handler">Awaiting location lock string parameters...</div>
+                    <div class="null-state-handler">Awaiting location lock parameters...</div>
                 </div>
             </div>
 
             <div class="weather-card">
                 <div class="card-title"><i class="fa-solid fa-calendar-days"></i> Diurnal Synoptic Outlook Array</div>
                 <div class="daily-list" id="container-daily-stack">
-                    <div class="null-state-handler">Awaiting location lock string parameters...</div>
+                    <div class="null-state-handler">Awaiting location lock parameters...</div>
                 </div>
             </div>
         </div>
 
         <div id="view-radar" class="app-view-panel">
             <div class="weather-card full-viewport-card">
-                <div class="card-title" style="padding-left: 8px; padding-top: 4px;"><i class="fa-solid fa-crosshairs"></i> Interactive NEXRAD Viewport</div>
-                <div class="media-viewport maximized-radar-frame">
-                    <iframe id="radar-frame-engine" src="https://radar.weather.gov/"></iframe>
+                <div class="card-title" style="padding-left: 8px; padding-top: 4px;"><i class="fa-solid fa-crosshairs"></i> Interactive Radar Viewport</div>
+                <div class="media-viewport maximized-radar-frame" id="radar-container-box">
+                    <div class="null-state-handler" style="padding-top: 80px;">Search for a city location to generate the active live radar map framework.</div>
                 </div>
             </div>
         </div>
@@ -470,10 +441,10 @@
             <div class="weather-card">
                 <div class="card-title" id="storm-matrix-title"><i class="fa-solid fa-radiation"></i> SPC Day 1 Convective Matrix</div>
                 <div class="media-viewport">
-                    <img id="spc-layer-cat" class="sub-layer-panel active-layer" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Categorical" onerror="handleSpcImageLoadError(this)">
-                    <img id="spc-layer-torn" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1torn.gif" alt="Tornado" onerror="handleSpcImageLoadError(this)">
-                    <img id="spc-layer-wind" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1wind.gif" alt="Wind" onerror="handleSpcImageLoadError(this)">
-                    <img id="spc-layer-hail" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1hail.gif" alt="Hail" onerror="handleSpcImageLoadError(this)">
+                    <img id="spc-layer-cat" class="sub-layer-panel active-layer" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Categorical">
+                    <img id="spc-layer-torn" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1torn.gif" alt="Tornado">
+                    <img id="spc-layer-wind" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1wind.gif" alt="Wind">
+                    <img id="spc-layer-hail" class="sub-layer-panel" src="https://www.spc.noaa.gov/products/outlook/day1hail.gif" alt="Hail">
                 </div>
             </div>
         </div>
@@ -488,7 +459,7 @@
             <div class="weather-card">
                 <div class="card-title" id="extended-matrix-title"><i class="fa-solid fa-calendar-plus"></i> SPC Day 3 Categorical Outlook</div>
                 <div class="media-viewport">
-                    <img id="spc-extended-view" src="https://www.spc.noaa.gov/products/outlook/day3otlk.gif" alt="Extended Outlook" onerror="handleSpcImageLoadError(this)">
+                    <img id="spc-extended-view" src="https://www.spc.noaa.gov/products/outlook/day3otlk.gif" alt="Extended Outlook">
                 </div>
             </div>
         </div>
@@ -504,7 +475,7 @@
 
         <div id="view-watches" class="app-view-panel">
             <div class="weather-card">
-                <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> Convective Convective Watches In Effect</div>
+                <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> Convective Watches In Effect</div>
                 <div class="text-feed-container" id="container-watches-feed">
                     <div class="null-state-handler">Streaming severe watch tracking metrics...</div>
                 </div>
@@ -513,9 +484,9 @@
 
         <div id="view-alerts" class="app-view-panel">
             <div class="weather-card">
-                <div class="card-title"><i class="fa-solid fa-bell"></i> Active County-Level Local Hazards Warnings</div>
+                <div class="card-title"><i class="fa-solid fa-bell"></i> Active Local Hazard Warnings</div>
                 <div class="text-feed-container" id="container-alerts-feed">
-                    <div class="null-state-handler">Awaiting local station tracking to isolate localized hazards...</div>
+                    <div class="null-state-handler">Awaiting location tracking to scan regional alerts...</div>
                 </div>
             </div>
         </div>
@@ -552,10 +523,6 @@
         let internalActiveLat = null;
         let internalActiveLon = null;
 
-        // Smart Runtime Timestamp Iteration Index Fallback Matrix Array rules to step over 404 blockades
-        const spcIssuanceHourRuntimes = ['2000', '1630', '1300', '1200', '0600'];
-        let errorIterationTrackerIndex = 0;
-
         function switchAppMainTabFrame(targetId, buttonElement) {
             document.querySelectorAll('.app-view-panel').forEach(view => view.classList.remove('active-view'));
             document.querySelectorAll('.nav-dock-item').forEach(item => item.classList.remove('active-tab'));
@@ -574,29 +541,6 @@
             }
         }
 
-        // SPC Image Asset Error Recovery Interceptor Engine Module
-        function handleSpcImageLoadError(imageNode) {
-            if (errorIterationTrackerIndex < spcIssuanceHourRuntimes.length) {
-                const retryTimestamp = spcIssuanceHourRuntimes[errorIterationTrackerIndex];
-                errorIterationTrackerIndex++;
-                
-                let baseAssetPath = imageNode.src.split('?')[0];
-                const dynamicPathExtractor = baseAssetPath.match(/day\d(torn|wind|hail|otlk)/);
-                
-                if (dynamicPathExtractor) {
-                    const structuralTerm = dynamicPathExtractor[0];
-                    const reconstructedRoute = `https://www.spc.noaa.gov/products/outlook/${structuralTerm}_${retryTimestamp}.gif`;
-                    console.log("Redirecting broken server node path track to absolute route target: " + reconstructedRoute);
-                    imageNode.src = reconstructedRoute;
-                }
-            } else {
-                // If all absolute timestamps are rejected, revert to clean root static fallback
-                imageNode.src = "https://www.spc.noaa.gov/products/outlook/day1otlk.gif";
-                imageNode.onerror = null; 
-            }
-        }
-
-        // Core Real-Time Ingestion Architecture
         async function triggerNwsExecutionPipeline() {
             const inputField = document.getElementById('target-search-field');
             const targetString = inputField.value.trim();
@@ -619,7 +563,11 @@
                 const standardName = geoData[0].display_name.split(',')[0];
 
                 document.getElementById('display-location-label').innerHTML = `<i class="fa-solid fa-radio"></i> LINKED: ${standardName}`;
-                document.getElementById('radar-frame-engine').src = `https://radar.weather.gov/index.html#/?zoom=8&center=${internalActiveLat},${internalActiveLon}`;
+                
+                // Patched Radar System: Dynamic unblocked NWS graphic layers centered perfectly on Lat/Lon
+                document.getElementById('radar-container-box').innerHTML = `
+                    <img src="https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif" style="width:100%; height:100%; object-fit:contain;" alt="Regional Radar Loop">
+                `;
 
                 const pointsResponse = await fetch(`https://api.weather.gov/points/${internalActiveLat},${internalActiveLon}`);
                 const pointsData = await pointsResponse.json();
@@ -644,20 +592,16 @@
         function renderLiveAccuWeatherTelemetry(dailyPeriods, hourlyPeriods) {
             const currentObservationNode = hourlyPeriods[0];
             
-            // Hero vector data tracking deployment
             document.getElementById('hero-temp').innerText = currentObservationNode.temperature;
             document.getElementById('hero-condition').innerText = currentObservationNode.shortForecast;
-            document.getElementById('hero-hilo').innerText = `Wind: ${currentObservationNode.windSpeed} ${currentObservationNode.windDirection}  •  Humidity: ${currentObservationNode.relativeHumidity.value || 0}%  •  Zone: Live NWS Operational Feed`;
+            document.getElementById('hero-hilo').innerText = `Wind: ${currentObservationNode.windSpeed} ${currentObservationNode.windDirection}  •  Humidity: ${currentObservationNode.relativeHumidity.value || 0}%`;
             
             if (currentObservationNode.icon) {
                 document.getElementById('hero-nws-vector-img').src = currentObservationNode.icon;
             }
 
-            // High-Resolution 72-Hour Chrono Scrubber Generation Block
             const hourlyContainer = document.getElementById('container-hourly-scrubber');
             hourlyContainer.innerHTML = "";
-            
-            // Constrain slice parameter explicitly to 72 hours max depth
             const sliceDepth72Hrs = Math.min(hourlyPeriods.length, 72);
 
             for (let i = 0; i < sliceDepth72Hrs; i++) {
@@ -674,7 +618,6 @@
                 hourlyContainer.appendChild(elementFrame);
             }
 
-            // AccuWeather Day/Night Diurnal Split List Processing
             const dailyContainer = document.getElementById('container-daily-stack');
             dailyContainer.innerHTML = "";
 
@@ -685,7 +628,6 @@
                 if (dayPeriod) {
                     const diurnalContainerCard = document.createElement('div');
                     diurnalContainerCard.className = 'diurnal-card';
-                    
                     diurnalContainerCard.innerHTML = `
                         <div class="diurnal-header">${dayPeriod.name}</div>
                         <div class="diurnal-split-row">
@@ -710,7 +652,6 @@
             }
         }
 
-        // Live Dynamic Federal Alerts Parsing Modules
         async function executeSpcMesoscaleIngestionPipeline() {
             const container = document.getElementById('container-md-feed');
             container.innerHTML = `<div class="null-state-handler"><i class="fa-solid fa-spinner fa-spin"></i> Ingesting Live SPC Severe Outbreak Texts...</div>`;
@@ -718,12 +659,10 @@
             try {
                 const res = await fetch('https://api.weather.gov/alerts/active?status=actual&message_type=alert&region=US');
                 const data = await res.json();
-                
-                // Isolate severe weather parameters
                 const mesoscaleEvents = data.features.filter(f => f.properties.description && f.properties.description.includes('DISCUSSION'));
                 
                 if (mesoscaleEvents.length === 0) {
-                    container.innerHTML = `<div class="null-state-handler">No active technical Mesoscale Severe convective discussions currently reported inside the national outlook boundaries.</div>`;
+                    container.innerHTML = `<div class="null-state-handler">No active technical Mesoscale Severe convective discussions currently reported.</div>`;
                     return;
                 }
 
@@ -772,9 +711,8 @@
 
         async function executeNwsAlertsIngestionPipeline() {
             const container = document.getElementById('container-alerts-feed');
-            
             if (!internalActiveLat || !internalActiveLon) {
-                container.innerHTML = `<div class="null-state-handler">Station grid unlocked. Map a target city location to scan your regional tactical alerts array.</div>`;
+                container.innerHTML = `<div class="null-state-handler">Station grid unlocked. Map a target city location to scan your regional alerts array.</div>`;
                 return;
             }
 
@@ -808,7 +746,6 @@
             btn.parentElement.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active-segment'));
             btn.classList.add('active-segment');
             currentActiveStormDay = day;
-            errorIterationTrackerIndex = 0; 
             
             document.getElementById('storm-matrix-title').innerHTML = `<i class="fa-solid fa-radiation"></i> SPC ${day === 'd1' ? 'Day 1' : 'Day 2'} Convective Matrix`;
             refreshConvectiveImageAssets();
@@ -833,7 +770,6 @@
             const viewElement = document.getElementById('spc-extended-view');
             const titleElement = document.getElementById('extended-matrix-title');
             const buster = new Date().getTime();
-            errorIterationTrackerIndex = 0;
 
             if (mode === 'd3cat') {
                 titleElement.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> SPC Day 3 Categorical Outlook`;
@@ -849,7 +785,6 @@
 
         function refreshConvectiveImageAssets() {
             const buster = new Date().getTime();
-            errorIterationTrackerIndex = 0; 
             
             const catImg = document.getElementById('spc-layer-cat');
             const tornImg = document.getElementById('spc-layer-torn');
