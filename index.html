@@ -9,7 +9,7 @@
             --onyx: #0f0f12;
             --desert: #e6b87d;
             --desert-dim: #b58d59;
-            --panel-bg: rgba(15, 15, 18, 0.85);
+            --panel-bg: rgba(15, 15, 18, 0.9);
             --border-color: #26262b;
             --text-main: #f5f5f7;
             --text-sub: #a0a0aa;
@@ -36,6 +36,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .station-title {
@@ -75,7 +76,7 @@
             display: flex;
             padding: 25px;
             gap: 25px;
-            height: calc(100vh - 160px);
+            height: calc(100vh - 140px);
             box-sizing: border-box;
         }
 
@@ -84,11 +85,12 @@
             flex: 1.2;
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             padding: 20px;
             overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
         /* Right Side Detail Matrix */
@@ -96,11 +98,12 @@
             flex: 0.8;
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
         .tab-content {
@@ -112,7 +115,6 @@
             display: block;
         }
 
-        /* UI Elements */
         h2 {
             color: var(--desert);
             border-bottom: 1px dashed var(--border-color);
@@ -129,36 +131,59 @@
         }
 
         .metric-card {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
             padding: 15px;
             border-left: 3px solid var(--desert);
         }
 
-        .metric-label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; }
+        .metric-label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
         .metric-value { font-size: 1.6rem; font-weight: bold; color: var(--text-main); margin-top: 5px; }
 
-        .data-item {
-            background: rgba(0,0,0,0.3);
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .forecast-card {
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-color);
             padding: 12px;
-            margin-bottom: 10px;
+            text-align: center;
+            border-top: 2px solid var(--desert-dim);
+        }
+
+        .forecast-time { font-size: 0.8rem; font-weight: bold; color: var(--desert); margin-bottom: 5px; }
+        .forecast-temp { font-size: 1.3rem; font-weight: bold; margin: 5px 0; }
+        .forecast-desc { font-size: 0.7rem; color: var(--text-sub); line-height: 1.2; }
+
+        .data-item {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 12px;
             cursor: pointer;
-            transition: border-color 0.2s;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
         }
 
         .data-item:hover {
             border-color: var(--desert);
+            border-left-color: var(--desert);
+            background: rgba(230, 184, 125, 0.05);
         }
 
         .data-item-title {
             color: var(--desert);
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
-        /* Navigation Terminal Dock */
+        /* Bottom Control Terminal Dock */
         nav.control-dock {
             background-color: var(--onyx);
             border-top: 2px solid var(--border-color);
@@ -166,42 +191,47 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
         }
 
         .dock-btn {
             background: #141417;
             color: var(--text-sub);
             border: 1px solid var(--border-color);
-            padding: 10px 20px;
-            font-family: monospace;
+            padding: 10px 22px;
+            font-family: 'Courier New', monospace;
             font-weight: bold;
             cursor: pointer;
+            letter-spacing: 1px;
             transition: all 0.2s;
         }
 
         .dock-btn:hover {
             color: var(--text-main);
             background: #1c1c22;
+            border-color: var(--desert-dim);
         }
 
         .dock-btn.active {
             background: var(--desert);
             color: var(--onyx);
             border-color: var(--desert);
+            box-shadow: 0 0 10px rgba(230, 184, 125, 0.3);
         }
 
         .discussion-img {
             width: 100%;
             border: 1px solid var(--border-color);
-            margin-top: 10px;
+            margin: 15px 0;
+            background: #000;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="station-title">SLATEWEATHER PRO // M-DX MATRIX</div>
+        <div class="station-title">SLATEWEATHER PRO // INTERACTIVE METEOROLOGICAL WORKSTATION</div>
         <div class="search-container">
             <input type="text" id="station-search" class="search-input" placeholder="ENTER US CITY / COORDINATES...">
             <button class="search-btn" onclick="geocodeQuery()">QUERY</button>
@@ -214,40 +244,47 @@
             <div id="tab-conditions" class="tab-content active">
                 <h2>SURFACE METAR TELETREMETRY</h2>
                 <div class="grid-metrics" id="metrics-output">
-                    <div class="metric-card"><div class="metric-label">System State</div><div class="metric-value">STANDBY</div></div>
+                    <div class="metric-card"><div class="metric-label">Station ID</div><div class="metric-value">...</div></div>
+                    <div class="metric-card"><div class="metric-label">Temperature</div><div class="metric-value">...</div></div>
                 </div>
+
+                <h2 style="margin-top: 25px;">72-HOUR HOURLY TELEMETRY</h2>
+                <div class="forecast-grid" id="hourly-output">Loading forecast metrics...</div>
+
+                <h2 style="margin-top: 25px;">7-DAY REGIONAL OUTLOOK</h2>
+                <div class="forecast-grid" id="daily-output">Loading outlook metrics...</div>
             </div>
 
             <div id="tab-alerts" class="tab-content">
                 <h2>CWA CRITICAL WARNING STREAMS</h2>
-                <div id="alerts-output">Awaiting initialization packet...</div>
+                <div id="alerts-output">Awaiting location tracking packet...</div>
             </div>
 
             <div id="tab-discussions" class="tab-content">
                 <h2>NATIONWIDE MESOSCALE &amp; PRECIPITATION DISCUSSIONS</h2>
-                <div id="discussions-output">Parsing active proxy telemetry data arrays...</div>
+                <div id="discussions-output">Parsing Storm Prediction Center data arrays...</div>
             </div>
 
             <div id="tab-watches" class="tab-content">
                 <h2>CONUS ACTIVE SEVERE WATCH BOXES</h2>
-                <div id="watches-output">Parsing Storm Prediction Center watch nodes...</div>
+                <div id="watches-output">Parsing active severe convective watch nodes...</div>
             </div>
 
         </div>
 
         <div class="detail-container">
             <h2>DIAGNOSTIC READOUT RECORD</h2>
-            <div id="detail-output" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-sub);">
-                Select an active discussion vector or warning packet to decode real-time meteorological teletype text.
+            <div id="detail-output" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-sub);">
+                Select an active discussion vector or warning packet to decode real-time convective teletype data.
             </div>
         </div>
     </div>
 
     <nav class="control-dock">
-        <button class="dock-btn active" onclick="switchConsoleTab('conditions', this)">CONDITIONS</button>
-        <button class="dock-btn" onclick="switchConsoleTab('alerts', this)">CWA ALERTS</button>
-        <button class="dock-btn" onclick="switchConsoleTab('discussions', this)">DISCUSSIONS</button>
+        <button class="dock-btn active" onclick="switchConsoleTab('conditions', this)">DASHBOARD</button>
+        <button class="dock-btn" onclick="switchConsoleTab('discussions', this)">MDS / DISCUSSIONS</button>
         <button class="dock-btn" onclick="switchConsoleTab('watches', this)">WATCHES</button>
+        <button class="dock-btn" onclick="switchConsoleTab('alerts', this)">ALERTS</button>
     </nav>
 
     <script>
@@ -262,26 +299,15 @@
             btn.classList.add('active');
         }
 
-        // --- STEP 3: HIDDEN SECRETS CACHE INGESTION LOGIC ---
-        // Reads pre-compiled data generated safely away from the browser layout environment
+        // Secure GitHub Secrets Cache Engine
         function fetchSecureWeatherCache() {
             fetch('live_weather_cache.json')
-                .then(res => {
-                    if (!res.ok) throw new Error("Server data cache pipeline pending cron execution pass.");
-                    return res.json();
-                })
+                .then(res => res.ok ? res.json() : null)
                 .then(secureData => {
-                    console.log("Secure Data Matrix Parsed Safely:", secureData);
-                    
-                    // Inside this logic branch, your app can safely render metrics derived
-                    // via the keys, without ever introducing the keys to the client window.
-                })
-                .catch(err => {
-                    console.warn("Security Pipeline Notice:", err.message);
-                });
+                    if(secureData) console.log("Secure Ingestion Synchronized:", secureData);
+                }).catch(() => {});
         }
 
-        // Location Parsing & Core Initialization
         function geocodeQuery() {
             const query = document.getElementById('station-search').value.trim();
             if (!query) return;
@@ -304,17 +330,17 @@
                     if (data && data.properties) {
                         localCwa = data.properties.cwa;
                         fetchCurrentConditions(data.properties.observationStations);
+                        fetchForecastData(data.properties.forecast, data.properties.forecastHourly);
                         fetchCwaAlerts();
                     }
                 });
         }
 
-        // Tab Ingestion Engines
         function fetchCurrentConditions(stationsUrl) {
             fetch(stationsUrl)
                 .then(res => res.json())
                 .then(data => {
-                    if (data && data.features && data.features.length > 0) {
+                    if (data?.features?.length > 0) {
                         const stationId = data.features[0].properties.stationIdentifier;
                         fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`)
                             .then(res => res.json())
@@ -324,15 +350,55 @@
                                 const dew = p.dewpoint.value ? ((p.dewpoint.value * 9/5) + 32).toFixed(1) : 'N/A';
                                 const hum = p.relativeHumidity.value ? p.relativeHumidity.value.toFixed(0) : 'N/A';
                                 const wind = p.windSpeed.value ? (p.windSpeed.value * 0.621371).toFixed(0) : '0';
+                                const direction = p.windDirection.value ? p.windDirection.value + '°' : 'N/A';
 
                                 document.getElementById('metrics-output').innerHTML = `
                                     <div class="metric-card"><div class="metric-label">Station ID</div><div class="metric-value" style="color:var(--desert);">${stationId}</div></div>
-                                    <div class="metric-card"><div class="metric-label">Temperature</div><div class="metric-value">${temp}°F</div></div>
+                                    <div class="metric-card"><div class="metric-label">Surface Temp</div><div class="metric-value">${temp}°F</div></div>
                                     <div class="metric-card"><div class="metric-label">Dew Point</div><div class="metric-value">${dew}°F</div></div>
-                                    <div class="metric-card"><div class="metric-label">Surface Winds</div><div class="metric-value">${wind} MPH</div></div>
+                                    <div class="metric-card"><div class="metric-label">Wind Vector</div><div class="metric-value">${direction} @ ${wind} MPH</div></div>
                                 `;
                             });
                     }
+                });
+        }
+
+        function fetchForecastData(dailyUrl, hourlyUrl) {
+            // Ingest and build the 72-Hour Hourly Matrix
+            fetch(hourlyUrl)
+                .then(res => res.json())
+                .then(data => {
+                    const periods = data.properties.periods.slice(0, 12); // Grab next 12 structured increments
+                    let html = '';
+                    periods.forEach(p => {
+                        const timeStr = new Date(p.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        html += `
+                            <div class="forecast-card">
+                                <div class="forecast-time">${timeStr}</div>
+                                <div class="forecast-temp">${p.temperature}°F</div>
+                                <div class="forecast-desc">${p.shortForecast}</div>
+                            </div>`;
+                    });
+                    document.getElementById('hourly-output').innerHTML = html;
+                });
+
+            // Ingest and build the 7-Day Outlook Matrix
+            fetch(dailyUrl)
+                .then(res => res.json())
+                .then(data => {
+                    const periods = data.properties.periods;
+                    let html = '';
+                    periods.forEach(p => {
+                        if(p.isDaytime) {
+                            html += `
+                                <div class="forecast-card">
+                                    <div class="forecast-time">${p.name.toUpperCase()}</div>
+                                    <div class="forecast-temp">${p.temperature}°F</div>
+                                    <div class="forecast-desc">${p.shortForecast}</div>
+                                </div>`;
+                        }
+                    });
+                    document.getElementById('daily-output').innerHTML = html;
                 });
         }
 
@@ -354,7 +420,7 @@
                         card.onclick = () => {
                             document.getElementById('detail-output').innerHTML = `
                                 <h3 style="color:var(--desert); margin-top:0;">${p.event}</h3>
-                                <p style="font-size:0.8rem; color:var(--text-main); background:rgba(0,0,0,0.3); padding:10px; white-space:pre-wrap;">${p.description || 'No summary text available.'}</p>
+                                <p style="font-size:0.85rem; color:var(--text-main); background:rgba(0,0,0,0.3); padding:15px; white-space:pre-wrap;">${p.description || p.headline}</p>
                             `;
                         };
                         container.appendChild(card);
@@ -363,6 +429,7 @@
         }
 
         function fetchDiscussionsAndWatches() {
+            // Isolates custom diagnostic feeds away from typical municipal advisory alerts
             fetch('https://api.weather.gov/alerts/active?status=actual')
                 .then(res => res.json())
                 .then(data => {
@@ -373,11 +440,22 @@
                     discContainer.innerHTML = '';
                     watchContainer.innerHTML = '';
 
+                    // Explicit string verification mapping rule
                     const watches = features.filter(f => f.properties.event.includes("Watch"));
-                    const statements = features.filter(f => f.properties.event.includes("Statement") || f.properties.event.includes("Discussion"));
+                    
+                    // Filter down ONLY to actual SPC Mesoscale Convective / WPC Precipitation Discussions
+                    const discussions = features.filter(f => {
+                        const desc = f.properties.description || '';
+                        const head = f.properties.headline || '';
+                        return desc.includes("MESOSCALE DISCUSSION") || 
+                               desc.includes("PRECIPITATION DISCUSSION") || 
+                               head.includes("SPC MD") ||
+                               f.properties.event.includes("Mesoscale Discussion");
+                    });
 
+                    // Render Severe Convective Watch Boxes
                     if(watches.length === 0) {
-                        watchContainer.innerHTML = '<div style="color:var(--text-sub);">No active national severe watch instances reported.</div>';
+                        watchContainer.innerHTML = '<div style="color:var(--text-sub);">No active Convective Watch instances logged across CONUS.</div>';
                     } else {
                         watches.forEach(w => {
                             const p = w.properties;
@@ -385,31 +463,49 @@
                             div.className = 'data-item';
                             div.innerHTML = `<div class="data-item-title">${p.event.toUpperCase()}</div><div style="font-size:0.75rem;">${p.headline}</div>`;
                             div.onclick = () => {
-                                document.getElementById('detail-output').innerHTML = `<h3 style="color:var(--desert);">${p.event}</h3><p style="white-space:pre-wrap;">${p.description}</p>`;
+                                document.getElementById('detail-output').innerHTML = `
+                                    <h3 style="color:var(--desert);">${p.event}</h3>
+                                    <p style="white-space:pre-wrap; background:rgba(0,0,0,0.3); padding:15px;">${p.description}</p>`;
                             };
                             watchContainer.appendChild(div);
                         });
                     }
 
-                    if(statements.length === 0) {
-                        discContainer.innerHTML = '<div style="color:var(--text-sub);">No mesoscale convective discussion frames parsed currently.</div>';
+                    // Render True Mesoscale/Precipitation Diagnostics Only
+                    if(discussions.length === 0) {
+                        discContainer.innerHTML = '<div style="color:var(--text-sub);">No active SPC Mesoscale or WPC Precipitation frame arrays detected.</div>';
                     } else {
-                        statements.slice(0, 15).forEach(s => {
-                            const p = s.properties;
+                        discussions.forEach(d => {
+                            const p = d.properties;
                             const div = document.createElement('div');
-                            div.className = 'data-item';
-                            div.innerHTML = `<div class="data-item-title">${p.event}</div><div style="font-size:0.75rem;">${p.headline}</div>`;
                             
-                            const mdNumber = p.headline.match(/\d+/) || "000";
-                            const mockImgUrl = `https://www.spc.noaa.gov/products/md/2026/md${mdNumber.toString().padStart(4, '0')}.gif`;
+                            // Determine discussion tracking classification numbers
+                            const mdNumber = p.description.match(/MESOSCALE DISCUSSION\s+(\d+)/i)?.[1] || 
+                                             p.headline.match(/MD\s+#?(\d+)/i)?.[1] || "0000";
+                            
+                            const isWpc = p.description.includes("WPC") || p.headline.includes("WPC");
+                            const typeLabel = isWpc ? "WPC PRECIPITATION DISCUSSION" : `SPC MESOSCALE DISCUSSION #${mdNumber}`;
+
+                            div.className = 'data-item';
+                            div.innerHTML = `<div class="data-item-title">${typeLabel}</div><div style="font-size:0.75rem;">${p.headline || 'Convective analysis frame output.'}</div>`;
+                            
+                            // Map graphic arrays directly from the Storm Prediction Center center directories
+                            const currentYear = new Date().getFullYear();
+                            const spcImgUrl = `https://www.spc.noaa.gov/products/md/${currentYear}/md${mdNumber.padStart(4, '0')}.gif`;
 
                             div.onclick = () => {
-                                document.getElementById('detail-output').innerHTML = `
-                                    <h3 style="color:var(--desert);">${p.event}</h3>
-                                    <strong>DIAGNOSTIC RUN IDENTIFIER:</strong> MD #${mdNumber}<br><br>
-                                    <img src="${mockImgUrl}" class="discussion-img" onerror="this.style.display='none';">
-                                    <p style="white-space:pre-wrap; margin-top:15px; background:rgba(0,0,0,0.3); padding:10px;">${p.description || p.headline}</p>
+                                let readoutHtml = `
+                                    <h3 style="color:var(--desert);">${typeLabel}</h3>
+                                    <strong>WEATHER LOG SEQUENCE:</strong> CONUS METEOROLOGICAL MATRIX<br>
                                 `;
+
+                                // If it's an SPC MD, render the convective graphic map window
+                                if(!isWpc && mdNumber !== "0000") {
+                                    readoutHtml += `<img src="${spcImgUrl}" class="discussion-img" alt="SPC Convective Graphic Map Pending">`;
+                                }
+
+                                readoutHtml += `<p style="white-space:pre-wrap; margin-top:15px; background:rgba(0,0,0,0.3); padding:15px;">${p.description || p.headline}</p>`;
+                                document.getElementById('detail-output').innerHTML = readoutHtml;
                             };
                             discContainer.appendChild(div);
                         });
@@ -420,7 +516,7 @@
         window.onload = function() {
             syncNwsGridData();
             fetchDiscussionsAndWatches();
-            fetchSecureWeatherCache(); // Triggers premium back-end loader loop
+            fetchSecureWeatherCache();
             
             setInterval(() => {
                 syncNwsGridData();
