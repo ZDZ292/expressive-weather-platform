@@ -11,7 +11,7 @@
             --vector-teal: #00f0ff;
             --vector-gold: #ffbd00;
             --vector-magenta: #ff007f;
-            --panel-glass: rgba(10, 20, 42, 0.75);
+            --panel-glass: rgba(10, 20, 42, 0.85);
             --panel-border: rgba(0, 240, 255, 0.25);
             --text-primary: #ffffff;
             --text-secondary: #7f8c9d;
@@ -29,7 +29,7 @@
             position: relative;
         }
 
-        /* SVG Vector Infinitely Scaling Backdrop Grid */
+        /* Infinite Scaling SVG Backdrop Pattern Grid */
         #vector-canvas-backdrop {
             position: fixed;
             top: 0;
@@ -38,7 +38,7 @@
             height: 100vh;
             z-index: -1;
             pointer-events: none;
-            opacity: 0.15;
+            opacity: 0.12;
         }
 
         header {
@@ -56,7 +56,6 @@
             font-weight: 800;
             letter-spacing: 4px;
             text-transform: uppercase;
-            color: #fff;
         }
 
         .header-main small {
@@ -76,49 +75,71 @@
             background: rgba(0,0,0,0.4);
         }
 
-        /* Location Vector Input Handling Prompt */
-        .vector-init-prompt {
+        /* Sandboxed Vector Location Search Utility Hub */
+        .vector-search-bay {
             background: var(--panel-glass);
-            border: 1px solid var(--vector-gold);
-            backdrop-filter: blur(8px);
-            padding: 16px;
+            border: 1px solid var(--vector-teal);
+            backdrop-filter: blur(12px);
+            padding: 16px 24px;
             margin-bottom: 24px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            font-size: 0.9rem;
+            gap: 20px;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.05);
         }
 
-        .vector-init-prompt input {
-            background: rgba(0,0,0,0.6);
+        .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
+        .search-input-wrapper label {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--vector-gold);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .search-input-wrapper input {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: #fff;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            width: 100%;
+            max-width: 450px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input-wrapper input:focus {
+            border-color: var(--vector-teal);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+        }
+
+        .search-action-btn {
+            background: transparent;
             border: 1px solid var(--vector-teal);
             color: var(--vector-teal);
-            padding: 8px 12px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            text-align: center;
-            outline: none;
-        }
-
-        .vector-init-prompt button {
-            background: transparent;
-            border: 1px solid var(--vector-gold);
-            color: var(--vector-gold);
-            padding: 8px 20px;
+            padding: 10px 24px;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
+            letter-spacing: 1px;
             transition: all 0.2s;
         }
 
-        .vector-init-prompt button:hover {
-            background: var(--vector-gold);
-            color: #000;
+        .search-action-btn:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
         #alert-banner {
-            background: linear-gradient(90deg, rgba(255,51,51,0.2) 0%, rgba(255,51,51,0.8) 50%, rgba(255,51,51,0.2) 100%);
+            background: linear-gradient(90deg, rgba(255,51,51,0.1) 0%, rgba(255,51,51,0.7) 50%, rgba(255,51,51,0.1) 100%);
             border-top: 1px solid var(--alert-red);
             border-bottom: 1px solid var(--alert-red);
             color: #fff;
@@ -130,7 +151,7 @@
             display: none;
         }
 
-        /* 7-Tab Controller Deck Navigation Bar */
+        /* Multi-Tab Control Deck Navigation */
         .vector-control-deck {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -181,7 +202,7 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* Custom Geometric IntelliStar Weather Card */
+        /* Geometric IntelliStar Weather Card Component */
         .vector-display-card {
             background: var(--panel-glass);
             border: 1px solid var(--panel-border);
@@ -257,7 +278,7 @@
             font-weight: bold;
         }
 
-        /* Structural Panel Layout Architectures */
+        /* Panel Grid System Architecture */
         .panel-layout-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -302,7 +323,7 @@
             line-height: 1.6;
         }
 
-        /* Modern Vector System Table Matrix */
+        /* Vector Matrix Layout Tables */
         .vector-matrix-table {
             width: 100%;
             border-collapse: collapse;
@@ -343,7 +364,7 @@
             color: var(--vector-gold);
         }
 
-        /* Multi-Pane Layout and Diagnostics Section */
+        /* Platform Debug/Diagnostics Framework Box */
         .diagnostics-console-box {
             margin-top: 24px;
             border: 1px solid var(--vector-magenta);
@@ -373,25 +394,27 @@
             </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-        <circle cx="80%" cy="30%" r="200" fill="none" stroke="rgba(255, 0, 127, 0.3)" stroke-width="1" stroke-dasharray="5,5"/>
-        <line x1="0" y1="150" x2="100%" y2="150" stroke="rgba(0, 240, 255, 0.5)" stroke-width="1"/>
+        <circle cx="85%" cy="35%" r="220" fill="none" stroke="rgba(255, 0, 127, 0.25)" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="0" y1="140" x2="100%" y2="140" stroke="rgba(0, 240, 255, 0.4)" stroke-width="1"/>
     </svg>
 
     <header>
         <div class="header-main">
             <h1>Expressive Weather Platform</h1>
-            <small>Vector Synthesis Array // Live System Deployment</small>
+            <small>Vector Synthesis Array // Secure Sandboxed Matrix</small>
         </div>
         <div id="clock">00:00:00 UTC</div>
     </header>
 
-    <div id="alert-banner">CRITICAL MESOSCALE RADAR EXCEPTIONS DISCOVERED</div>
-
-    <div id="vector-init-panel" class="system-init-prompt vector-init-prompt">
-        <span>🛰️ STAGE 1 GEOLOCATION TARGETING // DEPLOY COORDINATE MATRIX OVERLAY:</span>
-        <input type="text" id="vector-coordinates-field" placeholder="Lat, Lon (e.g., 41.88, -87.63)">
-        <button onclick="overrideVectorCoordinates()">Engage Analysis</button>
+    <div class="vector-search-bay">
+        <div class="search-input-wrapper">
+            <label for="city-search-field">🛰️ WEATHER RADAR FOCUS LOCATION TARGET :</label>
+            <input type="text" id="city-search-field" placeholder="Enter target city (e.g. Chicago, Houston, London)...">
+        </div>
+        <button class="search-action-btn" onclick="executeCitySearchIngest()">Lock Location</button>
     </div>
+
+    <div id="alert-banner">CRITICAL MESOSCALE RADAR EXCEPTIONS DISCOVERED</div>
 
     <nav class="vector-control-deck">
         <button class="vector-tab active-tab" onclick="switchVectorPane('current-conditions')">Current Conds</button>
@@ -406,7 +429,7 @@
     <div id="current-conditions" class="vector-view-pane active-view">
         <div class="vector-display-card">
             <div class="card-header-node">
-                <span id="vector-location-title" class="card-location-txt">AWAITING GEOSPATIAL VECTOR INITIALIZATION...</span>
+                <span id="vector-location-title" class="card-location-txt">MIAMI, FLORIDA MATRIX STANDBY</span>
                 <span style="font-family:'Courier New'; font-size: 0.8rem; color: var(--vector-teal);">CORE INGEST: ACTIVE</span>
             </div>
             <div class="card-body-node">
@@ -415,7 +438,7 @@
                     <div id="vector-temp-out" class="vector-temp-value">--°F</div>
                 </div>
                 <div class="card-metadata-group">
-                    <div class="metadata-row">SKY CONDITION : <span id="vector-cond-txt">ACQUIRING</span></div>
+                    <div class="metadata-row">SKY CONDITION : <span id="vector-cond-txt">LOADING</span></div>
                     <div class="metadata-row">WIND SPEED VECTOR: <span id="vector-wind-txt">-- MPH</span></div>
                     <div class="metadata-row">DEW POINT FACTOR : <span id="vector-dew-txt">--°F</span></div>
                     <div class="metadata-row">RELATIVE HUMIDITY: <span id="vector-humidity-txt">--%</span></div>
@@ -428,25 +451,25 @@
     <div id="alerts" class="vector-view-pane">
         <div class="vector-panel">
             <div class="vector-panel-title">National Weather Service Live Emergency Wire</div>
-            <div id="vector-nws-terminal" class="terminal-readout">System initialized. Awaiting network routing data arrays...</div>
+            <div id="vector-nws-terminal" class="terminal-readout">Initializing core monitoring nodes...</div>
         </div>
     </div>
 
     <div id="radar" class="vector-view-pane">
         <div class="panel-layout-grid">
             <div class="vector-panel">
-                <div class="vector-panel-title">NWS RIDGE Base Reflectivity Stream</div>
+                <div class="vector-panel-title">NWS RIDGE Base Reflectivity Processing Loop</div>
                 <div class="image-render-box">
                     <img id="nws-ridge-radar" src="https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif" alt="NWS RIDGE Composite Reflectivity Loop">
                 </div>
             </div>
             <div class="vector-panel">
-                <div class="vector-panel-title">Radar Deployment Analytics</div>
+                <div class="vector-panel-title">Radar Tracking Vector Metadata</div>
                 <div class="terminal-readout" style="height: auto;">
-                    <span>RADAR CORE LINK: <span style="color:var(--vector-teal);">ONLINE</span></span><br>
-                    <span>FRAME DEPLOYMENT: Standard RIDGE Geospatial Matrix</span><br>
-                    <span>REFRESH SCHEDULER: 120 Seconds Automated Ingest Cycle</span><br><br>
-                    <p style="color:var(--text-secondary); font-size:0.8rem; margin:0;">The NWS RIDGE image system provides radar data overlays. Use the Synoptic tracking tab to view global mesoanalysis scales simultaneously.</p>
+                    <span>RADAR CORE FEED LINK: <span style="color:var(--vector-teal);">ONLINE</span></span><br>
+                    <span>FRAME DEPLOYMENT MODE: RIDGE High-Res Station Overlay</span><br>
+                    <span>REFRESH BUFFER REFRESH: 120 Seconds Auto-Cycle</span><br><br>
+                    <p style="color:var(--text-secondary); font-size:0.8rem; margin:0;">The system dynamically remaps the local radar array asset block matching your search footprint variables without disclosing client hardware positions.</p>
                 </div>
             </div>
         </div>
@@ -454,7 +477,7 @@
 
     <div id="current-environment" class="vector-view-pane">
         <div class="vector-panel">
-            <div class="vector-panel-title">High-Resolution Instability & Boundary Telemetry</div>
+            <div class="vector-panel-title">Meso-Environmental Parametric Metrics</div>
             <table class="vector-matrix-table">
                 <thead>
                     <tr><th>Environmental Parametric Key</th><th>Vector Matrix Value</th></tr>
@@ -489,7 +512,7 @@
 
     <div id="hourly-forecast" class="vector-view-pane">
         <div class="vector-panel">
-            <div class="vector-panel-title">Chronological 72-Hour Boundary Model Data</div>
+            <div class="vector-panel-title">Chronological 72-Hour Mesoanalysis Boundary Data</div>
             <div style="max-height: 480px; overflow-y: auto;">
                 <table class="vector-matrix-table" id="v-hourly-table">
                     <thead>
@@ -525,7 +548,7 @@
 
     <div class="vector-panel diagnostics-console-box">
         <div class="diagnostics-title">Platform Error Exception Log Console // Active Fault Diagnostics</div>
-        <div id="system-fault-logger" class="terminal-readout">Initializing system anomaly matrix monitors... No active operational exceptions captured.</div>
+        <div id="system-fault-logger" class="terminal-readout">Initializing telemetry trackers... No unexpected execution faults captured.</div>
     </div>
 
     <script src="engine.js"></script>
