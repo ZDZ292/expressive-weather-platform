@@ -4,115 +4,224 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analog Weather // Expressive Weather Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --panel-color: #1f2833;
-            --text-color: #c5a059;
-            --accent-color: #45f3ff;
-            --alert-color: #ff3333;
+            --twc-blue-dark: #001040;
+            --twc-blue-mid: #002a8f;
+            --twc-blue-light: #0072bc;
+            --twc-text-glowing: #ffffff;
+            --twc-accent-yellow: #fff200;
+            --twc-panel-bg: linear-gradient(180deg, #001f66 0%, #001040 100%);
+            --alert-color: #d60000;
         }
 
         body {
             margin: 0;
             padding: 20px;
-            background-color: var(--bg-color);
-            font-family: 'Courier New', Courier, monospace;
-            color: var(--text-color);
+            background-color: var(--twc-blue-dark);
+            background: radial-gradient(circle, #002277 0%, #000926 100%);
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--twc-text-glowing);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.8);
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            background-color: rgba(0, 16, 64, 0.85);
+            border: 2px solid var(--twc-blue-light);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 15px rgba(0,114,188,0.5);
         }
 
-        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+        h1 { margin: 0; font-size: 1.6rem; color: var(--twc-text-glowing); }
+        .station-subtitle { color: var(--twc-accent-yellow); font-size: 0.85rem; margin-top: 4px; font-weight: normal; }
 
-        /* Real-Time NWS Live Ticker Banner */
+        #clock { font-family: monospace; font-size: 1.2rem; color: var(--twc-accent-yellow); }
+
+        /* NWS Ticker System */
         #ticker-banner {
-            background: #111;
-            border: 1px solid var(--alert-color);
-            padding: 10px;
+            background: linear-gradient(90deg, var(--alert-color) 0%, #5a0000 100%);
+            border: 2px solid #ff3333;
+            padding: 12px;
             margin-bottom: 20px;
-            color: #fff;
-            font-weight: bold;
+            font-size: 1rem;
+            text-align: center;
             display: none;
+            box-shadow: 0 0 10px rgba(255,0,0,0.6);
         }
 
-        /* Matrix Verification Controls */
+        /* Initializer Matrix Controls */
         .matrix-controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 4px;
             margin-bottom: 20px;
+            align-items: center;
+            border: 1px solid #002a8f;
         }
-
+        .matrix-label { font-size: 0.8rem; color: var(--twc-blue-light); }
         .matrix-btn {
-            background: var(--panel-color);
-            border: 1px solid var(--text-color);
-            color: var(--text-color);
-            padding: 10px 20px;
+            background: #001a5c;
+            border: 1px solid var(--twc-blue-light);
+            color: #fff;
+            padding: 6px 12px;
             cursor: pointer;
+            font-size: 0.8rem;
             font-weight: bold;
-            transition: all 0.3s ease;
         }
-
-        .matrix-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-
         .matrix-btn.active {
-            background: var(--accent-color);
-            color: var(--bg-color);
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
+            background: var(--twc-accent-yellow);
+            color: #000;
+            border-color: #fff;
+            text-shadow: none;
         }
 
-        /* The Main Display Grid */
-        .dashboard-grid {
+        /* Vintage 2000s TWC Weather Card Sidebar layout */
+        .workspace-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            grid-template-columns: 320px 1fr;
             gap: 20px;
         }
 
-        .panel {
-            background-color: var(--panel-color);
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 15px;
+        /* The Weather Channel Style Sidebar Card Component */
+        .twc-vintage-card {
+            background: var(--twc-panel-bg);
+            border: 3px solid #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,114,188,0.4);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: fit-content;
+        }
+
+        .twc-card-header {
+            color: var(--twc-accent-yellow);
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--twc-blue-light);
+            width: 100%;
+            padding-bottom: 8px;
+        }
+
+        .twc-icon-frame {
+            font-size: 4.5rem;
+            margin: 20px 0;
+            color: #ffffff;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.7));
+        }
+
+        .twc-temp-display {
+            font-size: 3.5rem;
+            font-family: sans-serif;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+        .twc-condition-text {
+            font-size: 1.1rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .twc-stats-grid {
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 12px;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .twc-stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .twc-stat-label { color: rgba(255,255,255,0.7); }
+        .twc-stat-val { color: var(--twc-accent-yellow); }
+
+        /* Modernized Tab Navigation System Container */
+        .tab-workspace {
             display: flex;
             flex-direction: column;
         }
 
-        .panel-header {
-            border-bottom: 1px solid #444;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: var(--accent-color);
+        .tab-bar {
+            display: flex;
+            gap: 5px;
+            border-bottom: 3px solid var(--twc-blue-light);
+            padding-left: 5px;
         }
 
-        .media-container img {
+        .tab-link {
+            background: linear-gradient(180deg, #002266 0%, #001133 100%);
+            border: 2px solid var(--twc-blue-light);
+            border-bottom: none;
+            color: rgba(255,255,255,0.8);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-link:hover {
+            color: #fff;
+            background: #003399;
+        }
+
+        .tab-link.active {
+            background: var(--twc-blue-light);
+            color: #fff;
+            border-color: #ffffff;
+            border-bottom: 2px solid var(--twc-blue-light);
+            margin-bottom: -2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tab-content-panel {
+            background: rgba(0, 16, 64, 0.85);
+            border: 2px solid var(--twc-blue-light);
+            border-top: none;
+            padding: 20px;
+            min-height: 450px;
+            display: none;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        .tab-content-panel.active { display: block; }
+
+        .media-pane img {
             width: 100%;
             height: auto;
-            border: 1px solid #000;
+            border: 2px solid var(--twc-blue-light);
         }
 
-        .raw-feed {
-            background: #000;
-            padding: 10px;
-            border-radius: 4px;
-            height: 300px;
+        .nws-terminal-stream {
+            background: #000000;
+            border: 2px solid #222;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            height: 400px;
             overflow-y: auto;
-            font-size: 0.85rem;
-            color: #39ff14; /* Retro Green Terminal */
+            color: #39ff14;
             white-space: pre-wrap;
+            font-size: 0.9rem;
+            text-shadow: none;
         }
     </style>
 </head>
@@ -121,39 +230,71 @@
     <header>
         <div>
             <h1>EXPRESSIVE WEATHER PLATFORM</h1>
-            <small>ANALOG MONITORING STATION // EVANSTON, IL</small>
+            <div class="station-subtitle">ANALOG WEATHER MONITORING INFRASTRUCTURE // SEVERE SETUP GRAPHICS</div>
         </div>
         <div id="clock">00:00:00 UTC</div>
     </header>
 
-    <div id="ticker-banner">🚨 HAZARD ALERT STATUS: ACTIVE CRITICAL OUTLOOK BULLETINS DETECTED</div>
+    <div id="ticker-banner">🚨 HAZARD CRITICAL ALERT OVERRIDE ENGAGED</div>
 
     <div class="matrix-controls">
-        <span style="align-self: center; font-weight: bold;">INITIALIZATION MATRIX:</span>
-        <button class="matrix-btn" onclick="setScenario(1)">[ 1 ] RRFS Double-Barrel</button>
-        <button class="matrix-btn" onclick="setScenario(2)">[ 2 ] HRRR Contamination</button>
-        <button class="matrix-btn" onclick="setScenario(3)">[ 3 ] Delayed Cap-Breaker</button>
+        <span class="matrix-label">SCENARIO MATRIX INITIALIZATION:</span>
+        <button class="matrix-btn" onclick="setScenario(1)">[ 1 ] RRFS Mode</button>
+        <button class="matrix-btn" onclick="setScenario(2)">[ 2 ] HRRR Bust</button>
+        <button class="matrix-btn" onclick="setScenario(3)">[ 3 ] Cap-Breaker</button>
     </div>
 
-    <div class="dashboard-grid">
-        <div class="panel">
-            <div class="panel-header">SPC Convective Stream (Auto-Overwriting Asset)</div>
-            <div class="media-container">
-                <img id="spc-outlook" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Outlook">
+    <div class="workspace-layout">
+        
+        <aside class="twc-vintage-card">
+            <div class="twc-card-header">Local Conditions</div>
+            <div id="local-city" style="font-size:1.1rem;">EVANSTON, IL</div>
+            <div class="twc-icon-frame">
+                <i id="twc-condition-icon" class="wi wi-refresh"></i>
             </div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-header">Regional High-Resolution Multi-Pane Target</div>
-            <div class="media-container">
-                <img id="meso-sector" src="https://www.spc.noaa.gov/exper/mesoanalysis/s11/sbcape.gif" alt="Live SBCAPE Sector 11">
+            <div id="local-temp" class="twc-temp-display">--°</div>
+            <div id="local-phrase" class="twc-condition-text">LOADING METRIC</div>
+            
+            <div class="twc-stats-grid">
+                <div class="twc-stat-row">
+                    <span class="twc-stat-label">WIND:</span>
+                    <span id="local-wind" class="twc-stat-val">-- MPH</span>
+                </div>
+                <div class="twc-stat-row">
+                    <span class="twc-stat-label">HUMIDITY:</span>
+                    <span id="local-humidity" class="twc-stat-val">--%</span>
+                </div>
+                <div class="twc-stat-row">
+                    <span class="twc-stat-label">DEW POINT:</span>
+                    <span id="local-dewpoint" class="twc-stat-val">--°F</span>
+                </div>
             </div>
-        </div>
+        </aside>
 
-        <div class="panel">
-            <div class="panel-header">Raw NWS Text Stream (Cook County JSON Parse)</div>
-            <div id="nws-terminal" class="raw-feed">Initializing active alert data pipelines...</div>
-        </div>
+        <main class="tab-workspace">
+            <nav class="tab-bar">
+                <button class="tab-link active" onclick="switchTab(event, 'pane-spc')">SPC Outlook</button>
+                <button class="tab-link" onclick="switchTab(event, 'pane-meso')">Mesoanalysis</button>
+                <button class="tab-link" onclick="switchTab(event, 'pane-nws')">Live NWS Feed</button>
+            </nav>
+
+            <div id="pane-spc" class="tab-content-panel active">
+                <div class="media-pane">
+                    <img id="spc-outlook" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Outlook Data">
+                </div>
+            </div>
+
+            <div id="pane-meso" class="tab-content-panel">
+                <div class="media-pane">
+                    <img id="meso-sector" src="https://www.spc.noaa.gov/exper/mesoanalysis/s11/sbcape.gif" alt="Live SBCAPE Model Parameters">
+                </div>
+            </div>
+
+            <div id="pane-nws" class="tab-content-panel">
+                <div id="nws-terminal" class="nws-terminal-stream">Interrogating National Weather Service public data streams...</div>
+            </div>
+        </main>
+
     </div>
 
     <script src="engine.js"></script>
