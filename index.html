@@ -7,106 +7,114 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --bg-color: #08080a;
-            --panel-color: #111114;
-            --accent-color: #ffb74d;
-            --border-color: #222226;
-            --text-color: #e2e2e6;
-            --sub-text: #8a8a93;
+            --bg-color: #060608;
+            --panel-color: rgba(14, 14, 18, 0.88);
+            --panel-border: #1d1d24;
+            --accent-color: #ffa726;
+            --text-main: #f0f0f5;
+            --text-sub: #7e7e8a;
             
-            /* Warning Color Matrix */
-            --tor-color: #ef5350;
-            --svr-color: #ffa726;
-            --ffw-color: #81c784;
-            --wsw-color: #64b5f6;
-            --adv-color: #e0e0e0;
+            /* Enhanced VTEC Core Hex Codes */
+            --vtec-tor: #ff1744;
+            --vtec-svr: #ff9100;
+            --vtec-ffw: #00e676;
+            --vtec-wch: #ffea00;
+            --vtec-adv: #e0e0e0;
+            --vtec-stm: #29b6f6;
         }
 
         body {
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, rgba(10,10,15,0.4) 0%, #060608 100%), 
+                        url('https://images.unsplash.com/photo-1562155618-e1a8bc2eb04f?q=80&w=3840&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Courier New', Courier, monospace;
-            color: var(--text-color);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             width: 100vw;
+            height: 100vw;
             height: 100vh;
             overflow: hidden;
         }
 
         header {
-            background-color: var(--panel-color);
-            border-bottom: 2px solid var(--border-color);
+            background-color: #0b0b0f;
+            border-bottom: 2px solid var(--panel-border);
             padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
-            height: 20px;
+            z-index: 10;
         }
 
-        /* Twin-Column Mission Control Layout */
+        /* Twin Column Main Workspace Frame */
         .workspace {
             display: flex;
             flex: 1;
             height: calc(100vh - 100px);
             width: 100vw;
+            background: rgba(6, 6, 8, 0.45);
+            backdrop-filter: blur(4px);
         }
 
-        /* Left Side: Dynamic Mapping Control Console */
+        /* Left Mapping Command Base */
         .map-container {
-            flex: 1.2;
+            flex: 1.3;
             height: 100%;
             position: relative;
-            border-right: 2px solid var(--border-color);
+            border-right: 2px solid var(--panel-border);
         }
 
         #radar-map {
             width: 100%;
             height: 100%;
-            background: #050507;
+            background: #040405;
         }
 
-        /* Interactive Radar Control Deck */
+        /* Tactical Floating Control Console */
         .radar-deck {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 20px;
+            left: 20px;
             z-index: 1000;
-            background: rgba(17, 17, 20, 0.95);
-            padding: 10px;
-            border: 1px solid var(--border-color);
+            background: #0c0c10;
+            border: 1px solid var(--panel-border);
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            width: 280px;
+            gap: 10px;
+            width: 290px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
 
-        .deck-section-title {
-            font-size: 0.7rem;
-            color: var(--sub-text);
+        .deck-title {
+            font-size: 0.65rem;
+            color: var(--text-sub);
             font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .radar-btn-group {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
+            gap: 5px;
         }
 
         .radar-btn {
-            background: #1c1c21;
-            color: var(--sub-text);
-            border: 1px solid #2e2e36;
-            padding: 6px 4px;
+            background: #14141a;
+            color: var(--text-sub);
+            border: 1px solid #252530;
+            padding: 8px 4px;
             font-family: monospace;
             font-size: 0.7rem;
             font-weight: bold;
             cursor: pointer;
-            text-align: center;
+            transition: all 0.15s ease;
         }
 
         .radar-btn.active {
@@ -115,22 +123,21 @@
             border-color: var(--accent-color);
         }
 
-        /* Timeline Scroller Controller */
         .loop-controller {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 4px;
+            gap: 10px;
         }
 
         .loop-btn {
-            background: #25252b;
+            background: #22222c;
             color: #fff;
-            border: none;
-            padding: 4px 10px;
+            border: 1px solid #333344;
+            padding: 6px 12px;
             font-family: monospace;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
 
         .loop-slider {
@@ -143,16 +150,17 @@
             font-size: 0.65rem;
             text-align: center;
             color: #fff;
-            background: #000;
-            padding: 3px;
+            background: #111116;
+            padding: 4px;
+            border: 1px solid #1f1f26;
         }
 
-        /* Right Side: Data Feed Workstation Panels */
+        /* Right Data Feed Station Frame */
         .data-station {
             flex: 1;
             height: 100%;
             position: relative;
-            background-color: #0b0b0d;
+            background-color: var(--panel-color);
         }
 
         .station-panel {
@@ -160,7 +168,7 @@
             width: 100%;
             height: 100%;
             box-sizing: border-box;
-            padding: 20px;
+            padding: 24px;
             overflow-y: auto;
         }
 
@@ -169,78 +177,113 @@
         }
 
         h2 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 1px dashed var(--border-color);
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--panel-border);
             padding-bottom: 8px;
             letter-spacing: 1px;
+            color: #fff;
         }
 
-        /* Dashboard Metric Cards */
+        /* High-End Advanced Metrics Layout */
         .metric-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .metric-card {
-            background: var(--panel-color);
-            border: 1px solid var(--border-color);
-            padding: 12px;
+            background: rgba(20, 20, 26, 0.75);
+            border: 1px solid var(--panel-border);
+            padding: 14px;
+            border-radius: 2px;
         }
 
-        .metric-label { font-size: 0.7rem; color: var(--sub-text); text-transform: uppercase; }
-        .metric-data { font-size: 1.6rem; font-weight: bold; color: #fff; margin-top: 4px; }
-
-        /* Forecast Tables and Lists */
-        .forecast-row {
-            display: flex;
-            justify-content: space-between;
-            background: var(--panel-color);
-            border: 1px solid var(--border-color);
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            font-size: 0.8rem;
-        }
-
-        .forecast-time { font-weight: bold; color: var(--accent-color); }
+        .metric-label { font-size: 0.65rem; color: var(--text-sub); text-transform: uppercase; }
+        .metric-data { font-size: 1.5rem; font-weight: bold; color: #fff; margin-top: 6px; }
 
         .data-card {
-            background: var(--panel-color);
-            border: 1px solid var(--border-color);
+            background: rgba(20, 20, 26, 0.6);
+            border: 1px solid var(--panel-border);
             border-left: 4px solid var(--accent-color);
-            padding: 15px;
-            margin-bottom: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
             font-size: 0.8rem;
             line-height: 1.4;
         }
 
-        /* Bottom Control Dock Layout */
+        .forecast-row {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(20, 20, 26, 0.6);
+            border: 1px solid var(--panel-border);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+        }
+
+        .forecast-time { font-weight: bold; color: var(--accent-color); }
+
+        /* Integrated Header Search System */
+        .search-engine {
+            display: flex;
+            align-items: center;
+            background: #14141a;
+            border: 1px solid var(--panel-border);
+            padding: 2px 8px;
+            width: 320px;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: monospace;
+            font-size: 0.75rem;
+            width: 100%;
+            outline: none;
+            padding: 6px 0;
+        }
+
+        .search-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent-color);
+            font-family: monospace;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding-left: 8px;
+        }
+
+        /* Bottom Operational Dock Layout */
         nav.control-dock {
-            background-color: var(--panel-color);
-            border-top: 2px solid var(--border-color);
+            background-color: #0b0b0f;
+            border-top: 2px solid var(--panel-border);
             height: 55px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            z-index: 10;
         }
 
         .dock-btn {
-            background-color: #161619;
-            color: var(--sub-text);
-            border: 1px solid var(--border-color);
-            padding: 8px 14px;
+            background-color: #121217;
+            color: var(--text-sub);
+            border: 1px solid var(--panel-border);
+            padding: 10px 18px;
             cursor: pointer;
             text-transform: uppercase;
             font-family: monospace;
             font-weight: bold;
             font-size: 0.7rem;
+            transition: all 0.2s ease;
         }
 
-        .dock-btn:hover { color: #fff; background: #202024; }
+        .dock-btn:hover { color: #fff; background: #1a1a24; }
         .dock-btn.active {
             background-color: var(--accent-color);
             color: #000;
@@ -251,7 +294,13 @@
 <body>
 
     <header>
-        <div>SLATEWEATHER PRO // INTERACTIVE METEOROLOGICAL WORKSTATION</div>
+        <div>SLATEWEATHER PRO // SEVERE CONVECTIVE OPERATION CENTER</div>
+        
+        <div class="search-engine">
+            <input type="text" id="target-search-field" class="search-input" placeholder="ENTER US CITY (E.G., CHICAGO)..." onkeydown="if(event.key==='Enter') executeLocationQuery()">
+            <button class="search-btn" onclick="executeLocationQuery()">LOCATE</button>
+        </div>
+        
         <div id="station-clock">00:00:00 UTC</div>
     </header>
 
@@ -259,19 +308,19 @@
         
         <div class="map-container">
             <div class="radar-deck">
-                <div class="deck-section-title">PRODUCTS</div>
+                <div class="deck-title">RADAR SPECTRUM METRICS</div>
                 <div class="radar-btn-group">
                     <button id="rad-br" class="radar-btn active" onclick="switchRadarProduct('reflectivity')">REFLECT</button>
                     <button id="rad-bv" class="radar-btn" onclick="switchRadarProduct('velocity')">VELOCITY</button>
                     <button id="rad-cc" class="radar-btn" onclick="switchRadarProduct('cc')">CC</button>
                 </div>
                 
-                <div class="deck-section-title" style="margin-top: 4px;">RADAR TIMELINE ANIMATION</div>
+                <div class="deck-title">TIMELINE ARRAYS LOOP</div>
                 <div class="loop-controller">
                     <button id="loop-action-btn" class="loop-btn" onclick="toggleRadarLoop()">PLAY</button>
                     <input type="range" id="loop-range" class="loop-slider" min="0" max="0" value="0" oninput="manualLoopSelect(this.value)">
                 </div>
-                <div id="loop-timestamp">SYNCHRONIZING TIMELINE...</div>
+                <div id="loop-timestamp">SYNCHRONIZING RECON INDEX...</div>
             </div>
             <div id="radar-map"></div>
         </div>
@@ -279,12 +328,31 @@
         <div class="data-station">
             
             <div id="panel-dashboard" class="station-panel active">
-                <h2>METAR OBSERVATION CONSOLE (CHICAGO METRO)</h2>
+                <h2>METAR TELETREMETRY MATRIX</h2>
                 <div class="metric-grid" id="dashboard-metrics">
-                    <div class="metric-card"><div class="metric-label">LOADING TEMP...</div><div class="metric-data">--</div></div>
+                    <div class="metric-card"><div class="metric-label">SURFACE TEMP</div><div class="metric-data">--</div></div>
+                    <div class="metric-card"><div class="metric-label">DEW POINT</div><div class="metric-data">--</div></div>
+                    <div class="metric-card"><div class="metric-label">RELATIVE HUMIDITY</div><div class="metric-data">--</div></div>
+                    <div class="metric-card"><div class="metric-label">WIND SYSTEM</div><div class="metric-data">--</div></div>
                 </div>
-                <h2>MESOSCALE OUTLOOK MATRIX</h2>
-                <div id="dashboard-summary" class="data-card">Connecting to regional forecast servers...</div>
+                <h2>LOCAL METEOROLOGICAL CONTEXT SUMMARY</h2>
+                <div id="dashboard-summary" class="data-card">Connecting to regional forecast arrays...</div>
+            </div>
+
+            <div id="panel-radar-view" class="station-panel">
+                <h2>RADAR STREAM GEOMETRY DIAGNOSTICS</h2>
+                <div class="data-card" style="border-left-color: var(--accent-color);">
+                    <h3>ACTIVE SCAN MATRIX STATUS</h3>
+                    <p>Map canvas left panel running multi-layered tile pipelines. Use upper controls to switch between base composite reflectivity, velocity fields, and hydrometeor debris profiles (CC).</p>
+                </div>
+                <div class="data-card" style="border-left-color: #90a4ae;">
+                    <h3>VTEC POLYGON INDEX LEGEND</h3>
+                    <p><span style="color:var(--vtec-tor); font-weight:bold;">■ TORNADO WARNING / EMERGENCY</span><br>
+                       <span style="color:var(--vtec-svr); font-weight:bold;">■ SEVERE THUNDERSTORM WARNING</span><br>
+                       <span style="color:var(--vtec-ffw); font-weight:bold;">■ FLASH FLOOD WARNING</span><br>
+                       <span style="color:var(--vtec-wch); font-weight:bold;">■ ACTIVE WATCH BOUNDARY</span><br>
+                       <span style="color:var(--vtec-adv); font-weight:bold;">■ ADVISORIES &amp; URBAN STATEMENTS</span></p>
+                </div>
             </div>
 
             <div id="panel-hourly" class="station-panel">
@@ -298,7 +366,7 @@
             </div>
 
             <div id="panel-mds" class="station-panel">
-                <h2>SPC MESOSCALE DISCUSSIONS &amp; OUTLOOKS</h2>
+                <h2>SPC MESOSCALE DISCUSSIONS &amp; CONVECTIVE OUTLOOKS</h2>
                 <div id="mds-feed-container">Polling Storm Prediction Center feed nodes...</div>
             </div>
 
@@ -311,7 +379,9 @@
     </div>
 
     <nav class="control-dock">
-        <button class="dock-btn active" onclick="switchDataTab('dashboard', this)">DASHBOARD</button>
+        <button id="dock-tab-radar" class="dock-btn" onclick="switchDataTab('radar-view', this)">RADAR</button>
+        
+        <button id="dock-tab-dashboard" class="dock-btn active" onclick="switchDataTab('dashboard', this)">DASHBOARD</button>
         <button class="dock-btn" onclick="switchDataTab('hourly', this)">72 HR HOURLY</button>
         <button class="dock-btn" onclick="switchDataTab('extended', this)">7 DAY OUTLOOK</button>
         <button class="dock-btn" onclick="switchDataTab('mds', this)">MDS</button>
@@ -320,7 +390,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Global Map Engine and Animation Cache Matrices
         let map;
         let warningVtecLayer;
         
@@ -329,30 +398,34 @@
         let currentFrameIndex = 0;
         let loopInterval = null;
         let activeProduct = 'reflectivity';
+        
+        // Active location coordination track variables (Defaults to Chicago Metro grid indices)
+        let currentWfo = "LOT";
+        let gridX = 75;
+        let gridY = 74;
+        let stationId = "KORD";
 
-        // 1. Initialize High-Performance Tracking Grid With Extra Deeper Zoom Unlocked
+        // 1. Map Initialization and Bounds Architecture
         function initMapGrid() {
             map = L.map('radar-map', {
                 zoomControl: true,
                 attributionControl: false,
-                maxZoom: 21,       // Unlocked ultra deeper micro-mesoscale zooming capabilities
+                maxZoom: 21,
                 minZoom: 4
-            }).setView([41.8781, -87.6298], 6); // Centered on Midwest setup corridor
+            }).setView([41.8781, -87.6298], 6);
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 maxZoom: 21
             }).addTo(map);
 
-            // Trigger Ingestion Engines
             syncRadarTimeline();
             fetchGlobalVtecAlerts();
             
-            // Core Automated Synchronization Interval Loops
-            setInterval(syncRadarTimeline, 180000);       // Radar arrays refresh every 3 minutes
-            setInterval(fetchGlobalVtecAlerts, 60000);    // Alert maps sync every 60 seconds
+            setInterval(syncRadarTimeline, 180000);
+            setInterval(fetchGlobalVtecAlerts, 60000);
         }
 
-        // 2. Tab Navigation Routing Engine
+        // 2. Tab Routing Switchboard
         function switchDataTab(tabId, element) {
             document.querySelectorAll('.station-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
@@ -360,11 +433,10 @@
             element.classList.add('active');
         }
 
-        // 3. Complete VTEC Global Alert System Parser (All Alerts, Watches, Advisories & Statements)
+        // 3. Expanded VTEC Parser Engine (Includes explicit polygon descriptions upon layer popup selection)
         function fetchGlobalVtecAlerts() {
             if (warningVtecLayer) map.removeLayer(warningVtecLayer);
 
-            // Querying full active database array across CONUS sector
             fetch('https://api.weather.gov/alerts/active?status=actual')
                 .then(res => res.json())
                 .then(data => {
@@ -372,36 +444,33 @@
                         style: function(feature) {
                             const ev = feature.properties.event;
                             
-                            // High-End Convective Warnings (Red / Orange / Green Matrix)
-                            if (ev.includes("Tornado Warning") || ev.includes("Extreme Wind")) return { color: '#ef5350', weight: 3, fillOpacity: 0.20, zIndex: 1000 };
-                            if (ev.includes("Severe Thunderstorm Warning")) return { color: '#ffa726', weight: 2, fillOpacity: 0.12 };
-                            if (ev.includes("Flash Flood Warning")) return { color: '#81c784', weight: 2, fillOpacity: 0.10 };
+                            if (ev.includes("Tornado Warning") || ev.includes("Extreme Wind")) return { color: 'var(--vtec-tor)', weight: 3, fillOpacity: 0.22, zIndex: 1000 };
+                            if (ev.includes("Severe Thunderstorm Warning")) return { color: 'var(--vtec-svr)', weight: 2, fillOpacity: 0.14 };
+                            if (ev.includes("Flash Flood Warning")) return { color: 'var(--vtec-ffw)', weight: 2, fillOpacity: 0.12 };
+                            if (ev.includes("Watch")) return { color: 'var(--vtec-wch)', weight: 1.5, fillOpacity: 0.06, dashArray: '4, 4' };
+                            if (ev.includes("Advisory")) return { color: 'var(--vtec-adv)', weight: 1, fillOpacity: 0.05 };
+                            if (ev.includes("Statement")) return { color: 'var(--vtec-stm)', weight: 1, fillOpacity: 0.04, dashArray: '2, 2' };
                             
-                            // Convective and Meso Synoptic Watches
-                            if (ev.includes("Watch")) return { color: '#ffeb3b', weight: 1.5, fillOpacity: 0.05, dashArray: '4, 4' };
-                            
-                            // Advisories, Winter, and Special Weather Statements
-                            if (ev.includes("Advisory")) return { color: '#ba68c8', weight: 1, fillOpacity: 0.04 };
-                            if (ev.includes("Statement")) return { color: '#4fc3f7', weight: 1, fillOpacity: 0.03, dashArray: '2, 2' };
-                            
-                            // Catch-all baseline policy for all other active statements
                             return { color: '#90a4ae', weight: 1, fillOpacity: 0.02 };
                         },
                         onEachFeature: function(feature, layer) {
                             const p = feature.properties;
-                            layer.bindPopup(`
-                                <div style="font-family:monospace; font-size:11px; background:#111; color:#fff; padding:6px; border:1px solid #333;">
-                                    <strong style="color:var(--accent-color);">${p.event.toUpperCase()}</strong><br>
-                                    <strong>ISSUED:</strong> ${p.senderName}<br><br>
-                                    <strong>TEXT RECON:</strong><br>${p.headline}<br>
+                            
+                            // Formulates clean, readable, explicit descriptions directly from the API output keys inside popup containers
+                            const popupPayload = `
+                                <div style="font-family:monospace; font-size:11px; background:#0c0c10; color:#fff; padding:10px; border:1px solid var(--panel-border); max-height:220px; overflow-y:auto;">
+                                    <strong style="color:var(--accent-color); font-size:12px;">${p.event.toUpperCase()}</strong><br><br>
+                                    <strong>AFFECTED ZONES:</strong> ${p.areaDesc || 'N/A'}<br><br>
+                                    <strong>EXPLICIT DETAILED SPECIFICATIONS:</strong><br>${p.description || p.headline || 'No explicit teletype description payload included in statement package.'}
                                 </div>
-                            `, { maxWidth: 260 });
+                            `;
+                            layer.bindPopup(popupPayload, { maxWidth: 280 });
                         }
                     }).addTo(map);
                 }).catch(err => console.error("Alert vector packet drop: ", err));
         }
 
-        // 4. Dynamic Time Loop System & Multi-Product Core Engine
+        // 4. Radar Layer Product Switching & Frame Buffering
         function switchRadarProduct(productType) {
             activeProduct = productType;
             document.querySelectorAll('.radar-btn').forEach(b => b.classList.remove('active'));
@@ -410,7 +479,6 @@
             if(productType === 'velocity') document.getElementById('rad-bv').classList.add('active');
             if(productType === 'cc') document.getElementById('rad-cc').classList.add('active');
             
-            // Flush display cache map and render selected configuration matrix
             clearMapRadarLayers();
             renderActiveRadarFrame();
         }
@@ -420,15 +488,11 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.radar && data.radar.past) {
-                        // Cache timestamps loop data arrays
                         radarFrames = data.radar.past;
-                        
-                        // Scale slider bounds to match API dataset array lengths
                         const maxIdx = radarFrames.length - 1;
                         const slider = document.getElementById('loop-range');
                         slider.max = maxIdx;
                         
-                        // Pre-cache individual map structures to ensure smooth rendering transitions
                         clearMapRadarLayers();
                         currentFrameIndex = maxIdx;
                         slider.value = maxIdx;
@@ -443,24 +507,20 @@
             
             const frameData = radarFrames[currentFrameIndex];
             const timestamp = new Date(frameData.time * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + " CDT";
-            document.getElementById('loop-timestamp').innerText = `FRAME TIME: ${timestamp}`;
+            document.getElementById('loop-timestamp').innerText = `FRAME RECON: ${timestamp}`;
 
             clearMapRadarLayers();
-
             const cacheKey = `${activeProduct}_${frameData.time}`;
 
             if (activeProduct === 'reflectivity') {
-                // High-resolution Reflectivity array layer via RainViewer data API matrix
                 radarLayerCache[cacheKey] = L.tileLayer(`https://tilecache.rainviewer.com${frameData.path}/256/{z}/{x}/{y}/2/1_1.png`, {
                     opacity: 0.75, zIndex: 200
                 }).addTo(map);
             } else if (activeProduct === 'velocity') {
-                // High-resolution NEXRAD Base Doppler Velocity rendering via Iowa Environmental Mesonet architecture 
                 radarLayerCache[cacheKey] = L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0v-900913/{z}/{x}/{y}.png', {
                     opacity: 0.75, zIndex: 200
                 }).addTo(map);
             } else if (activeProduct === 'cc') {
-                // High-resolution NEXRAD Correlation Coefficient (CC) debris signature tracker via IEM network
                 radarLayerCache[cacheKey] = L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0c-900913/{z}/{x}/{y}.png', {
                     opacity: 0.75, zIndex: 200
                 }).addTo(map);
@@ -490,20 +550,20 @@
                     }
                     document.getElementById('loop-range').value = currentFrameIndex;
                     renderActiveRadarFrame();
-                }, 700); // 700ms interpolation speed across loops
+                }, 750);
             }
         }
 
         function manualLoopSelect(val) {
-            if (loopInterval) toggleRadarLoop(); // Kill automated looping if user takes manual scrolling handle control
+            if (loopInterval) toggleRadarLoop();
             currentFrameIndex = parseInt(val);
             renderActiveRadarFrame();
         }
 
-        // 5. Raw Live NWS Telemetry Database Operations (Dashboard, 72h Hourly, 7 Day Outlook, Feeds)
+        // 5. Native NWS Telemetry Pipelines Data Engine
         function ingestTelemetryFeeds() {
-            // A. CURRENT CONDITIONS BOARD GENERATOR (Using KORD Core Telemetry Frame)
-            fetch('https://api.weather.gov/stations/KORD/observations/latest')
+            // METAR Observation Station Telemetry Ingestion
+            fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`)
                 .then(res => res.json())
                 .then(data => {
                     const p = data.properties;
@@ -517,16 +577,18 @@
                         <div class="metric-card"><div class="metric-label">SURFACE TEMP</div><div class="metric-data">${fahrenheit}°F</div></div>
                         <div class="metric-card"><div class="metric-label">DEW POINT</div><div class="metric-data">${dewpoint}°F</div></div>
                         <div class="metric-card"><div class="metric-label">RELATIVE HUMIDITY</div><div class="metric-data">${relHum}%</div></div>
-                        <div class="metric-card"><div class="metric-label">WIND VECTOR</div><div class="metric-data">${dir}° @ ${speed}MPH</div></div>
+                        <div class="metric-card"><div class="metric-label">WIND SYSTEM</div><div class="metric-data">${dir}° @ ${speed}MPH</div></div>
                     `;
+                }).catch(() => {
+                    document.getElementById('dashboard-metrics').innerHTML = `<div class="data-card" style="grid-column: span 2;">Observation station out of bounds or offline.</div>`;
                 });
 
-            // B. HOURLY FORECAST METRIC ARRAYS (72-Hour Data Stream Generator)
-            fetch('https://api.weather.gov/gridpoints/LOT/75,74/forecast/hourly')
+            // 72-Hour Data Stream Generator Pipeline
+            fetch(`https://api.weather.gov/gridpoints/${currentWfo}/${gridX},${gridY}/forecast/hourly`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.properties && data.properties.periods) {
-                        const periods = data.properties.periods.slice(0, 72); // Snapping exactly to 72 hour array bounds
+                        const periods = data.properties.periods.slice(0, 72);
                         let hourlyHtml = '';
                         
                         periods.forEach(hp => {
@@ -540,17 +602,12 @@
                             `;
                         });
                         document.getElementById('hourly-stream-container').innerHTML = hourlyHtml;
-                        
-                        // Push initial headline readout to Main Dashboard summary viewport card
-                        document.getElementById('dashboard-summary').innerHTML = `
-                            <strong>CURRENT LOCAL ZONE FORECAST SUMMARY:</strong><br>
-                            ${data.properties.periods[0].shortForecast}. Wind patterns holding from the ${data.properties.periods[0].windDirection} heading around ${data.properties.periods[0].windSpeed}.
-                        `;
+                        document.getElementById('dashboard-summary').innerHTML = `<strong>LOCAL SUMMARY NODE:</strong><br>${data.properties.periods[0].shortForecast}. Vectors current via tracking station coordinates.`;
                     }
-                });
+                }).catch(() => { document.getElementById('hourly-stream-container').innerText = "Hourly vector grid parameters failed validation."; });
 
-            // C. 7-DAY SYNOPTIC OUTLOOK STRATIFICATION GENERATOR
-            fetch('https://api.weather.gov/gridpoints/LOT/75,74/forecast')
+            // 7-Day Synoptic Grid Pipeline
+            fetch(`https://api.weather.gov/gridpoints/${currentWfo}/${gridX},${gridY}/forecast`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.properties && data.properties.periods) {
@@ -559,16 +616,16 @@
                             extendedHtml += `
                                 <div class="data-card">
                                     <h3 style="color:var(--accent-color); margin:0 0 5px 0; font-size:0.85rem;">${p.name.toUpperCase()}</h3>
-                                    <p style="margin:0;"><strong>THERMO: ${p.temperature}°F (${p.temperatureTrend || 'STEADY'})</strong> // POP: ${p.probabilityOfPrecipitation.value || 0}%</p>
-                                    <p style="margin:5px 0 0 0; color:var(--sub-text);">${p.detailedForecast}</p>
+                                    <p style="margin:0;"><strong>THERMO: ${p.temperature}°F</strong> // POP: ${p.probabilityOfPrecipitation.value || 0}%</p>
+                                    <p style="margin:5px 0 0 0; color:var(--text-sub);">${p.detailedForecast}</p>
                                 </div>
                             `;
                         });
                         document.getElementById('extended-forecast-container').innerHTML = extendedHtml;
                     }
-                });
+                }).catch(() => { document.getElementById('extended-forecast-container').innerText = "Extended coordinate vector failed extraction."; });
 
-            // D. CRITICAL ALERTS AND NATIONAL MESOSCALE DISCUSSION ARRAY PARSERS
+            // Text Feed Database Query Pipeline
             fetch('https://api.weather.gov/alerts/active?status=actual')
                 .then(res => res.json())
                 .then(data => {
@@ -577,31 +634,31 @@
                     let alertsHtml = '';
 
                     const spcMds = features.filter(f => f.properties.event.includes("Statement") || f.properties.event.includes("Outlook") || f.properties.event.includes("Watch"));
-                    const dynamicWarnings = features.filter(f => f.properties.event.includes("Warning") || f.properties.event.includes("Emergency"));
+                    const dynamicWarnings = features.filter(f => f.properties.event.includes("Warning") || f.properties.event.includes("Emergency") || f.properties.event.includes("Advisory"));
 
                     if(spcMds.length === 0) {
-                        mdsHtml = '<div class="data-card">NO ACTIVE CONVECTIVE OUTLOOK INTERPOLATIONS REPORTED IN SYSTEM SECTOR</div>';
+                        mdsHtml = '<div class="data-card">NO CONVECTIVE STATEMENT ARRAYS RECORDED.</div>';
                     } else {
-                        spcMds.slice(0, 10).forEach(m => {
+                        spcMds.slice(0, 15).forEach(m => {
                             mdsHtml += `
-                                <div class="data-card" style="border-left-color: #ba68c8;">
+                                <div class="data-card" style="border-left-color: var(--vtec-stm);">
                                     <h3>${m.properties.event.toUpperCase()}</h3>
-                                    <strong>ZONE SUMMARY:</strong> ${m.properties.headline}<br>
-                                    <p style="margin:5px 0 0 0; color:var(--sub-text); font-size:11px;">${m.properties.description || ''}</p>
+                                    <strong>REGIONAL TARGET:</strong> ${m.properties.headline}<br>
+                                    <p style="margin:5px 0 0 0; color:var(--text-sub); font-size:11px;">${m.properties.description || ''}</p>
                                 </div>
                             `;
                         });
                     }
 
                     if(dynamicWarnings.length === 0) {
-                        alertsHtml = '<div class="data-card">NO CRITICAL THREAT WARNING ARRAYS RECORDED IN LOCAL COORDINATES</div>';
+                        alertsHtml = '<div class="data-card">NO HIGH-THREAT CRITICAL READOUTS DETECTED CURRENTLY.</div>';
                     } else {
                         dynamicWarnings.forEach(w => {
                             alertsHtml += `
-                                <div class="data-card" style="border-left-color:var(--tor-color); background:rgba(239,83,80,0.02);">
-                                    <h3 style="color:var(--tor-color); margin:0 0 5px 0;">${w.properties.event.toUpperCase()}</h3>
+                                <div class="data-card" style="border-left-color:var(--vtec-tor); background:rgba(255,23,68,0.02);">
+                                    <h3 style="color:var(--vtec-tor); margin:0 0 5px 0;">${w.properties.event.toUpperCase()}</h3>
                                     <strong>CRITICAL READOUT:</strong> ${w.properties.headline}<br>
-                                    <p style="margin:5px 0 0 0; color:var(--sub-text); font-size:11px;">${w.properties.description || ''}</p>
+                                    <p style="margin:5px 0 0 0; color:var(--text-sub); font-size:11px;">${w.properties.description || ''}</p>
                                 </div>
                             `;
                         });
@@ -612,19 +669,59 @@
                 });
         }
 
-        // 6. Clock Initialization Routine
+        // 6. Restored Dynamic Search Coordinates Engine Pipeline (Yellow Highlight Field Execution)
+        function executeLocationQuery() {
+            const query = document.getElementById('target-search-field').value.trim();
+            if (!query) return;
+
+            // Step A: Parse city boundaries via public geographic lookup servers
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&limit=1&q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(geo => {
+                    if (geo && geo.length > 0) {
+                        const lat = parseFloat(geo[0].lat);
+                        const lon = parseFloat(geo[0].lon);
+                        
+                        // Recenter client map target location seamlessly
+                        map.setView([lat, lon], 9);
+
+                        // Step B: Route latitude and longitude parameters to extract matching NWS forecasting grids
+                        fetch(`https://api.weather.gov/points/${lat},${lon}`)
+                            .then(res => res.json())
+                            .then(pointsData => {
+                                const props = pointsData.properties;
+                                currentWfo = props.gridId;
+                                gridX = props.gridX;
+                                gridY = props.gridY;
+                                
+                                // Step C: Extract observation terminal identity signature matches
+                                fetch(props.observationStations)
+                                    .then(res => res.json())
+                                    .then(stationsData => {
+                                        if (stationsData && stationsData.features && stationsData.features.length > 0) {
+                                            stationId = stationsData.features[0].properties.stationIdentifier;
+                                        }
+                                        // Execute fresh master database ingestion sequence for the newly loaded station coordinates
+                                        ingestTelemetryFeeds();
+                                    });
+                            });
+                    } else {
+                        alert("TARGET COORDINATE NOT DETECTED IN NWS DOMAIN RECORDS.");
+                    }
+                }).catch(() => alert("Geographic tracking server timeout. Try again."));
+        }
+
         function updateStationClock() {
             const now = new Date();
             const utcStr = now.toUTCString().split(' ')[4] + " UTC";
             document.getElementById('station-clock').innerText = utcStr;
         }
 
-        // Launch Application Operations
         window.onload = function() {
             initMapGrid();
             ingestTelemetryFeeds();
             setInterval(updateStationClock, 1000);
-            setInterval(ingestTelemetryFeeds, 180000); // Master data stream re-polling loop every 3 minutes
+            setInterval(ingestTelemetryFeeds, 180000);
         };
     </script>
 </body>
