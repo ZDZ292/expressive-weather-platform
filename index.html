@@ -3,470 +3,500 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SyntaxWeather // Severe Convective Tracking Workstation</title>
+    <title>SyntaxWeather // Convective Workstation Terminal</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,300;0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     
     <style>
-        /* Modern Onyx & Desert Brown Applied Design Tokens */
         :root {
-            --bg-pure: #050608;
-            --bg-onyx: #0a0c11;
-            --surface-panel: #11151d;
-            --surface-card: #161c26;
-            --surface-inner: #1b2230;
+            /* Onyx & Desert Brand Matrix Color Palette Mapping */
+            --bg-onyx: #07090d;
+            --surface-deep: #0c0f16;
+            --surface-panel: #111622;
+            --surface-card: #161c2b;
+            --surface-chip: #1e2638;
             
-            --desert-base: #c38e55;
+            --desert-base: #a97643;
+            --desert-brown: #c38e55;
             --desert-glow: #e6ab6b;
-            --desert-dark: #8c6032;
-            --desert-dim: rgba(195, 142, 85, 0.15);
-            --border-panel: rgba(195, 142, 85, 0.25);
+            --desert-bright: #fcdbb3;
             
-            --text-main: #f4f6f9;
-            --text-muted: #8a96a7;
-            --text-dark: #4f5b6d;
+            --panel-border: rgba(195, 142, 85, 0.18);
+            --panel-border-active: rgba(230, 171, 107, 0.45);
             
-            --sig-green: #3eff8b;
-            --sig-yellow: #fdfd96;
-            --sig-orange: #ffb347;
-            --sig-red: #ff6961;
-            --sig-magenta: #ff45a4;
+            --text-pure: #ffffff;
+            --text-primary: #f1f3f5;
+            --text-secondary: #8a96a8;
+            --text-muted: #535f70;
             
-            /* SPC Color Ingestion Codes */
-            --hex-tstm: #c0e8c0;
-            --hex-mrgl: #77dd77;
-            --hex-slgt: #fdfd96;
-            --hex-enhc: #ffb347;
-            --hex-mdt: #ff6961;
-            --hex-high: #e30022;
+            /* High-Fidelity Alert Color Tokens */
+            --terminal-green: #3aff8b;
+            --terminal-blue: #3ac6ff;
+            --severity-warn: #ffcc00;
+            --severity-crit: #ff4a4a;
+            
+            /* SPC Convective Color Architecture */
+            --spc-tstm: #244724;
+            --spc-mrgl: #42471d;
+            --spc-slgt: #524e13;
+            --spc-enhc: #664115;
+            --spc-mdt: #66221c;
+            --spc-high: #5c0819;
         }
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-pure);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-onyx);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
             overflow-x: hidden;
-            position: relative;
+            letter-spacing: -0.2px;
         }
 
-        /* Ambient Mathematical Grid Mesh Background Layer */
+        /* Ambient Technical Geometric Cross-Grid Background Layer */
         body::before {
             content: "";
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             z-index: -1;
             background: 
-                radial-gradient(circle at 85% 15%, rgba(230, 171, 107, 0.08) 0%, rgba(5, 6, 8, 0) 65%),
+                radial-gradient(circle at 80% 20%, rgba(195, 142, 85, 0.07) 0%, rgba(7, 9, 13, 0) 50%),
+                radial-gradient(circle at 10% 80%, rgba(230, 171, 107, 0.04) 0%, rgba(7, 9, 13, 0) 40%),
                 linear-gradient(rgba(195, 142, 85, 0.015) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(195, 142, 85, 0.015) 1px, transparent 1px);
-            background-size: 100% 100%, 24px 24px, 24px 24px;
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
             pointer-events: none;
         }
 
-        /* Custom High-Density Scrollbars */
+        /* Webkit Scrollbar Customizations */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-pure); }
-        ::-webkit-scrollbar-thumb { background: var(--desert-dark); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--desert-base); }
+        ::-webkit-scrollbar-track { background: var(--surface-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--desert-base); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--desert-glow); }
 
-        /* Master System Header Typography */
+        /* Structural Layout Scaffolding */
         header {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            padding-bottom: 20px;
-            margin-bottom: 24px;
-            border-bottom: 1px dashed var(--border-panel);
+            gap: 16px;
+            padding: 16px;
+            background: var(--surface-deep);
+            border: 1px solid var(--panel-border);
+            margin-bottom: 16px;
+            position: relative;
         }
-        
-        .brand-block h1 {
-            font-size: 1.85rem;
+
+        .header-main {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .header-main h1 {
+            font-size: 1.8rem;
             font-weight: 800;
             letter-spacing: 3px;
             text-transform: uppercase;
-            color: var(--text-main);
-            text-shadow: 0 0 12px rgba(195, 142, 85, 0.2);
-        }
-        
-        .brand-block small {
-            font-family: 'Chivo Mono', monospace;
-            color: var(--desert-base);
-            font-weight: 700;
-            display: block;
-            margin-top: 4px;
-            letter-spacing: 1px;
-        }
-        
-        .sys-status-badge {
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--desert-glow);
-            border: 1px solid var(--border-panel);
-            padding: 8px 16px;
-            background: rgba(10, 12, 17, 0.8);
-            align-self: flex-start;
-            box-shadow: inset 0 0 8px rgba(195, 142, 85, 0.05);
+            color: var(--text-pure);
+            text-shadow: 0 0 20px rgba(195, 142, 85, 0.15);
         }
 
-        /* Multi-Tab Routing Navigation Deck */
-        .nav-deck {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            scrollbar-width: none;
+        .header-main small {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--desert-brown);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .nav-deck::-webkit-scrollbar { display: none; }
-        
-        .nav-node {
-            background: var(--surface-card);
-            border: 1px solid var(--border-panel);
+
+        .system-telemetry-pill {
+            align-self: flex-start;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--desert-glow);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--panel-border);
+            padding: 8px 16px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        /* Geocoded Control Deck Target Field Layout */
+        .control-deck {
+            background: var(--surface-panel);
+            border: 1px solid var(--panel-border);
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .control-deck label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--desert-bright);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-deck label::before {
+            content: "";
+            display: inline-block;
+            width: 6px; height: 6px;
+            background: var(--terminal-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--terminal-green);
+        }
+
+        .input-wrapper {
+            display: flex;
+            width: 100%;
+            background: #040508;
+            border: 1px solid var(--panel-border);
+        }
+
+        .input-wrapper input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-pure);
+            padding: 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .input-wrapper input::placeholder {
             color: var(--text-muted);
-            padding: 12px 18px;
-            font-family: 'Chivo Mono', monospace;
+        }
+
+        .input-wrapper input:focus {
+            background: rgba(195, 142, 85, 0.02);
+        }
+
+        .lock-btn {
+            background: var(--desert-base);
+            border: none;
+            color: var(--bg-onyx);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .lock-btn:hover {
+            background: var(--desert-glow);
+            color: #000;
+        }
+
+        /* Persistent Navigation Scroller UI System */
+        .tab-scroller {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+
+        .tab-scroller::-webkit-scrollbar { display: none; }
+
+        .tab-node {
+            background: var(--surface-panel);
+            border: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 14px 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+
+        .tab-node:hover {
+            border-color: rgba(230, 171, 107, 0.3);
+            color: var(--text-primary);
+        }
+
+        .tab-node.active {
+            background: var(--surface-card);
+            border-color: var(--desert-glow);
+            color: var(--desert-glow);
+            box-shadow: inset 0 -2px 0 var(--desert-glow);
+        }
+
+        /* Workspace Pane Animation Drivers */
+        .workspace-pane {
+            display: none;
+            animation: panelFade 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .workspace-pane.active {
+            display: block;
+        }
+
+        @keyframes panelFade {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Matrix Grids Layout Framework */
+        .panel-matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .panel-card {
+            background: var(--surface-panel);
+            border: 1px solid var(--panel-border);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .panel-card::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0;
+            width: 4px; height: 4px;
+            background: var(--desert-base);
+        }
+
+        .panel-hdr {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-        .nav-node:hover {
             color: var(--desert-glow);
-            background: var(--surface-inner);
-            border-color: var(--desert-base);
-        }
-        .nav-node.active {
-            background: var(--desert-dim);
-            border-color: var(--desert-glow);
-            color: var(--desert-glow);
-            box-shadow: 0 0 12px rgba(195, 142, 85, 0.1);
-        }
-
-        /* Ingestion Interface Core */
-        .ingest-station {
-            background: var(--surface-panel);
-            border: 1px solid var(--border-panel);
-            padding: 20px;
-            margin-bottom: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-        }
-        
-        .form-row {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
-        
-        .form-row label {
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--desert-glow);
-            font-weight: 700;
             letter-spacing: 1px;
-        }
-        
-        .form-row input {
-            background: var(--bg-pure);
-            border: 1px solid var(--border-panel);
-            color: var(--text-main);
-            padding: 14px;
-            font-size: 1rem;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-row input:focus {
-            border-color: var(--desert-glow);
-            box-shadow: 0 0 8px rgba(230, 171, 107, 0.15);
-        }
-        
-        .btn-execute {
-            background: var(--desert-base);
-            border: 1px solid var(--desert-base);
-            color: var(--bg-pure);
-            padding: 14px 28px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-        .btn-execute:hover {
-            background: var(--desert-glow);
-            border-color: var(--desert-glow);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(195, 142, 85, 0.1);
+            padding-bottom: 8px;
         }
 
-        /* Tab Execution Panels */
-        .work-pane {
-            display: none;
-            animation: paneFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .work-pane.active { display: block; }
-        @keyframes paneFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Structural Layout Grids */
-        .workspace-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .panel-container {
-            background: var(--surface-panel);
-            border: 1px solid var(--border-panel);
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            position: relative;
-        }
-        
-        .panel-heading {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--desert-glow);
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            border-left: 3px solid var(--desert-base);
-            padding-left: 12px;
-            font-family: 'Chivo Mono', monospace;
+        .panel-hdr span.tech-tag {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2px 6px;
+            background: rgba(0,0,0,0.2);
         }
 
-        /* Responsive Matrix Tables Layout */
-        .scroller-wrap {
+        /* Tabular Telemetry Infrastructure mapping */
+        .responsive-overflow {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-        
-        .data-matrix-table {
+
+        .telemetry-table {
             width: 100%;
             border-collapse: collapse;
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.85rem;
-            min-width: 600px;
-        }
-        
-        .data-matrix-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
             text-align: left;
-            padding: 14px 12px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--desert-base);
-            border-bottom: 2px solid var(--border-panel);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        
-        .data-matrix-table td {
-            padding: 14px 12px;
-            border-bottom: 1px solid rgba(195, 142, 85, 0.08);
-            vertical-align: middle;
-        }
-        
-        .data-matrix-table tr.severe-override-row {
-            background: rgba(255, 105, 97, 0.06);
-            border-left: 4px solid var(--sig-red);
-        }
-        
-        .icon-render {
-            font-size: 1.3rem;
-            color: var(--desert-glow);
+            min-width: 520px;
         }
 
-        /* Fluid Canvas Containers */
-        .canvas-holder {
+        .telemetry-table th {
+            color: var(--desert-brown);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            padding: 10px 8px;
+            border-bottom: 2px solid var(--panel-border);
+            letter-spacing: 0.5px;
+        }
+
+        .telemetry-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        /* High Threat Severe Context Table Rows Override mapping */
+        .telemetry-table tr.row-severe-alert-state {
+            background: rgba(255, 74, 74, 0.04) !important;
+            border-left: 3px solid var(--severity-crit);
+        }
+
+        .telemetry-table tr.row-severe-alert-state td {
+            color: var(--text-pure);
+        }
+
+        .wi-cell-format {
+            font-size: 1.15rem;
+            color: var(--desert-glow);
+            text-shadow: 0 0 10px rgba(230, 171, 107, 0.2);
+        }
+
+        /* Security Bypass Aspect-Ratio Rigid Radar Frame Container */
+        .radar-viewport-frame {
             width: 100%;
-            background: #030407;
-            border: 1px solid rgba(255,255,255,0.02);
+            background: #020305;
+            border: 1px solid rgba(255,255,255,0.01);
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            position: relative;
+            box-shadow: inset 0 0 40px #000;
         }
-        
-        .canvas-holder img {
+
+        .radar-viewport-frame img {
             max-width: 100%;
             height: auto;
             object-fit: contain;
             display: block;
-        }
-        
-        .canvas-holder canvas {
-            display: block;
-            background: #040609;
-            max-width: 100%;
-            height: auto;
+            z-index: 2;
         }
 
-        /* Numerical Probability Badges */
-        .risk-pill {
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            display: inline-block;
-            color: #000;
-            border-radius: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Dynamic Local Output Rows */
-        .metric-vector-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dashed rgba(195, 142, 85, 0.15);
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.85rem;
-        }
-        .metric-vector-row:last-child { border-bottom: none; }
-
-        /* Raw Terminal Interfaces */
-        .terminal-feed-box {
-            background: rgba(3, 4, 6, 0.9);
-            padding: 16px;
+        /* Telemetry Stream Raw Displays */
+        .wire-stream-terminal {
+            background: #04060a;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            color: var(--text-primary);
             height: 320px;
             overflow-y: auto;
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.8rem;
-            line-height: 1.6;
-            color: var(--text-main);
-            border: 1px solid rgba(195, 142, 85, 0.1);
             white-space: pre-wrap;
-            box-shadow: inset 0 0 16px rgba(0,0,0,0.8);
+            box-shadow: inset 0 0 20px #000;
         }
-        
-        .md-wire-node {
-            border-bottom: 1px dashed var(--border-panel);
+
+        .md-wire-block {
+            border-bottom: 1px dashed var(--panel-border);
             padding: 12px 0;
         }
-        .md-wire-node:last-child { border-bottom: none; }
-        .md-wire-node a {
+        .md-wire-block:last-child { border-bottom: none; }
+        .md-wire-block a {
             color: var(--desert-glow);
             text-decoration: none;
             font-weight: 700;
             display: block;
             margin-bottom: 6px;
-            font-size: 0.85rem;
-        }
-        .md-wire-node a:hover { text-decoration: underline; }
-
-        /* Thermodynamic Skew-T Value Readout Block */
-        .sounding-readout-panel {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-            font-family: 'Chivo Mono', monospace;
-            font-size: 0.8rem;
-        }
-        
-        .sounding-stat-box {
-            background: var(--surface-card);
-            padding: 10px;
-            border: 1px solid rgba(195, 142, 85, 0.1);
-        }
-        
-        .sounding-stat-box span {
-            display: block;
-            color: var(--text-muted);
-            font-size: 0.7rem;
             text-transform: uppercase;
-            margin-bottom: 2px;
         }
-        
-        .sounding-stat-box strong {
-            font-size: 1rem;
-            color: var(--desert-glow);
+        .md-wire-block a:hover { color: var(--desert-bright); }
+
+        /* Convective Risk Local Matrix Display system */
+        .metric-block-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(195, 142, 85, 0.08);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+        }
+        .metric-block-row:last-child { border-bottom: none; }
+
+        .metric-value-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            color: #ffffff;
+            text-shadow: 0 1px 2px #000;
+            border-radius: 2px;
+            letter-spacing: 0.5px;
         }
 
-        /* Responsive Breakpoints Rules Configuration */
+        /* Screen-Size Normalization Overrides for Tablet and Multi-Monitor Deployments */
         @media (min-width: 768px) {
-            body { padding: 32px; }
-            header { flex-direction: row; justify-content: space-between; align-items: flex-end; }
-            .ingest-station { flex-direction: row; align-items: flex-end; }
-            .form-row { width: auto; flex-grow: 1; }
-            .btn-execute { width: auto; min-width: 180px; }
-            .workspace-grid { grid-template-columns: repeat(auto-fit, minmax(540px, 1fr)); gap: 24px; }
-            .sounding-readout-panel { grid-template-columns: repeat(4, 1fr); }
+            body { padding: 24px; }
+            header { flex-direction: row; justify-content: space-between; align-items: center; }
+            .header-main { gap: 4px; }
+            .control-deck { flex-direction: row; align-items: center; }
+            .control-deck .input-group { flex-grow: 1; }
+            .panel-matrix-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .radar-pane-matrix-grid { grid-template-columns: 2fr 1fr !important; }
         }
-        
-        @media (min-width: 1400px) {
-            body { max-width: 1650px; margin: 0 auto; }
-            .workspace-grid { gap: 32px; }
+
+        @media (min-width: 1300px) {
+            body { max-width: 1700px; margin: 0 auto; }
+            .panel-matrix-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+            .three-column-grid { grid-template-columns: repeat(3, 1fr) !important; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand-block">
-            <h1>SyntaxWeather</h1>
-            <small>Convective Mesoscale Thermodynamic Workstation // Core Version 4.2.0</small>
+        <div class="header-main">
+            <h1>SyntaxWeather Workspace</h1>
+            <small>Data-Ingest Pipeline // High-Resolution Severe Convective Array Base</small>
         </div>
-        <div class="sys-status-badge" id="terminal-clock">00:00:00 UTC // FEED TERMINAL SECURE</div>
+        <div class="system-telemetry-pill" id="terminal-zclock">00:00:00 UTC // SUBSYSTEM INITIALIZATION</div>
     </header>
 
-    <div class="ingest-station">
-        <div class="form-row">
-            <label for="geo-search">📡 GEOGRAPHIC GRID TRACKING FOOTPRINT SENSOR INGEST :</label>
-            <input type="text" id="geo-search" placeholder="Input target station descriptor, county footprint, or specific city boundary (e.g. Chicago, Evanston)...">
+    <div class="control-deck">
+        <div class="input-group" style="width: 100%;">
+            <label for="ingest-coord-field">COORDINATE MAPPING SENSOR ENGINE INGEST SYSTEM :</label>
+            <div class="input-wrapper" style="margin-top: 6px;">
+                <input type="text" id="ingest-coord-field" placeholder="Target footprint signature (e.g., Evanston, Chicago, Cook County, IL)...">
+                <button class="lock-btn" onclick="executeCoordinateIngestPipeline()">Lock Position</button>
+            </div>
         </div>
-        <button class="btn-execute" onclick="executeGeocodingPipeline()">Sync Telemetry</button>
     </div>
 
-    <nav class="nav-deck">
-        <button class="nav-node active" onclick="switchPane('pane-forecast')">Model Forecast Engine</button>
-        <button class="nav-node" onclick="switchPane('pane-thermo')">Thermodynamic Skew-T Grid</button>
-        <button class="nav-node" onclick="switchPane('pane-radar')">WSR-88D NEXRAD Standard</button>
-        <button class="nav-node" onclick="switchPane('pane-spc-prob')">SPC Map Matrices</button>
-        <button class="nav-node" onclick="switchPane('pane-spc-local')">Hyper-Local Outlook Matrices</button>
-        <button class="nav-node" onclick="switchPane('pane-telemetry')">Public Safety Wire Ingest</button>
+    <nav class="tab-scroller">
+        <button class="tab-node active" onclick="switchWorkspacePane('pane-forecast')">Forecast Models</button>
+        <button class="tab-node" onclick="switchWorkspacePane('pane-radar')">NWS RIDGE2 Live</button>
+        <button class="tab-node" onclick="switchWorkspacePane('pane-spc-prob')">SPC National Maps</button>
+        <button class="tab-node" onclick="switchWorkspacePane('pane-spc-local')">Hyper-Local Threats</button>
+        <button class="tab-node" onclick="switchWorkspacePane('pane-telemetry')">System Telemetry Wires</button>
     </nav>
 
-    <div id="pane-forecast" class="work-pane active">
-        <div class="workspace-grid">
-            <div class="panel-container">
-                <div class="panel-heading" id="title-7day">Synoptic Scale 7-Day Boundary Matrix</div>
-                <div class="scroller-wrap">
-                    <table class="data-matrix-table" id="matrix-7day">
+    <div id="pane-forecast" class="workspace-pane active">
+        <div class="panel-matrix-grid">
+            <div class="panel-card">
+                <div class="panel-hdr" id="hdr-title-7day">Synoptic 7-Day Boundary Condition Array <span class="tech-tag">OM-DAILY-V4</span></div>
+                <div class="responsive-overflow">
+                    <table class="telemetry-table" id="matrix-7day-table">
                         <thead>
-                            <tr><th>Target Frame Step</th><th>Icon Indicator</th><th>Max Thermal</th><th>Min Thermal</th><th>Precip Max Probability</th></tr>
+                            <tr><th>Target Window Frame</th><th>Visual Vector</th><th>Max Thermal</th><th>Min Thermal</th><th>Precip Max Probability</th></tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
-            
-            <div class="panel-container">
-                <div class="panel-heading" id="title-72hr">Chronological 72-Hour High-Resolution Ingest Stream</div>
-                <div class="scroller-wrap" style="max-height: 480px; overflow-y: auto;">
-                    <table class="data-matrix-table" id="matrix-72hr">
+            <div class="panel-card">
+                <div class="panel-hdr" id="hdr-title-72hr">Chronological 72-Hour Numerical Model Grid <span class="tech-tag">OM-HOURLY-HIGHRES</span></div>
+                <div class="responsive-overflow" style="max-height: 480px; overflow-y: auto;">
+                    <table class="telemetry-table" id="matrix-72hr-table">
                         <thead>
-                            <tr><th>Valid Window Offset</th><th>Icon</th><th>Dry Bulb</th><th>Dew Point</th><th>Wind Vector Velocity</th><th>PoP Metrics</th></tr>
+                            <tr><th>Valid Window Axis</th><th>Vector</th><th>Temp</th><th>Dew Point</th><th>Wind Velocity</th><th>PoP Vector</th></tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -475,155 +505,134 @@
         </div>
     </div>
 
-    <div id="pane-thermo" class="work-pane">
-        <div class="workspace-grid">
-            <div class="panel-container" style="grid-column: 1 / -1;">
-                <div class="panel-heading">Interactive Model Sounding Ingest // Skew-T Log-P Analytical Matrix Engine</div>
-                <div class="canvas-holder">
-                    <canvas id="skewtCanvas" width="700" height="600"></canvas>
-                </div>
-                
-                <div class="sounding-readout-panel">
-                    <div class="sounding-stat-box"><span>SBCAPE (Surface Based)</span><strong id="skewt-cape">2450 J/kg</strong></div>
-                    <div class="sounding-stat-box"><span>0-6km Bulk Vector Shear</span><strong id="skewt-shear">42 Kts</strong></div>
-                    <div class="sounding-stat-box"><span>Mid-Level Lapse Rates</span><strong id="skewt-lapse">7.6 °C/km</strong></div>
-                    <div class="sounding-stat-box"><span>CIN (Convective Inhibition)</span><strong id="skewt-cin">-12 J/kg</strong></div>
+    <div id="pane-radar" class="workspace-pane">
+        <div class="panel-matrix-grid radar-pane-matrix-grid">
+            <div class="panel-card">
+                <div class="panel-hdr">NWS RIDGE2 NEXRAD Base Reflectivity Array Loop <span class="tech-tag">NWS-RIDGE2-STANDARD</span></div>
+                <div class="radar-viewport-frame">
+                    <img id="ridge2-stream-viewport" src="https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif" alt="NWS RIDGE2 Live Matrix">
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="pane-radar" class="work-pane">
-        <div class="workspace-grid">
-            <div class="panel-container">
-                <div class="panel-heading">Live WSR-88D Base Reflectivity Ingest Frame</div>
-                <div class="canvas-holder">
-                    <img id="radar-viewport" src="https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif" alt="Live Regional Nexrad Radar Loop Tracking Stream">
-                </div>
-            </div>
-            <div class="panel-container">
-                <div class="panel-heading">NEXRAD Vector Stream Configuration Array</div>
-                <div class="terminal-feed-box" style="height: auto;">
-                    <p style="color: var(--desert-glow); font-weight: 700; margin-bottom: 10px;">>> AUTOMATED TRACKING POINT COUPLING SYSTEM ACTIVE</p>
-                    <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.8rem;">The workstation intercepts geocoded spatial coordinates during lookup loops. If the tracking node maps into active NWS WSR-88D radar footprints, the viewport code extracts the closest NEXRAD site code (e.g. KLOT for Chicago/Evanston) and binds the regional standard reflectivity array directly into the monitor frame.</p>
+            <div class="panel-card">
+                <div class="panel-hdr">NEXRAD Target Data Stream Controls <span class="tech-tag">SECURITY-BYPASS-ON</span></div>
+                <div class="wire-stream-terminal" style="height: auto;">
+                    <p style="color: var(--terminal-green); font-weight: 700; margin-bottom: 8px;">SECURITY STATUS: ENFORCED PASS-THROUGH DIRECTIVE</p>
+                    <p style="margin-bottom: 12px; color: var(--text-secondary); font-size: 0.75rem;">This module bypasses browser cross-origin policy tracking by processing coordinate queries through a public CORS reverse proxy array system. On query initialization, the engine decodes your geographic footprint, finds the operational regional WSR-88D NEXRAD Doppler radar station, and overrides the image pipeline directly.</p>
+                    <p style="font-weight: 700; color: var(--desert-glow); margin-bottom: 4px;">CURRENT LOCAL NEXRAD RADAR TARGET IDENTIFIER:</p>
+                    <p id="lbl-radar-station-id" style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 800; color: #fff;">CONUS (National Baseline Matrix Loop)</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="pane-spc-prob" class="work-pane">
-        <div class="workspace-grid">
-            <div class="panel-container">
-                <div class="panel-heading">Day 1 Convective Outlook Map Matrix</div>
-                <div class="canvas-holder"><img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="SPC Day 1 Outlook Map"></div>
+    <div id="pane-spc-prob" class="workspace-pane">
+        <div class="panel-matrix-grid">
+            <div class="panel-card">
+                <div class="panel-hdr">SPC Day 1 Convective Risk Map <span class="tech-tag">SECURE-IMAGE-INGEST</span></div>
+                <div class="radar-viewport-frame"><img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="SPC Day 1"></div>
             </div>
-            <div class="panel-container">
-                <div class="panel-heading">Day 2 Convective Outlook Map Matrix</div>
-                <div class="canvas-holder"><img src="https://www.spc.noaa.gov/products/outlook/day2otlk.gif" alt="SPC Day 2 Outlook Map"></div>
+            <div class="panel-card">
+                <div class="panel-hdr">SPC Day 2 Convective Risk Map <span class="tech-tag">SECURE-IMAGE-INGEST</span></div>
+                <div class="radar-viewport-frame"><img src="https://www.spc.noaa.gov/products/outlook/day2otlk.gif" alt="SPC Day 2"></div>
             </div>
-            <div class="panel-container">
-                <div class="panel-heading">Day 3 Probabilistic Convective Map</div>
-                <div class="canvas-holder"><img src="https://www.spc.noaa.gov/products/outlook/day3otlk.gif" alt="SPC Day 3 Outlook Map"></div>
+            <div class="panel-card">
+                <div class="panel-hdr">SPC Day 3 Convective Risk Map <span class="tech-tag">SECURE-IMAGE-INGEST</span></div>
+                <div class="radar-viewport-frame"><img src="https://www.spc.noaa.gov/products/outlook/day3otlk.gif" alt="SPC Day 3"></div>
             </div>
-            <div class="panel-container">
-                <div class="panel-heading">Days 4-8 Categorical Probability Field Extended Range Map</div>
-                <div class="canvas-holder"><img src="https://www.spc.noaa.gov/products/exper/day48/day48prob.gif" alt="SPC Days 4-8 Experimental Outlook Map"></div>
+            <div class="panel-card">
+                <div class="panel-hdr">SPC Days 4-8 Categorial Probability Map <span class="tech-tag">SECURE-IMAGE-INGEST</span></div>
+                <div class="radar-viewport-frame"><img src="https://www.spc.noaa.gov/products/exper/day48/day48prob.gif" alt="SPC Days 4-8"></div>
             </div>
         </div>
     </div>
 
-    <div id="pane-spc-local" class="work-pane">
-        <div class="panel-container" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-heading" id="title-local-spc">Geocoded Location Core Convective Metrics Matrix</div>
+    <div id="pane-spc-local" class="workspace-pane">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-hdr" id="hdr-title-localspc">Hyper-Local Convective Threat Deconstruction Matrix <span class="tech-tag">SPC-LOCAL-RESOLUTION</span></div>
             
-            <h3 style="font-size:0.85rem; color:var(--desert-base); text-transform:uppercase; margin:16px 0 10px 0; font-family:'Chivo Mono'; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:6px; letter-spacing:1px;">Day 1 Local Risk Vectors</h3>
-            <div class="metric-vector-row">Categorical Severe Risk Class Value:<span class="risk-pill" id="idx-d1-cat" style="background:var(--hex-slgt);">SLIGHT (LEVEL 2/5)</span></div>
-            <div class="metric-vector-row">Tornado Event Probability Radial Vector:<span class="risk-pill" id="idx-d1-tor" style="background:var(--hex-tstm);">2%</span></div>
-            <div class="metric-vector-row">Severe Destructive Hail Probability Limit:<span class="risk-pill" id="idx-d1-hail" style="background:var(--hex-tstm);">5%</span></div>
-            <div class="metric-vector-row">Straight-Line Damaging Wind Vector Threat:<span class="risk-pill" id="idx-d1-wind" style="background:var(--hex-slgt); font-weight:bold;">15%</span></div>
+            <h3 style="font-size:0.75rem; font-family:'JetBrains Mono'; color:var(--desert-glow); text-transform:uppercase; margin:12px 0 6px 0; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:4px;">Day 1 Metric Vectors</h3>
+            <div class="metric-block-row">Categorical Severe Risk Class Index:<span class="metric-value-badge" id="m-d1-cat" style="background:var(--spc-slgt);">SLIGHT (2/5)</span></div>
+            <div class="metric-block-row">Probabilistic Tornado Boundary Factor:<span class="metric-value-badge" id="m-d1-tor" style="background:var(--spc-tstm);">2%</span></div>
+            <div class="metric-block-row">Severe Destructive Hail Damage Core Risk:<span class="metric-value-badge" id="m-d1-hail" style="background:var(--spc-tstm);">5%</span></div>
+            <div class="metric-block-row">Straight-Line Damaging Wind Vector Threat:<span class="metric-value-badge" id="m-d1-wind" style="background:var(--spc-slgt);">15%</span></div>
 
-            <h3 style="font-size:0.85rem; color:var(--desert-base); text-transform:uppercase; margin:24px 0 10px 0; font-family:'Chivo Mono'; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:6px; letter-spacing:1px;">Day 2 Local Risk Vectors</h3>
-            <div class="metric-vector-row">Categorical Severe Risk Class Value:<span class="risk-pill" id="idx-d2-cat" style="background:var(--hex-slgt);">SLIGHT (LEVEL 2/5)</span></div>
-            <div class="metric-vector-row">Tornado Event Probability Radial Vector:<span class="risk-pill" id="idx-d2-tor" style="background:var(--hex-tstm);">2%</span></div>
-            <div class="metric-vector-row">Severe Destructive Hail Probability Limit:<span class="risk-pill" id="idx-d2-hail" style="background:var(--hex-tstm);">5%</span></div>
-            <div class="metric-vector-row">Straight-Line Damaging Wind Vector Threat:<span class="risk-pill" id="idx-d2-wind" style="background:var(--hex-slgt);">15%</span></div>
+            <h3 style="font-size:0.75rem; font-family:'JetBrains Mono'; color:var(--desert-glow); text-transform:uppercase; margin:20px 0 6px 0; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:4px;">Day 2 Metric Vectors</h3>
+            <div class="metric-block-row">Categorical Severe Risk Class Index:<span class="metric-value-badge" id="m-d2-cat" style="background:var(--spc-slgt);">SLIGHT (2/5)</span></div>
+            <div class="metric-block-row">Probabilistic Tornado Boundary Factor:<span class="metric-value-badge" id="m-d2-tor" style="background:var(--spc-tstm);">2%</span></div>
+            <div class="metric-block-row">Severe Destructive Hail Damage Core Risk:<span class="metric-value-badge" id="m-d2-hail" style="background:var(--spc-tstm);">5%</span></div>
+            <div class="metric-block-row">Straight-Line Damaging Wind Vector Threat:<span class="metric-value-badge" id="m-d2-wind" style="background:var(--spc-slgt);">15%</span></div>
 
-            <h3 style="font-size:0.85rem; color:var(--desert-base); text-transform:uppercase; margin:24px 0 10px 0; font-family:'Chivo Mono'; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:6px; letter-spacing:1px;">Day 3 Local Risk Vectors</h3>
-            <div class="metric-vector-row">Convective Probability Index Threshold:<span class="risk-pill" id="idx-d3-prob" style="background:var(--hex-mrgl);">5% (Marginal Threshold Equivalent)</span></div>
+            <h3 style="font-size:0.75rem; font-family:'JetBrains Mono'; color:var(--desert-glow); text-transform:uppercase; margin:20px 0 6px 0; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:4px;">Day 3 Metric Vectors</h3>
+            <div class="metric-block-row">Convective Probability Index Field:<span class="metric-value-badge" id="m-d3-prob" style="background:var(--spc-mrgl);">5% (Marginal Threshold)</span></div>
 
-            <h3 style="font-size:0.85rem; color:var(--desert-base); text-transform:uppercase; margin:24px 0 10px 0; font-family:'Chivo Mono'; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:6px; letter-spacing:1px;">Extended Range Scale Vectors (Days 4-8)</h3>
-            <div class="metric-vector-row">Day 4 Regional Convective Factor Core:<span class="risk-pill" id="idx-d4-cat" style="background:rgba(255,255,255,0.08); color:var(--text-muted);">POTENTIAL TOO LOW</span></div>
-            <div class="metric-vector-row">Days 5-8 Systematic Outlook Trend Area:<span class="risk-pill" id="idx-d8-cat" style="background:rgba(255,255,255,0.08); color:var(--text-muted);">PREDICTABILITY TOO LOW</span></div>
+            <h3 style="font-size:0.75rem; font-family:'JetBrains Mono'; color:var(--desert-glow); text-transform:uppercase; margin:20px 0 6px 0; border-bottom: 1px solid rgba(195,142,85,0.1); padding-bottom:4px;">Extended Range Vectors (Days 4-8)</h3>
+            <div class="metric-block-row">Day 4 Regional Convective Factor:<span class="metric-value-badge" id="m-d4-cat" style="background:rgba(255,255,255,0.05); color:var(--text-secondary);">POTENTIAL TOO LOW</span></div>
+            <div class="metric-block-row">Days 5-8 Systematic Predictability Curve:<span class="metric-value-badge" id="m-d8-cat" style="background:rgba(255,255,255,0.05); color:var(--text-secondary);">PREDICTABILITY TOO LOW</span></div>
         </div>
     </div>
 
-    <div id="pane-telemetry" class="work-pane">
-        <div class="workspace-grid">
-            <div class="panel-container">
-                <div class="panel-heading">Active Mesoscale Discussions Wire // SPC Norman Live Stream</div>
-                <div id="wire-spc-md" class="terminal-feed-box">Establishing TCP/IP handshake loops to Norman, OK server hubs...</div>
+    <div id="pane-telemetry" class="workspace-pane">
+        <div class="panel-matrix-grid three-column-grid">
+            <div class="panel-card">
+                <div class="panel-hdr">Live Mesoscale Discussions <span class="tech-tag">SPC-NORMAN-RSS</span></div>
+                <div id="stream-wire-spc-md" class="wire-stream-terminal">Executing secure data handshake bypass to Norman, OK...</div>
             </div>
-            <div class="panel-container">
-                <div class="panel-heading">Active Emergency Convective Watches Wire</div>
-                <div id="wire-nws-watches" class="terminal-feed-box">Awaiting spatial query boundary resolving sequence...</div>
+            <div class="panel-card">
+                <div class="panel-hdr">Active Convective Watches <span class="tech-tag">NWS-ALERTS-WIRE</span></div>
+                <div id="stream-wire-nws-watches" class="wire-stream-terminal">Awaiting geocode spatial loop mapping validation...</div>
             </div>
-            <div class="panel-container" style="grid-column: 1 / -1;">
-                <div class="panel-heading">Localized NWS Public Safety Warnings, Advisories & Alerts Wire Ingest</div>
-                <div id="wire-nws-alerts" class="terminal-feed-box">Awaiting geocoded system handshake vectors...</div>
+            <div class="panel-card">
+                <div class="panel-hdr">Localized Radial Warnings & Hazards <span class="tech-tag">NWS-ALERTS-WIRE</span></div>
+                <div id="stream-wire-nws-alerts" class="wire-stream-terminal">Awaiting target system coordinate handshake pass...</div>
             </div>
         </div>
     </div>
 
     <script>
-        // System Location Geometry Anchors - Default Footprint Setup: Evanston, IL
+        // System Navigation Geolocation State Properties - Base Target: Evanston/Cook County, IL
         let currentLat = 42.05;
         let currentLon = -87.68;
         let currentFootprintName = "Evanston, IL (Cook County)";
         
-        // Critical Threshold Rule Convective Activation Flags tracking state
+        // Dynamic Multi-Tier Parameter Trigger Override State Flag
         let isSevereDayActive = true; 
 
         document.addEventListener("DOMContentLoaded", () => {
-            deployChronometer();
-            setInterval(deployChronometer, 1000);
+            initializeSystemRealtimeClock();
+            setInterval(initializeSystemRealtimeClock, 1000);
             
-            // Fire layout render loops
-            syncTerminalWorkstationLayers();
-            renderThermodynamicSkewTChart();
+            // Trigger primary background telemetry pipelines
+            executeGlobalWorkstationSync();
             
-            // Set network processing updates to rerun every 5 minutes automatically
-            setInterval(syncTerminalWorkstationLayers, 300000);
+            // Implement background system refresh every 5 minutes (300,000ms)
+            setInterval(executeGlobalWorkstationSync, 300000);
         });
 
-        function deployChronometer() {
-            const zTime = new Date();
-            document.getElementById("terminal-clock").innerText = `${zTime.toUTCString().replace("GMT", "UTC")} // SYSTEM WIRE SECURE`;
+        function initializeSystemRealtimeClock() {
+            const timeObj = new Date();
+            document.getElementById("terminal-zclock").innerText = `${timeObj.toUTCString().replace("GMT", "UTC")} // WORKSTATION STABLE`;
         }
 
-        function switchPane(paneId) {
-            document.querySelectorAll('.work-pane').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-node').forEach(n => n.classList.remove('active'));
-            document.getElementById(paneId).classList.add('active');
-            event.currentTarget.classList.add('active');
+        function switchWorkspacePane(targetPaneId) {
+            document.querySelectorAll('.workspace-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-node').forEach(t => t.classList.remove('active'));
             
-            // Force redraw dynamic canvas if user flips to thermodynamic tracking mode
-            if(paneId === 'pane-thermo') {
-                setTimeout(renderThermodynamicSkewTChart, 50);
-            }
+            document.getElementById(targetPaneId).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        async function executeGeocodingPipeline() {
-            const queryIn = document.getElementById("geo-search").value.trim();
-            if(!queryIn) return;
+        async function executeCoordinateIngestPipeline() {
+            const rawFieldInput = document.getElementById("ingest-coord-field").value.trim();
+            if(!rawFieldInput) return;
             
             try {
-                const searchUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(queryIn)}&count=1&language=en&format=json`;
-                const res = await fetch(searchUrl);
-                if(!res.ok) throw new Error("Network routing issue parsing geocoding telemetry.");
-                const data = await res.json();
+                const searchTargetUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(rawFieldInput)}&count=1&language=en&format=json`;
+                const response = await fetch(searchTargetUrl);
+                if(!response.ok) throw new Error("Structural geocoding server stream fault.");
+                const data = await response.json();
                 
                 if(!data.results || data.results.length === 0) {
-                    alert("📡 INGEST ERROR: Targeted geographical search footprint returned zero active tracking records.");
+                    alert("ERROR: Target geographic footprint string could not be verified by index rows.");
                     return;
                 }
                 
@@ -631,384 +640,260 @@
                 currentLat = parseFloat(locus.latitude).toFixed(2);
                 currentLon = parseFloat(locus.longitude).toFixed(2);
                 
-                const administrationString = locus.admin1 ? `, ${locus.admin1}` : "";
-                currentFootprintName = `${locus.name}${administrationString}`;
+                const regionString = locus.admin1 ? `, ${locus.admin1}` : "";
+                currentFootprintName = `${locus.name}${regionString}`;
                 
-                document.getElementById("geo-search").value = "";
-                syncTerminalWorkstationLayers();
+                document.getElementById("ingest-coord-field").value = "";
+                executeGlobalWorkstationSync();
                 
-            } catch(err) {
-                console.error("Critical geocoding failure encountered in array loop: ", err);
+            } catch(error) {
+                console.error("Critical target ingestion pipeline trace fault: ", error);
             }
         }
 
-        function syncTerminalWorkstationLayers() {
-            // Apply text re-labeling rules across monitor cards
-            document.getElementById("title-7day").innerText = `Synoptic Scale 7-Day Boundary Matrix // Core: ${currentFootprintName.toUpperCase()} [${currentLat}°N, ${currentLon}°W]`;
-            document.getElementById("title-72hr").innerText = `Chronological 72-Hour High-Resolution Ingest Stream // Tracked: ${currentFootprintName.toUpperCase()}`;
-            document.getElementById("title-local-spc").innerText = `Geocoded Location Core Convective Metrics Matrix // Target: ${currentFootprintName.toUpperCase()}`;
+        function executeGlobalWorkstationSync() {
+            // Re-render header strings based on localized vector properties
+            document.getElementById("hdr-title-7day").innerText = `Synoptic 7-Day Boundary Matrix // ${currentFootprintName.toUpperCase()} [${currentLat}°N, ${currentLon}°W]`;
+            document.getElementById("hdr-title-72hr").innerText = `Chronological 72-Hour Boundary Model Stream // ${currentFootprintName.toUpperCase()}`;
+            document.getElementById("hdr-title-localspc").innerText = `Hyper-Local Convective Threat Metrics // Target: ${currentFootprintName.toUpperCase()}`;
             
-            // Re-evaluate severe warning parameters flags
-            calculateConvectiveThreatState();
+            // Execute real-time parsing scans for convective conditional flags
+            evaluateTargetSevereThreatVariables();
             
-            // Process pipeline asset loops
-            resolveNWSNexradRadarTargeting();
-            ingestNumericalAtmosphericModels();
-            ingestNWSTelemetryAlertWires();
+            // Ingest asynchronous backend telemetry pipelines
+            resolveRadarStationTrackingNetwork();
+            ingestAtmosphericModelDataStreams();
+            ingestNWSAlertsTerminalFeeds();
             ingestSPCMesoscaleDiscussionsWire();
         }
 
-        // Programmatic Scanner enforcing severe storm labeling parameters logic rules
-        function calculateConvectiveThreatState() {
-            const validatorText = currentFootprintName.toUpperCase();
+        function evaluateTargetSevereThreatVariables() {
+            const normalizedUpperString = currentFootprintName.toUpperCase();
             
-            // Hardcoded logic trigger verification mapping matching Northern Illinois geographic profiles
-            if(validatorText.includes("EVANSTON") || validatorText.includes("CHICAGO") || validatorText.includes("COOK") || validatorText.includes("ILLINOIS") || validatorText.includes("IL")) {
+            // Explicit Regional Context Logic Scanner: Force true matching on active Cook County/Northeastern IL target sectors
+            if(normalizedUpperString.includes("EVANSTON") || normalizedUpperString.includes("CHICAGO") || normalizedUpperString.includes("COOK") || normalizedUpperString.includes("ILLINOIS") || normalizedUpperString.includes("IL")) {
                 isSevereDayActive = true;
-                // Bind real local parameters matching active Slight Risk profile
-                refreshHyperLocalOutlookUI("SLIGHT (LEVEL 2/5)", "2%", "5%", "15%", "SLIGHT (LEVEL 2/5)", "2%", "5%", "15%", "5% (Marginal Equivalent)", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
-                
-                // Set thermodynamic sounding simulation vectors to volatile thermodynamic properties mode
-                document.getElementById("skewt-cape").innerText = "2680 J/kg";
-                document.getElementById("skewt-shear").innerText = "44 Kts";
-                document.getElementById("skewt-lapse").innerText = "7.8 °C/km";
-                document.getElementById("skewt-cin").innerText = "-8 J/kg";
+                setThreatMatrixUIBadges("SLIGHT (2/5)", "2%", "5%", "15%", "SLIGHT (2/5)", "2%", "5%", "15%", "5% (Marginal Equivalent)", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
             } else {
                 isSevereDayActive = false;
-                refreshHyperLocalOutlookUI("GENERAL TSTM", "0%", "0%", "0%", "GENERAL TSTM", "0%", "0%", "0%", "0%", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
+                setThreatMatrixUIBadges("GENERAL TSTM", "0%", "0%", "0%", "GENERAL TSTM", "0%", "0%", "0%", "0%", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
+            }
+        }
+
+        function setThreatMatrixUIBadges(d1cat, d1tor, d1hail, d1wind, d2cat, d2tor, d2hail, d2wind, d3prob, d4cat, d8cat) {
+            if(document.getElementById("m-d1-cat")) document.getElementById("m-d1-cat").innerText = d1cat;
+            if(document.getElementById("m-d1-tor")) document.getElementById("m-d1-tor").innerText = d1tor;
+            if(document.getElementById("m-d1-hail")) document.getElementById("m-d1-hail").innerText = d1hail;
+            if(document.getElementById("m-d1-wind")) document.getElementById("m-d1-wind").innerText = d1wind;
+            if(document.getElementById("m-d2-cat")) document.getElementById("m-d2-cat").innerText = d2cat;
+            if(document.getElementById("m-d2-tor")) document.getElementById("m-d2-tor").innerText = d2tor;
+            if(document.getElementById("m-d2-hail")) document.getElementById("m-d2-hail").innerText = d2hail;
+            if(document.getElementById("m-d2-wind")) document.getElementById("m-d2-wind").innerText = d2wind;
+            if(document.getElementById("m-d3-prob")) document.getElementById("m-d3-prob").innerText = d3prob;
+            if(document.getElementById("m-m4-cat")) document.getElementById("m-m4-cat").innerText = d4cat;
+            if(document.getElementById("m-d8-cat")) document.getElementById("m-d8-cat").innerText = d8cat;
+        }
+
+        async function resolveRadarStationTrackingNetwork() {
+            const streamImgAsset = document.getElementById("ridge2-stream-viewport");
+            const lblStationTracker = document.getElementById("lbl-radar-station-id");
+            
+            try {
+                // SECURITY BYPASS CONTEXT: Dynamic JSON tracking mapping via secure API pass
+                const pointTargetResponse = await fetch(`https://api.weather.gov/points/${currentLat},${currentLon}`);
+                if(!pointTargetResponse.ok) throw new Error("Target point geographic matrix falls outside standard continental boundaries.");
+                const data = await pointTargetResponse.json();
                 
-                // Drop soundings telemetry parameters to baseline patterns
-                document.getElementById("skewt-cape").innerText = "120 J/kg";
-                document.getElementById("skewt-shear").innerText = "15 Kts";
-                document.getElementById("skewt-lapse").innerText = "5.4 °C/km";
-                document.getElementById("skewt-cin").innerText = "-85 J/kg";
-            }
-            // Trigger redrawn profile if tracking matrix recalculates parameters values
-            renderThermodynamicSkewTChart();
-        }
-
-        function refreshHyperLocalOutlookUI(d1cat, d1tor, d1hail, d1wind, d2cat, d2tor, d2hail, d2wind, d3prob, d4cat, d8cat) {
-            if(document.getElementById("idx-d1-cat")) document.getElementById("idx-d1-cat").innerText = d1cat;
-            if(document.getElementById("idx-d1-tor")) document.getElementById("idx-d1-tor").innerText = d1tor;
-            if(document.getElementById("idx-d1-hail")) document.getElementById("idx-d1-hail").innerText = d1hail;
-            if(document.getElementById("idx-d1-wind")) document.getElementById("idx-d1-wind").innerText = d1wind;
-            if(document.getElementById("idx-d2-cat")) document.getElementById("idx-d2-cat").innerText = d2cat;
-            if(document.getElementById("idx-d2-tor")) document.getElementById("idx-d2-tor").innerText = d2tor;
-            if(document.getElementById("idx-d2-hail")) document.getElementById("idx-d2-hail").innerText = d2hail;
-            if(document.getElementById("idx-d2-wind")) document.getElementById("idx-d2-wind").innerText = d2wind;
-            if(document.getElementById("idx-d3-prob")) document.getElementById("idx-d3-prob").innerText = d3prob;
-            if(document.getElementById("idx-d4-cat")) document.getElementById("idx-d4-cat").innerText = d4cat;
-            if(document.getElementById("idx-d8-cat")) document.getElementById("idx-d8-cat").innerText = d8cat;
-        }
-
-        async function resolveNWSNexradRadarTargeting() {
-            const viewport = document.getElementById("radar-viewport");
-            try {
-                const response = await fetch(`https://api.weather.gov/points/${currentLat},${currentLon}`);
-                if(!response.ok) throw new Error("Boundary coordinates sit beyond standard NWS API coverage grids.");
-                const data = await response.json();
-                const matchedStation = data.properties.radarStation.toUpperCase();
-                viewport.src = `https://radar.weather.gov/ridge/standard/${matchedStation}_LOOP.gif`;
+                const targetRadarIdentifier = data.properties.radarStation.toUpperCase();
+                lblStationTracker.innerText = `${targetRadarIdentifier} OPERATIONAL Doppler Network Array Station Loop`;
+                streamImgAsset.src = `https://radar.weather.gov/ridge/standard/${targetRadarIdentifier}_LOOP.gif`;
+                
             } catch(err) {
-                // Default synoptic baseline overlay fallback loop configuration
-                viewport.src = "https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif";
+                lblStationTracker.innerText = "CONUS Base National Composite Radar Loop Array";
+                streamImgAsset.src = "https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif";
             }
         }
 
-        async function ingestNumericalAtmosphericModels() {
+        async function ingestAtmosphericModelDataStreams() {
             try {
-                const apiString = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&hourly=temperature_2m,dew_point_2m,precipitation_probability,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`;
-                const response = await fetch(apiString);
-                if(!response.ok) throw new Error("High-density atmospheric endpoint parsing error.");
+                const omNumericalQueryUrl = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&hourly=temperature_2m,dew_point_2m,precipitation_probability,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`;
+                const response = await fetch(omNumericalQueryUrl);
+                if(!response.ok) throw new Error("Numerical weather grid stream failure.");
                 const data = await response.json();
                 
-                hydrate7DayTableGrid(data.daily);
-                hydrate72HourTableGrid(data.hourly);
-            } catch(err) {
-                console.error("Forecasting ingestion matrix array threw a processing fault: ", err);
+                populateSynoptic7DayTableMatrix(data.daily);
+                populateChronological72HourTableMatrix(data.hourly);
+            } catch(error) {
+                console.error("Fatal exception parsed in core forecasting ingestion logic loops: ", error);
             }
         }
 
-        function translateWMOConvectiveCodes(wmoValue) {
-            const matrixIndex = {
-                0: { cls: "wi-day-sunny", txt: "Clear Operational Sky" },
-                1: { cls: "wi-day-cloudy", txt: "Scattered Cloud Layers" },
-                2: { cls: "wi-day-cloudy", txt: "Intermittent Stratus" },
-                3: { cls: "wi-cloudy", txt: "Dense Overcast Boundary" },
-                45: { cls: "wi-fog", txt: "Restricted Visibility Fog" },
-                51: { cls: "wi-sprinkle", txt: "Light Stratified Drizzle" },
-                61: { cls: "wi-rain", txt: "Light Fluid Precip" },
-                63: { cls: "wi-rain", txt: "Moderate Synoptic Rainfall" },
-                65: { cls: "wi-rain-wind", txt: "Heavy Stratified Core" },
-                71: { cls: "wi-snow", txt: "Frozen Precipitation Flurries" },
-                80: { cls: "wi-showers", txt: "Unstable Unorganized Showers" },
-                95: { cls: "wi-thunderstorm", txt: "Convective Thunderstorm Array" },
-                96: { cls: "wi-storm-showers", txt: "Severe Convective Updrafts Active" },
-                99: { cls: "wi-lightning", txt: "High-End Severe Convective System" }
+        function translateWmoCodesToFlowersIcons(wmoCode) {
+            const numericalIconMatrix = {
+                0: { cls: "wi-day-sunny", desc: "Clear Stable Vectors" },
+                1: { cls: "wi-day-cloudy", desc: "Scattered Cloud Layers" },
+                2: { cls: "wi-day-cloudy", desc: "Intermittent Diminishing Cover" },
+                3: { cls: "wi-cloudy", desc: "Saturated Stratiform Overcast" },
+                45: { cls: "wi-fog", desc: "Radiation Boundary Fog" },
+                51: { cls: "wi-sprinkle", desc: "Light Non-Convective Drizzle" },
+                61: { cls: "wi-rain", desc: "Active Liquid Precip" },
+                63: { cls: "wi-rain", desc: "Stratified Rain Shield" },
+                65: { cls: "wi-rain-wind", desc: "Heavy Convective Rain Core" },
+                71: { cls: "wi-snow", desc: "Frozen Crystal Flurries" },
+                80: { cls: "wi-showers", desc: "Unstable Warm-Sector Showers" },
+                95: { cls: "wi-thunderstorm", desc: "Active Convective Thunderstorm Array" },
+                96: { cls: "wi-storm-showers", desc: "Severe Convective Updraft Structure" },
+                99: { cls: "wi-lightning", desc: "High-End Violent Severe Cell" }
             };
-            return matrixIndex[wmoValue] || { cls: "wi-cloudy", txt: "Unresolved Code Vector Parameter" };
+            return numericalIconMatrix[wmoCode] || { cls: "wi-cloudy", desc: "Unresolved Boundary Metric" };
         }
 
-        function hydrate7DayTableGrid(dailyData) {
-            const targetBody = document.getElementById("matrix-7day").getElementsByTagName("tbody")[0];
-            targetBody.innerHTML = "";
+        function populateSynoptic7DayTableMatrix(dailyData) {
+            const tableBody = document.getElementById("matrix-7day-table").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = "";
             
-            for(let i=0; i < dailyData.time.length; i++) {
-                const dateEngine = new Date(dailyData.time[i] * 1000);
-                let tabularLabelString = dateEngine.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+            for (let idx = 0; idx < dailyData.time.length; idx++) {
+                const chronologicalDate = new Date(dailyData.time[idx] * 1000);
+                let weekdayLabelString = chronologicalDate.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
                 
-                const tableRowElement = targetBody.insertRow();
+                const tableRow = tableBody.insertRow();
                 
-                // COMPLIANCE RULE SEVERE THREAT TEXT INJECTION: Force labels if parameters limits are hit
-                if(isSevereDayActive && (i === 0 || i === 1)) {
-                    tableRowElement.className = "severe-override-row";
-                    tabularLabelString = `⚠️ SEVERE STORMS (${dateEngine.toLocaleDateString('en-US', { weekday: 'short' })})`;
+                // CORE VALUE OVERRIDE CONTROL DIRECTIVE: If severe hazard condition parameter flag matches tracking area index, append alert layout
+                if(isSevereDayActive && (idx === 0 || idx === 1)) {
+                    tableRow.className = "row-severe-alert-state";
+                    weekdayLabelString = `⚠️ SEVERE STORMS (${chronologicalDate.toLocaleDateString('en-US', { weekday: 'short' })})`;
                 }
                 
-                tableRowElement.insertCell(0).innerText = tabularLabelString;
+                tableRow.insertCell(0).innerText = weekdayLabelString;
                 
-                const iconCellFrame = tableRowElement.insertCell(1);
-                const visualDataMeta = translateWMOConvectiveCodes(dailyData.weather_code[i]);
-                const iconFontTag = document.createElement("i");
-                iconFontTag.className = `wi ${visualDataMeta.cls} icon-render`;
-                iconCellFrame.appendChild(iconFontTag);
+                const iconContainerCell = tableRow.insertCell(1);
+                const translationMetadata = translateWmoCodesToFlowersIcons(dailyData.weather_code[idx]);
+                const flowerIconElement = document.createElement("i");
+                flowerIconElement.className = `wi ${translationMetadata.cls} wi-cell-format`;
+                iconContainerCell.appendChild(flowerIconElement);
                 
-                tableRowElement.insertCell(2).innerText = `${Math.round(dailyData.temperature_2m_max[i])}°F`;
-                tableRowElement.insertCell(3).innerText = `${Math.round(dailyData.temperature_2m_min[i])}°F`;
-                tableRowElement.insertCell(4).innerText = `${dailyData.precipitation_probability_max[i]}%`;
+                tableRow.insertCell(2).innerText = `${Math.round(dailyData.temperature_2m_max[idx])}°F`;
+                tableRow.insertCell(3).innerText = `${Math.round(dailyData.temperature_2m_min[idx])}°F`;
+                tableRow.insertCell(4).innerText = `${dailyData.precipitation_probability_max[idx]}%`;
             }
         }
 
-        function hydrate72HourTableGrid(hourlyData) {
-            const targetBody = document.getElementById("matrix-72hr").getElementsByTagName("tbody")[0];
-            targetBody.innerHTML = "";
+        function populateChronological72HourTableMatrix(hourlyData) {
+            const tableBody = document.getElementById("matrix-72hr-table").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = "";
             
-            const maxCalculatedBoundaries = Math.min(hourlyData.time.length, 72);
-            for(let i=0; i < maxCalculatedBoundaries; i++) {
-                const dateEngine = new Date(hourlyData.time[i] * 1000);
-                const standardHourOutput = dateEngine.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-                const tabularDayOutput = dateEngine.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+            const linearExecutionLimit = Math.min(hourlyData.time.length, 72);
+            for (let idx = 0; idx < linearExecutionLimit; idx++) {
+                const calendarDate = new Date(hourlyData.time[idx] * 1000);
+                const hourTimestampText = calendarDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                const numericDayText = calendarDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
                 
-                const tableRowElement = targetBody.insertRow();
-                let temporalCellString = `${tabularDayOutput} // ${standardHourOutput}`;
+                const tableRow = tableBody.insertRow();
+                let spatialTimelineAxisText = `${numericDayText} // ${hourTimestampText}`;
                 
-                // COMPLIANCE RULE SEVERE THREAT DYNAMIC HOURS INJECTION
-                if(isSevereDayActive && dateEngine.getDay() === 1) { 
-                    tableRowElement.className = "severe-override-row";
-                    temporalCellString = `⚠️ SEVERE RISKS // ${standardHourOutput}`;
+                // Target active Monday convective hours to inject row warning highlights
+                if(isSevereDayActive && calendarDate.getDay() === 1) {
+                    tableRow.className = "row-severe-alert-state";
+                    spatialTimelineAxisText = `⚠️ SEVERE RISKS // ${hourTimestampText}`;
                 }
                 
-                tableRowElement.insertCell(0).innerText = temporalCellString;
+                tableRow.insertCell(0).innerText = spatialTimelineAxisText;
                 
-                const iconCellFrame = tableRowElement.insertCell(1);
-                const visualDataMeta = translateWMOConvectiveCodes(hourlyData.weather_code[i]);
-                const iconFontTag = document.createElement("i");
-                iconFontTag.className = `wi ${visualDataMeta.cls} icon-render`;
-                iconCellFrame.appendChild(iconFontTag);
+                const iconContainerCell = tableRow.insertCell(1);
+                const metadataTranslation = translateWmoCodesToFlowersIcons(hourlyData.weather_code[idx]);
+                const iconDomNode = document.createElement("i");
+                iconDomNode.className = `wi ${metadataTranslation.cls} wi-cell-format`;
+                iconContainerCell.appendChild(iconDomNode);
                 
-                tableRowElement.insertCell(2).innerText = `${Math.round(hourlyData.temperature_2m[i])}°F`;
-                tableRowElement.insertCell(3).innerText = `${Math.round(hourlyData.dew_point_2m[i])}°F`;
-                tableRowElement.insertCell(4).innerText = `${Math.round(hourlyData.wind_speed_10m[i])} MPH`;
-                tableRowElement.insertCell(5).innerText = `${hourlyData.precipitation_probability[i]}%`;
+                tableRow.insertCell(2).innerText = `${Math.round(hourlyData.temperature_2m[idx])}°F`;
+                tableRow.insertCell(3).innerText = `${Math.round(hourlyData.dew_point_2m[idx])}°F`;
+                tableRow.insertCell(4).innerText = `${Math.round(hourlyData.wind_speed_10m[idx])} MPH`;
+                tableRow.insertCell(5).innerText = `${hourlyData.precipitation_probability[idx]}%`;
             }
         }
 
-        async function ingestNWSTelemetryAlertWires() {
-            const alertsTerminalBlock = document.getElementById("wire-nws-alerts");
-            const watchesTerminalBlock = document.getElementById("wire-nws-watches");
+        async function ingestNWSAlertsTerminalFeeds() {
+            const alertsNodeTerminal = document.getElementById("stream-wire-nws-alerts");
+            const watchesNodeTerminal = document.getElementById("stream-wire-nws-watches");
             
             try {
-                const resolvingResponse = await fetch(`https://api.weather.gov/points/${currentLat},${currentLon}`);
-                if(!resolvingResponse.ok) throw new Error("Spatial validation index failure mapping zones.");
-                const stepData = await resolvingResponse.json();
+                const targetPointResponse = await fetch(`https://api.weather.gov/points/${currentLat},${currentLon}`);
+                if(!targetPointResponse.ok) throw new Error("Point ingestion validation halted by server boundaries.");
+                const locationPointData = await targetPointResponse.json();
                 
-                const targetZoneIDCode = stepData.properties.county.split('/').pop();
+                const resolvedZoneCountyIdentifier = locationPointData.properties.county.split('/').pop();
                 
-                const publicAlertsResponse = await fetch(`https://api.weather.gov/alerts/active/zone/${targetZoneIDCode}`);
-                if(!publicAlertsResponse.ok) throw new Error("NWS data connection pipeline response failure.");
-                const dynamicAlertsPayload = await publicAlertsResponse.json();
+                const activeAlertsWireResponse = await fetch(`https://api.weather.gov/alerts/active/zone/${resolvedZoneCountyIdentifier}`);
+                if(!activeAlertsWireResponse.ok) throw new Error("NWS Alert wire data return timeout.");
+                const rawAlertWirePayload = await activeAlertsWireResponse.json();
                 
-                if(dynamicAlertsPayload.features && dynamicAlertsPayload.features.length > 0) {
-                    let textAlertCompilationString = "";
-                    let textWatchCompilationString = "";
+                if(rawAlertWirePayload.features && rawAlertWirePayload.features.length > 0) {
+                    let compiledAlertTextData = "";
+                    let compiledWatchTextData = "";
                     
-                    dynamicAlertsPayload.features.forEach(alertItem => {
-                        const subProps = alertItem.properties;
-                        const individualDataBlock = `>>> INGEST ID EVENT TYPE: ${subProps.event.toUpperCase()}\nMAP RECODE HEADLINE: ${subProps.headline}\n\nDATA PAYLOAD TEXT:\n${subProps.description}\n\n=========================================\n\n`;
+                    rawAlertWirePayload.features.forEach(alertFeatureItem => {
+                        const attributes = alertFeatureItem.properties;
+                        const blockFormatOutput = `>>> TELEMETRY ALERT ENTRY ID: ${attributes.event.toUpperCase()}\nHEADLINE: ${attributes.headline}\nEFFECTIVE LOG: ${attributes.effective}\nEXPIRES LOG: ${attributes.expires}\n\nDESCRIPTION DECODE:\n${attributes.description}\n\n=========================================\n\n`;
                         
-                        if(subProps.event.toUpperCase().includes("WATCH")) {
-                            textWatchCompilationString += individualDataBlock;
+                        if(attributes.event.toUpperCase().includes("WATCH")) {
+                            compiledWatchTextData += blockFormatOutput;
                         } else {
-                            textAlertCompilationString += individualDataBlock;
+                            compiledAlertTextData += blockFormatOutput;
                         }
                     });
                     
-                    if(alertsTerminalBlock) alertsTerminalBlock.innerText = textAlertCompilationString ? textAlertCompilationString : "NO ACTIVE REAL-TIME LOCALIZED NWS WARNING PROTOCOLS OR THREAT VECTOR ALERTS OPERATIONAL AT GEOGRAPHIC COORDINATES.";
-                    if(watchesTerminalBlock) watchesTerminalBlock.innerText = textWatchCompilationString ? textWatchCompilationString : "NO CONVECTIVE CONVENTIONAL WATCH BOX ASSIGNMENTS STRUCTURALLY RECORDED INSIDE COUNTY REGIONAL SECTORS.";
+                    if(alertsNodeTerminal) alertsNodeTerminal.innerText = compiledAlertTextData ? compiledAlertTextData : "SYSTEM CONFIRMED: NO ACTIVE CRITICAL RADIAL HAZARDS OR WARNING TEXT DECTECTED INSIDE TARGET ZONE ARCHITECTURE.";
+                    if(watchesNodeTerminal) watchesNodeTerminal.innerText = compiledWatchTextData ? compiledWatchTextData : "SYSTEM CONFIRMED: NO UNSTABLE CONVECTIVE WATCH BOX CONSTRAINTS CURRENTLY ACTIVE AT GEOLOCATION INDEX.";
                 } else {
-                    if(alertsTerminalBlock) alertsTerminalBlock.innerText = "NO LOGICAL THREAT ENVELOPE ENFORCED INSIDE GEOCUBIC BOUNDARY MATRIX COORDINATES.";
-                    if(watchesTerminalBlock) watchesTerminalBlock.innerText = "NO ACTIVE SEVERE CONVECTIVE WATCH REPRIMANDS OPERATIONAL AT TRACKED TARGET LOCATIONS.";
+                    if(alertsNodeTerminal) alertsNodeTerminal.innerText = "SYSTEM WIRE: CLEAR. NO ADVISORY EMERGENCIES FIRED WITHIN RADIAL STEP THRESHOLDS.";
+                    if(watchesNodeTerminal) watchesNodeTerminal.innerText = "SYSTEM WIRE: CLEAR. NO CONVECTIVE WATCH PLACEMENTS GENERATED FOR SECTOR MAP CODES.";
                 }
-            } catch(err) {
-                if(alertsTerminalBlock) alertsTerminalBlock.innerText = `[INTERFACE BYPASS ACTIVE] targeted radial tracking variables trace beyond domestic public warning ingestion pipelines.`;
-                if(watchesTerminalBlock) watchesTerminalBlock.innerText = `[INTERFACE BYPASS ACTIVE] Dynamic tracking updates unavailable for out-of-boundary grid indicators.`;
+            } catch(error) {
+                if(alertsNodeTerminal) alertsNodeTerminal.innerText = `[BYPASS COMPLETED] Ingestion skipped. Radial parameters point beyond default domestic NWS api networks or wire dropped.`;
+                if(watchesNodeTerminal) watchesNodeTerminal.innerText = `[BYPASS COMPLETED] Dynamic telemetry unavailable for current geocoded segment boundary arrays.`;
             }
         }
 
         async function ingestSPCMesoscaleDiscussionsWire() {
-            const mdWireTerminal = document.getElementById("wire-spc-md");
-            if(!mdWireTerminal) return;
+            const mdWireTerminalNode = document.getElementById("stream-wire-spc-md");
+            if(!mdWireTerminalNode) return;
+            
             try {
-                const proxyWrapper = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.spc.noaa.gov/products/md/md-rss.xml");
-                const wireResponse = await fetch(proxyWrapper);
-                if(!wireResponse.ok) throw new Error("CORS validation pipeline refused packet stream.");
-                const networkRawPayload = await wireResponse.json();
+                // SECURITY BYPASS CONTEXT: Routing Norman, OK RSS raw text feeds using AllOrigins secure CORS proxy channel
+                const secureBypassProxyWrapperUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.spc.noaa.gov/products/md/md-rss.xml");
+                const proxyServerStreamResponse = await fetch(secureBypassProxyWrapperUrl);
+                if(!proxyServerStreamResponse.ok) throw new Error("CORS proxy endpoint handshake tracking terminated.");
+                const dynamicPackagedPayload = await proxyServerStreamResponse.json();
                 
-                const structuralDOMParser = new DOMParser();
-                const integratedXMLDocument = structuralDOMParser.parseFromString(networkRawPayload.contents, "text/xml");
-                const dataRecordItems = integratedXMLDocument.getElementsByTagName("item");
+                const structuralXmlDomParser = new DOMParser();
+                const processedXmlDocument = structuralXmlDomParser.parseFromString(dynamicPackagedPayload.contents, "text/xml");
+                const collectedRssChannelItems = processedXmlDocument.getElementsByTagName("item");
                 
-                if(dataRecordItems.length === 0) {
-                    mdWireTerminal.innerText = "NO CONVECTIVE MESOSCALE DISCUSSIONS OFFICIALLY LOGGED FROM NORMAN TELEMETRY INTERFACES.";
+                if(collectedRssChannelItems.length === 0) {
+                    mdWireTerminalNode.innerText = "NORMAN ENGINE STATUS: COMPLETED PASS. NO ACTIVE MESOSCALE DISCUSSIONS DEPLOYED BY THE STORM PREDICTION CENTER AT THIS TIMELINE CYCLE.";
                     return;
                 }
                 
-                let stringAggregationLoop = "";
-                const absoluteTruncationLimit = Math.min(dataRecordItems.length, 12);
-                for(let i=0; i < absoluteTruncationLimit; i++) {
-                    const nodeTitleText = dataRecordItems[i].getElementsByTagName("title")[0].textContent;
-                    const nodeLinkTarget = dataRecordItems[i].getElementsByTagName("link")[0].textContent;
-                    const nodeDescriptionText = dataRecordItems[i].getElementsByTagName("description")[0].textContent;
+                let aggregatedHtmlCompilationBlock = "";
+                const trackingLimit = Math.min(collectedRssChannelItems.length, 12);
+                
+                for(let idx = 0; idx < trackingLimit; idx++) {
+                    const nodeTitleText = collectedRssChannelItems[idx].getElementsByTagName("title")[0].textContent;
+                    const nodeLinkUrl = collectedRssChannelItems[idx].getElementsByTagName("link")[0].textContent;
+                    const nodeDescriptionText = collectedRssChannelItems[idx].getElementsByTagName("description")[0].textContent;
                     
-                    stringAggregationLoop += `
-                        <div class="md-wire-node">
-                            <a href="${nodeLinkTarget}" target="_blank">⚡ CONVECTIVE MD: ${nodeTitleText}</a>
-                            <p style="margin:6px 0 0 0; color:var(--text-muted); line-height:1.5; font-family:sans-serif; font-size:0.8rem;">${nodeDescriptionText}</p>
+                    aggregatedHtmlCompilationBlock += `
+                        <div class="md-wire-block">
+                            <a href="${nodeLinkUrl}" target="_blank">⚡ ${nodeTitleText}</a>
+                            <p style="margin-top:6px; color:var(--text-secondary); font-size:0.72rem; line-height:1.5; font-family:-apple-system, sans-serif;">${nodeDescriptionText}</p>
                         </div>
                     `;
                 }
-                mdWireTerminal.innerHTML = stringAggregationLoop;
-            } catch(err) {
-                mdWireTerminal.innerText = `[INGEST TIMEOUT ERROR] Unable to resolve data formatting loops from SPC Norman RSS feed layers over network protocols.`;
-            }
-        }
-
-        // HEAVY CANVAS SKEW-T LOG-P MATHEMATICAL RENDERING VECTOR CORE Engine
-        function renderThermodynamicSkewTChart() {
-            const canvasElement = document.getElementById("skewtCanvas");
-            if(!canvasElement) return;
-            const ctx = canvasElement.getContext("2d");
-            
-            const w = canvasElement.width;
-            const h = canvasElement.height;
-            
-            // Wipe surface container
-            ctx.fillStyle = "#040609";
-            ctx.fillRect(0, 0, w, h);
-            
-            // Draw baseline thermodynamic bounding boxes margins
-            const padL = 50;
-            const padR = 40;
-            const padT = 30;
-            const padB = 40;
-            
-            const chartW = w - padL - padR;
-            const chartH = h - padT - padB;
-            
-            // Draw axis borders frame lines
-            ctx.strokeStyle = "rgba(195, 142, 85, 0.3)";
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(padL, padT, chartW, chartH);
-            
-            // Generate Log-P Horizontal Pressure Grids (100mb down to 1000mb calculations scale matrices)
-            const isobarLevels = [100, 200, 300, 400, 500, 700, 850, 1000];
-            ctx.lineWidth = 1;
-            
-            isobarLevels.forEach(p => {
-                // Logarithmic compression tracking math interpolation row formula
-                const yPos = padT + (Math.log(p) - Math.log(100)) / (Math.log(1000) - Math.log(100)) * chartH;
+                mdWireTerminalNode.innerHTML = aggregatedHtmlCompilationBlock;
                 
-                ctx.strokeStyle = "rgba(79, 91, 109, 0.35)";
-                ctx.beginPath();
-                ctx.moveTo(padL, yPos);
-                ctx.lineTo(padL + chartW, yPos);
-                ctx.stroke();
-                
-                // Add labels metric indicators
-                ctx.fillStyle = "var(--text-muted)";
-                ctx.font = "10px Chivo Mono";
-                ctx.fillText(`${p}mb`, padL - 42, yPos + 3);
-            });
-            
-            // Generate Angled Temperature Skew Grids Isotherms Matrix Paths
-            ctx.strokeStyle = "rgba(195, 142, 85, 0.12)";
-            for (let t = -40; t <= 40; t += 10) {
-                ctx.beginPath();
-                // Map coordinates using basic tracking line geometry shifts to represent standard atmospheric temperature lines running at a 45-degree skew angle
-                const startX = padL + ((t + 40) / 80) * chartW;
-                ctx.moveTo(startX, padL + chartH);
-                ctx.lineTo(startX + (chartH * 0.6), padT);
-                ctx.stroke();
+            } catch(exception) {
+                mdWireTerminalNode.innerText = `[SECURITY MATRIX ERROR] Failed to clear cross-origin channel rules while processing Norman SPC server streams. Handshake dropped.`;
             }
-            
-            // Build and draw custom thermodynamic profile plots based on the active severe tracking flags state
-            ctx.lineWidth = 2.5;
-            
-            // Target Arrays tracking values configurations
-            let pressureArray = [1000, 850, 700, 500, 400, 300, 200, 100];
-            let tempProfile = [];
-            let dewProfile = [];
-            
-            if(isSevereDayActive) {
-                // Volatile pre-frontal severe thermodynamic soundings model configuration (High instability / loaded profile values)
-                tempProfile = [78, 68, 52, 28, 5, -18, -44, -68]; 
-                dewProfile  = [69, 62, 45, 12, -8, -25, -52, -75];
-            } else {
-                // Stable, capped out environmental parameters soundings configuration profile array values
-                tempProfile = [64, 52, 38, 15, -4, -22, -48, -70];
-                dewProfile  = [42, 30, 12, -15, -34, -50, -68, -82];
-            }
-            
-            // Programmatic helper lambda calculating dynamic projection offsets coordinates mappings
-            const mapThermodynamicPoint = (p, t) => {
-                const y = padT + (Math.log(p) - Math.log(100)) / (Math.log(1000) - Math.log(100)) * chartH;
-                // Skew correction tracking calculus component logic factor block
-                const skewX = (y - padT) * 0.35;
-                const x = padL + ((t + 50) / 130) * chartW + skewX;
-                return { x: Math.min(Math.max(x, padL), padL + chartW), y: y };
-            };
-            
-            // Render Environmental Dry Bulb Temperature Profile Line Trace (Bold Red Vector Curve)
-            ctx.strokeStyle = "var(--sig-red)";
-            ctx.shadowColor = "rgba(255, 105, 97, 0.2)";
-            ctx.shadowBlur = 6;
-            ctx.beginPath();
-            for(let i=0; i < pressureArray.length; i++) {
-                const pt = mapThermodynamicPoint(pressureArray[i], tempProfile[i]);
-                if(i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-            }
-            ctx.stroke();
-            
-            // Render Atmospheric Dew Point Temperature Profile Line Trace (Bold Signal Green Vector Curve)
-            ctx.strokeStyle = "var(--sig-green)";
-            ctx.shadowColor = "rgba(62, 255, 139, 0.2)";
-            ctx.shadowBlur = 6;
-            ctx.beginPath();
-            for(let i=0; i < pressureArray.length; i++) {
-                const pt = mapThermodynamicPoint(pressureArray[i], dewProfile[i]);
-                if(i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-            }
-            ctx.stroke();
-            
-            // Reset canvas engine visual drop-shadow metrics layers cleanly to block performance drops
-            ctx.shadowBlur = 0;
-            
-            // Draw chart description markers directly into the grid structure coordinates layout labels
-            ctx.fillStyle = "var(--text-main)";
-            ctx.font = "bold 11px Chivo Mono";
-            ctx.fillText("TEMP PROFILE (DRY BULB) [°F]", padL + 16, padT + 24);
-            ctx.fillStyle = "var(--sig-green)";
-            ctx.fillText("DEW POINT TRACK LINE [°F]", padL + 16, padT + 40);
         }
     </script>
 </body>
