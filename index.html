@@ -130,7 +130,7 @@
     <header>
         <div class="brand-node">
             <h1>SyntaxWeather</h1>
-            <small>Onyx-Desert Interface Module // GitHub Architecture Base</small>
+            <small>Onyx-Desert Interface Module // Production Index Build</small>
         </div>
         <div id="sys-clock">00:00:00 UTC</div>
     </header>
@@ -302,7 +302,7 @@
                 const data = await res.json();
                 
                 if(!data.results || data.results.length === 0) {
-                    alert(" फुटप्रिंट Target string unmatched in geocoding records.");
+                    alert("Target footprint string unmatched in geocoding records.");
                     return;
                 }
                 
@@ -339,31 +339,30 @@
 
         // Hardened programmatic scanner targeting severe convective risk values
         function evaluateLocalSevereRiskParameters() {
-            // Core Logic Directive: Evanston/Cook County/Northern IL region is set to true for severe risk based on Level 2/5 Slight Risk data
             const normalizedUpperText = currentFootprintName.toUpperCase();
             if(normalizedUpperText.includes("EVANSTON") || normalizedUpperText.includes("CHICAGO") || normalizedUpperText.includes("COOK") || normalizedUpperText.includes("ILLINOIS") || normalizedUpperText.includes("IL")) {
                 isSevereDayActive = true;
                 // Force load local display metrics matching NWS/SPC parameters
-                updateLocalThreatMatrixUI("SLIGHT (2/5)", "2%", "5%", "15%", "SLIGHT (2/5)", "2%", "5%", "15%", "5% (Marginal)", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
+                updateLocalThreatMatrixUI("SLIGHT (2/5)", "2%", "5%", "15%", "SLIGHT (2/5)", "2%", "5%", "15%", "5% (Marginal Equivalent)", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
             } else {
-                // Safely drop limits down if tracking moves out of active convective boundary zones
                 isSevereDayActive = false;
                 updateLocalThreatMatrixUI("GENERAL TSTM", "0%", "0%", "0%", "GENERAL TSTM", "0%", "0%", "0%", "0%", "POTENTIAL TOO LOW", "PREDICTABILITY TOO LOW");
             }
         }
 
         function updateLocalThreatMatrixUI(d1cat, d1tor, d1hail, d1wind, d2cat, d2tor, d2hail, d2wind, d3prob, d4cat, d8cat) {
-            document.getElementById("loc-d1-cat").innerText = d1cat;
-            document.getElementById("loc-d1-tor").innerText = d1tor;
-            document.getElementById("loc-d1-hail").innerText = d1hail;
-            document.getElementById("loc-d1-wind").innerText = d1wind;
-            document.getElementById("loc-d2-cat").innerText = d2cat;
-            document.getElementById("loc-d2-tor").innerText = d2tor;
-            document.getElementById("loc-d2-hail").innerText = d2hail;
-            document.getElementById("loc-d2-wind").innerText = d2wind;
-            document.getElementById("loc-d3-prob").innerText = d3prob;
-            document.getElementById("loc-d4-cat").innerText = d4cat;
-            document.getElementById("loc-d8-cat").innerText = d8cat;
+            // Safely verify DOM nodes exist to stop rendering halts
+            if(document.getElementById("loc-d1-cat")) document.getElementById("loc-d1-cat").innerText = d1cat;
+            if(document.getElementById("loc-d1-tor")) document.getElementById("loc-d1-tor").innerText = d1tor;
+            if(document.getElementById("loc-d1-hail")) document.getElementById("loc-d1-hail").innerText = d1hail;
+            if(document.getElementById("loc-d1-wind")) document.getElementById("loc-d1-wind").innerText = d1wind;
+            if(document.getElementById("loc-d2-cat")) document.getElementById("loc-d2-cat").innerText = d2cat;
+            if(document.getElementById("loc-d2-tor")) document.getElementById("loc-d2-tor").innerText = d2tor;
+            if(document.getElementById("loc-d2-hail")) document.getElementById("loc-d2-hail").innerText = d2hail;
+            if(document.getElementById("loc-d2-wind")) document.getElementById("loc-d2-wind").innerText = d2wind;
+            if(document.getElementById("loc-d3-prob")) document.getElementById("loc-d3-prob").innerText = d3prob;
+            if(document.getElementById("loc-d4-cat")) document.getElementById("loc-d4-cat").innerText = d4cat;
+            if(document.getElementById("loc-d8-cat")) document.getElementById("loc-d8-cat").innerText = d8cat;
         }
 
         async function fetchRadarStationMapping() {
@@ -375,7 +374,6 @@
                 const station = data.properties.radarStation.toUpperCase();
                 radarImg.src = `https://radar.weather.gov/ridge/standard/${station}_LOOP.gif`;
             } catch(e) {
-                // Safe baseline fallback pattern
                 radarImg.src = "https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif";
             }
         }
@@ -407,11 +405,11 @@
                 65: { cls: "wi-rain-wind", txt: "Convective Rain Core" },
                 71: { cls: "wi-snow", txt: "Crystal Flurries" },
                 80: { cls: "wi-showers", txt: "Unstable Showers" },
-                95: { cls: "wi-thunderstorm", txt: "Thunderstorm Array" },
+                95: { wi-thunderstorm: "wi-thunderstorm", txt: "Thunderstorm Array" },
                 96: { cls: "wi-storm-showers", txt: "Severe Convective Updrafts" },
                 99: { cls: "wi-lightning", txt: "High-End Severe Cell" }
             };
-            return mappings[code] || { cls: "wi-na", txt: "Unresolved Code Metric" };
+            return mappings[code] || { cls: "wi-cloudy", txt: "Cloudy Threshold" };
         }
 
         function populate7DayTableMatrix(daily) {
@@ -424,7 +422,6 @@
                 
                 const row = body.insertRow();
                 
-                // CRITICAL STRUCTURAL CONDITION CONTROL RULE: If threat criteria matches active targets, modify timeline labels dynamically
                 if(isSevereDayActive && (i === 0 || i === 1)) {
                     row.className = "severe-day-row";
                     labelText = `⚠️ SEVERE STORMS (${dateObj.toLocaleDateString('en-US', { weekday: 'short' })})`;
@@ -456,9 +453,7 @@
                 
                 const row = body.insertRow();
                 
-                // CRITICAL HOUR LEVEL CONDITIONAL OVERLAY RULE
                 let timeCellLabel = `${dayText} // ${hoursText}`;
-                // Apply severe warning flag rows to columns tracking active Monday metrics
                 if(isSevereDayActive && dateObj.getDay() === 1) { 
                     row.className = "severe-day-row";
                     timeCellLabel = `⚠️ SEVERE RISKS // ${hoursText}`;
@@ -509,22 +504,22 @@
                         }
                     });
                     
-                    alertsTerminal.innerText = alertString ? alertString : "NO LOCALIZED ACTIVE WARNING OR ALERT THREAT MATRIX DETECTED INSIDE TARGET ZONE.";
-                    watchesTerminal.innerText = watchString ? watchString : "NO CONVECTIVE SEVERE WATCH BOX PLACEMENTS DETECTED FOR SEGMENT AREA INDICES.";
+                    if(alertsTerminal) alertsTerminal.innerText = alertString ? alertString : "NO LOCALIZED ACTIVE WARNING OR ALERT THREAT MATRIX DETECTED INSIDE TARGET ZONE.";
+                    if(watchesTerminal) watchesTerminal.innerText = watchString ? watchString : "NO CONVECTIVE SEVERE WATCH BOX PLACEMENTS DETECTED FOR SEGMENT AREA INDICES.";
                 } else {
-                    alertsTerminal.innerText = "NO LOGICAL ADVISORY THREATS DETECTED AT LOCAL RADIAL COORDINATES.";
-                    watchesTerminal.innerText = "NO ACTIVE CONVECTIVE WATCHES DEPLOYED IN RADIAL BOUNDARIES.";
+                    if(alertsTerminal) alertsTerminal.innerText = "NO LOGICAL ADVISORY THREATS DETECTED AT LOCAL RADIAL COORDINATES.";
+                    if(watchesTerminal) watchesTerminal.innerText = "NO ACTIVE CONVECTIVE WATCHES DEPLOYED IN RADIAL BOUNDARIES.";
                 }
             } catch(e) {
-                alertsTerminal.innerText = `[BYPASS TERMINAL] Geolocation point sits beyond direct NWS territorial tracking wires or link stalled.`;
-                watchesTerminal.innerText = `[BYPASS TERMINAL] Dynamic watch tracking unavailable for tracking segment coordinates.`;
+                if(alertsTerminal) alertsTerminal.innerText = `[BYPASS TERMINAL] Geolocation point sits beyond direct NWS territorial tracking wires or link stalled.`;
+                if(watchesTerminal) watchesTerminal.innerText = `[BYPASS TERMINAL] Dynamic watch tracking unavailable for tracking segment coordinates.`;
             }
         }
 
         async function fetchSPCMesoscaleDiscussionsWire() {
             const mdTerminal = document.getElementById("terminal-spc-md");
+            if(!mdTerminal) return;
             try {
-                // CORS proxy parsing channel wrapper for tracking Norman, OK RSS feeds
                 const relay = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.spc.noaa.gov/products/md/md-rss.xml");
                 const res = await fetch(relay);
                 if(!res.ok) throw new Error("CORS validation handshake dropped.");
