@@ -7,12 +7,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --bg-color: #0c0c0e;
-            --panel-color: #141416;
+            --bg-color: #08080a;
+            --panel-color: #111114;
             --accent-color: #ffb74d;
-            --alert-color: #ef5350;
+            --border-color: #222226;
             --text-color: #e2e2e6;
-            --border-color: #26262b;
+            --sub-text: #8a8a93;
+            
+            /* Warning Color Matrix */
+            --tor-color: #ef5350;
+            --svr-color: #ffa726;
+            --ffw-color: #81c784;
+            --wsw-color: #64b5f6;
+            --adv-color: #e0e0e0;
         }
 
         body {
@@ -31,74 +38,75 @@
         header {
             background-color: var(--panel-color);
             border-bottom: 2px solid var(--border-color);
-            padding: 10px 20px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             letter-spacing: 1px;
+            height: 20px;
         }
 
-        .station-status {
-            color: #4caf50;
-            font-weight: bold;
-        }
-
-        main {
+        /* Twin-Column Mission Control Layout */
+        .workspace {
             display: flex;
             flex: 1;
-            position: relative;
-            height: calc(100vh - 110px);
+            height: calc(100vh - 100px);
+            width: 100vw;
         }
 
-        .content-panel {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .content-panel.active {
-            display: block;
-        }
-
-        /* Radar Layout Layout with Mode Switches */
-        #radar-wrapper {
-            width: 100%;
+        /* Left Side: Dynamic Mapping Control Console */
+        .map-container {
+            flex: 1.2;
             height: 100%;
             position: relative;
+            border-right: 2px solid var(--border-color);
         }
 
         #radar-map {
             width: 100%;
             height: 100%;
-            background: #09090b;
+            background: #050507;
         }
 
-        .radar-controls {
+        /* Interactive Radar Control Deck */
+        .radar-deck {
             position: absolute;
             top: 15px;
             left: 15px;
             z-index: 1000;
-            display: flex;
-            gap: 8px;
-            background: rgba(20, 20, 22, 0.9);
-            padding: 6px;
+            background: rgba(17, 17, 20, 0.95);
+            padding: 10px;
             border: 1px solid var(--border-color);
-            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 280px;
+        }
+
+        .deck-section-title {
+            font-size: 0.7rem;
+            color: var(--sub-text);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .radar-btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
         }
 
         .radar-btn {
-            background: #222226;
-            color: #8a8a93;
-            border: 1px solid #333;
-            padding: 6px 12px;
+            background: #1c1c21;
+            color: var(--sub-text);
+            border: 1px solid #2e2e36;
+            padding: 6px 4px;
             font-family: monospace;
+            font-size: 0.7rem;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.75rem;
+            text-align: center;
         }
 
         .radar-btn.active {
@@ -107,41 +115,109 @@
             border-color: var(--accent-color);
         }
 
-        /* Feed & Condition Elements */
-        .feed-container {
-            padding: 20px;
-            overflow-y: auto;
+        /* Timeline Scroller Controller */
+        .loop-controller {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .loop-btn {
+            background: #25252b;
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            font-family: monospace;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .loop-slider {
+            flex: 1;
+            accent-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #loop-timestamp {
+            font-size: 0.65rem;
+            text-align: center;
+            color: #fff;
+            background: #000;
+            padding: 3px;
+        }
+
+        /* Right Side: Data Feed Workstation Panels */
+        .data-station {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            background-color: #0b0b0d;
+        }
+
+        .station-panel {
+            display: none;
+            width: 100%;
             height: 100%;
             box-sizing: border-box;
+            padding: 20px;
+            overflow-y: auto;
         }
 
-        .grid-conditions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+        .station-panel.active {
+            display: block;
         }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        /* Dashboard Metric Cards */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: var(--panel-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+        }
+
+        .metric-label { font-size: 0.7rem; color: var(--sub-text); text-transform: uppercase; }
+        .metric-data { font-size: 1.6rem; font-weight: bold; color: #fff; margin-top: 4px; }
+
+        /* Forecast Tables and Lists */
+        .forecast-row {
+            display: flex;
+            justify-content: space-between;
+            background: var(--panel-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
+
+        .forecast-time { font-weight: bold; color: var(--accent-color); }
 
         .data-card {
-            background-color: var(--panel-color);
+            background: var(--panel-color);
             border: 1px solid var(--border-color);
             border-left: 4px solid var(--accent-color);
             padding: 15px;
             margin-bottom: 12px;
+            font-size: 0.8rem;
+            line-height: 1.4;
         }
 
-        .alert-card {
-            border-left-color: var(--alert-color);
-            background: rgba(239, 83, 80, 0.03);
-        }
-
-        .metric-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 5px;
-        }
-
+        /* Bottom Control Dock Layout */
         nav.control-dock {
             background-color: var(--panel-color);
             border-top: 2px solid var(--border-color);
@@ -149,26 +225,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .dock-btn {
-            background-color: #1a1a1c;
-            color: #8a8a93;
+            background-color: #161619;
+            color: var(--sub-text);
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
+            padding: 8px 14px;
             cursor: pointer;
             text-transform: uppercase;
             font-family: monospace;
             font-weight: bold;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
-        .dock-btn:hover {
-            color: #fff;
-            background: #222226;
-        }
-
+        .dock-btn:hover { color: #fff; background: #202024; }
         .dock-btn.active {
             background-color: var(--accent-color);
             color: #000;
@@ -179,258 +251,380 @@
 <body>
 
     <header>
-        <div>SLATEWEATHER PRO WORKSTATION // LIVE DATA DEPLOYMENT</div>
-        <div class="station-status" id="system-status">● FEED STREAM ONLINE</div>
+        <div>SLATEWEATHER PRO // INTERACTIVE METEOROLOGICAL WORKSTATION</div>
+        <div id="station-clock">00:00:00 UTC</div>
     </header>
 
-    <main>
-        <div id="panel-radar" class="content-panel active">
-            <div id="radar-wrapper">
-                <div class="radar-controls">
-                    <button id="btn-reflectivity" class="radar-btn active" onclick="setRadarLayer('reflectivity')">COMPOSITE REFLECTIVITY</button>
-                    <button id="btn-velocity" class="radar-btn" onclick="setRadarLayer('velocity')">BASE VELOCITY (NEXRAD)</button>
+    <div class="workspace">
+        
+        <div class="map-container">
+            <div class="radar-deck">
+                <div class="deck-section-title">PRODUCTS</div>
+                <div class="radar-btn-group">
+                    <button id="rad-br" class="radar-btn active" onclick="switchRadarProduct('reflectivity')">REFLECT</button>
+                    <button id="rad-bv" class="radar-btn" onclick="switchRadarProduct('velocity')">VELOCITY</button>
+                    <button id="rad-cc" class="radar-btn" onclick="switchRadarProduct('cc')">CC</button>
                 </div>
-                <div id="radar-map"></div>
+                
+                <div class="deck-section-title" style="margin-top: 4px;">RADAR TIMELINE ANIMATION</div>
+                <div class="loop-controller">
+                    <button id="loop-action-btn" class="loop-btn" onclick="toggleRadarLoop()">PLAY</button>
+                    <input type="range" id="loop-range" class="loop-slider" min="0" max="0" value="0" oninput="manualLoopSelect(this.value)">
+                </div>
+                <div id="loop-timestamp">SYNCHRONIZING TIMELINE...</div>
             </div>
+            <div id="radar-map"></div>
         </div>
 
-        <div id="panel-conditions" class="content-panel">
-            <div class="feed-container">
-                <h2>METAR OBSERVATIONS (CHICAGO METRO)</h2>
-                <div id="conditions-feed" class="grid-conditions">Loading live METAR station packet...</div>
+        <div class="data-station">
+            
+            <div id="panel-dashboard" class="station-panel active">
+                <h2>METAR OBSERVATION CONSOLE (CHICAGO METRO)</h2>
+                <div class="metric-grid" id="dashboard-metrics">
+                    <div class="metric-card"><div class="metric-label">LOADING TEMP...</div><div class="metric-data">--</div></div>
+                </div>
+                <h2>MESOSCALE OUTLOOK MATRIX</h2>
+                <div id="dashboard-summary" class="data-card">Connecting to regional forecast servers...</div>
             </div>
-        </div>
 
-        <div id="panel-storms" class="content-panel">
-            <div class="feed-container">
-                <h2>ACTIVE CONVECTIVE WATCHES</h2>
-                <div id="watches-feed">Querying NWS convective watch database...</div>
+            <div id="panel-hourly" class="station-panel">
+                <h2>72-HOUR METEOROLOGICAL DATA STREAM</h2>
+                <div id="hourly-stream-container">Querying hourly thermodynamic run coordinates...</div>
             </div>
-        </div>
 
-        <div id="panel-mds" class="content-panel">
-            <div class="feed-container">
-                <h2>MESOSCALE DISCUSSIONS (MDS)</h2>
-                <div id="mds-feed">Querying Storm Prediction Center feed vectors...</div>
+            <div id="panel-extended" class="station-panel">
+                <h2>7-DAY SYNOPTIC OUTLOOK STRATIFICATION</h2>
+                <div id="extended-forecast-container">Querying long-range grid vectors...</div>
             </div>
-        </div>
 
-        <div id="panel-alerts" class="content-panel">
-            <div class="feed-container">
-                <h2>LIVE REGIONAL WARNING FEEDS</h2>
-                <div id="alerts-feed">Initializing emergency management alert arrays...</div>
+            <div id="panel-mds" class="station-panel">
+                <h2>SPC MESOSCALE DISCUSSIONS &amp; OUTLOOKS</h2>
+                <div id="mds-feed-container">Polling Storm Prediction Center feed nodes...</div>
             </div>
+
+            <div id="panel-alerts" class="station-panel">
+                <h2>COMPREHENSIVE CRITICAL WARNING FEEDS</h2>
+                <div id="alerts-feed-container">Polling local weather forecast office packets...</div>
+            </div>
+
         </div>
-    </main>
+    </div>
 
     <nav class="control-dock">
-        <button class="dock-btn active" onclick="switchPanel('radar', this)">RADAR</button>
-        <button class="dock-btn" onclick="switchPanel('conditions', this)">CONDITIONS</button>
-        <button class="dock-btn" onclick="switchPanel('storms', this)">WATCHES</button>
-        <button class="dock-btn" onclick="switchPanel('mds', this)">MDS</button>
-        <button class="dock-btn" onclick="switchPanel('alerts', this)">ALERTS</button>
+        <button class="dock-btn active" onclick="switchDataTab('dashboard', this)">DASHBOARD</button>
+        <button class="dock-btn" onclick="switchDataTab('hourly', this)">72 HR HOURLY</button>
+        <button class="dock-btn" onclick="switchDataTab('extended', this)">7 DAY OUTLOOK</button>
+        <button class="dock-btn" onclick="switchDataTab('mds', this)">MDS</button>
+        <button class="dock-btn" onclick="switchDataTab('alerts', this)">ALERTS</button>
     </nav>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Global Map Engine and Animation Cache Matrices
         let map;
-        let radarLayer;
-        let warningGeoJsonLayer;
-        let currentRadarMode = 'reflectivity';
+        let warningVtecLayer;
+        
+        let radarFrames = [];
+        let radarLayerCache = {};
+        let currentFrameIndex = 0;
+        let loopInterval = null;
+        let activeProduct = 'reflectivity';
 
-        // 1. Tab Engine Selector Switching Logic
-        function switchPanel(panelId, element) {
-            document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(`panel-${panelId}`).classList.add('active');
-            element.classList.add('active');
-
-            if (panelId === 'radar' && map) {
-                setTimeout(() => { map.invalidateSize(); }, 100);
-            }
-        }
-
-        // 2. Initialize Interactive Live Tracking Map Grid
-        function initMap() {
+        // 1. Initialize High-Performance Tracking Grid With Extra Deeper Zoom Unlocked
+        function initMapGrid() {
             map = L.map('radar-map', {
                 zoomControl: true,
-                attributionControl: false
-            }).setView([41.8781, -87.6298], 6); // Centered on Midwest convective corridor
+                attributionControl: false,
+                maxZoom: 21,       // Unlocked ultra deeper micro-mesoscale zooming capabilities
+                minZoom: 4
+            }).setView([41.8781, -87.6298], 6); // Centered on Midwest setup corridor
 
-            // High-contrast clean dark tracking base matrix
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19
+                maxZoom: 21
             }).addTo(map);
 
-            // Load Map Layers
-            updateRadarStream();
-            updateLiveNWSWarningOverlay();
-
-            // Setup automated data interval loop checks (Every 2 minutes)
-            setInterval(updateRadarStream, 120000);
-            setInterval(updateLiveNWSWarningOverlay, 60000);
+            // Trigger Ingestion Engines
+            syncRadarTimeline();
+            fetchGlobalVtecAlerts();
+            
+            // Core Automated Synchronization Interval Loops
+            setInterval(syncRadarTimeline, 180000);       // Radar arrays refresh every 3 minutes
+            setInterval(fetchGlobalVtecAlerts, 60000);    // Alert maps sync every 60 seconds
         }
 
-        // 3. Switch Radar Modes (Reflectivity vs Velocity) Without Breaking Client Map Bounds
-        function setRadarLayer(mode) {
-            currentRadarMode = mode;
-            document.querySelectorAll('.radar-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${mode}`).classList.add('active');
-            updateRadarStream();
+        // 2. Tab Navigation Routing Engine
+        function switchDataTab(tabId, element) {
+            document.querySelectorAll('.station-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`panel-${tabId}`).classList.add('active');
+            element.classList.add('active');
         }
 
-        // 4. Ingest Live Radar Data Arrays
-        function updateRadarStream() {
-            if (radarLayer) map.removeLayer(radarLayer);
+        // 3. Complete VTEC Global Alert System Parser (All Alerts, Watches, Advisories & Statements)
+        function fetchGlobalVtecAlerts() {
+            if (warningVtecLayer) map.removeLayer(warningVtecLayer);
 
-            if (currentRadarMode === 'reflectivity') {
-                // Fetch dynamic, free compressed live NEXRAD Reflectivity tiles via RainViewer open API data
-                fetch('https://api.rainviewer.com/public/weather-maps.json')
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.radar && data.radar.past) {
-                            const latestFrame = data.radar.past[data.radar.past.length - 1];
-                            radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${latestFrame.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                opacity: 0.70,
-                                zIndex: 100
-                            }).addTo(map);
+            // Querying full active database array across CONUS sector
+            fetch('https://api.weather.gov/alerts/active?status=actual')
+                .then(res => res.json())
+                .then(data => {
+                    warningVtecLayer = L.geoJSON(data, {
+                        style: function(feature) {
+                            const ev = feature.properties.event;
+                            
+                            // High-End Convective Warnings (Red / Orange / Green Matrix)
+                            if (ev.includes("Tornado Warning") || ev.includes("Extreme Wind")) return { color: '#ef5350', weight: 3, fillOpacity: 0.20, zIndex: 1000 };
+                            if (ev.includes("Severe Thunderstorm Warning")) return { color: '#ffa726', weight: 2, fillOpacity: 0.12 };
+                            if (ev.includes("Flash Flood Warning")) return { color: '#81c784', weight: 2, fillOpacity: 0.10 };
+                            
+                            // Convective and Meso Synoptic Watches
+                            if (ev.includes("Watch")) return { color: '#ffeb3b', weight: 1.5, fillOpacity: 0.05, dashArray: '4, 4' };
+                            
+                            // Advisories, Winter, and Special Weather Statements
+                            if (ev.includes("Advisory")) return { color: '#ba68c8', weight: 1, fillOpacity: 0.04 };
+                            if (ev.includes("Statement")) return { color: '#4fc3f7', weight: 1, fillOpacity: 0.03, dashArray: '2, 2' };
+                            
+                            // Catch-all baseline policy for all other active statements
+                            return { color: '#90a4ae', weight: 1, fillOpacity: 0.02 };
+                        },
+                        onEachFeature: function(feature, layer) {
+                            const p = feature.properties;
+                            layer.bindPopup(`
+                                <div style="font-family:monospace; font-size:11px; background:#111; color:#fff; padding:6px; border:1px solid #333;">
+                                    <strong style="color:var(--accent-color);">${p.event.toUpperCase()}</strong><br>
+                                    <strong>ISSUED:</strong> ${p.senderName}<br><br>
+                                    <strong>TEXT RECON:</strong><br>${p.headline}<br>
+                                </div>
+                            `, { maxWidth: 260 });
                         }
-                    });
-            } else if (currentRadarMode === 'velocity') {
-                // Base Velocity implementation using Iowa Environmental Mesonet (IEM) real-time base NEXRAD data layer
-                // Renders pure velocity packets onto the base layer
-                radarLayer = L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0v-900913/{z}/{x}/{y}.png', {
-                    opacity: 0.70,
-                    zIndex: 100
+                    }).addTo(map);
+                }).catch(err => console.error("Alert vector packet drop: ", err));
+        }
+
+        // 4. Dynamic Time Loop System & Multi-Product Core Engine
+        function switchRadarProduct(productType) {
+            activeProduct = productType;
+            document.querySelectorAll('.radar-btn').forEach(b => b.classList.remove('active'));
+            
+            if(productType === 'reflectivity') document.getElementById('rad-br').classList.add('active');
+            if(productType === 'velocity') document.getElementById('rad-bv').classList.add('active');
+            if(productType === 'cc') document.getElementById('rad-cc').classList.add('active');
+            
+            // Flush display cache map and render selected configuration matrix
+            clearMapRadarLayers();
+            renderActiveRadarFrame();
+        }
+
+        function syncRadarTimeline() {
+            fetch('https://api.rainviewer.com/public/weather-maps.json')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.radar && data.radar.past) {
+                        // Cache timestamps loop data arrays
+                        radarFrames = data.radar.past;
+                        
+                        // Scale slider bounds to match API dataset array lengths
+                        const maxIdx = radarFrames.length - 1;
+                        const slider = document.getElementById('loop-range');
+                        slider.max = maxIdx;
+                        
+                        // Pre-cache individual map structures to ensure smooth rendering transitions
+                        clearMapRadarLayers();
+                        currentFrameIndex = maxIdx;
+                        slider.value = maxIdx;
+                        
+                        renderActiveRadarFrame();
+                    }
+                });
+        }
+
+        function renderActiveRadarFrame() {
+            if (!radarFrames[currentFrameIndex]) return;
+            
+            const frameData = radarFrames[currentFrameIndex];
+            const timestamp = new Date(frameData.time * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + " CDT";
+            document.getElementById('loop-timestamp').innerText = `FRAME TIME: ${timestamp}`;
+
+            clearMapRadarLayers();
+
+            const cacheKey = `${activeProduct}_${frameData.time}`;
+
+            if (activeProduct === 'reflectivity') {
+                // High-resolution Reflectivity array layer via RainViewer data API matrix
+                radarLayerCache[cacheKey] = L.tileLayer(`https://tilecache.rainviewer.com${frameData.path}/256/{z}/{x}/{y}/2/1_1.png`, {
+                    opacity: 0.75, zIndex: 200
+                }).addTo(map);
+            } else if (activeProduct === 'velocity') {
+                // High-resolution NEXRAD Base Doppler Velocity rendering via Iowa Environmental Mesonet architecture 
+                radarLayerCache[cacheKey] = L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0v-900913/{z}/{x}/{y}.png', {
+                    opacity: 0.75, zIndex: 200
+                }).addTo(map);
+            } else if (activeProduct === 'cc') {
+                // High-resolution NEXRAD Correlation Coefficient (CC) debris signature tracker via IEM network
+                radarLayerCache[cacheKey] = L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0c-900913/{z}/{x}/{y}.png', {
+                    opacity: 0.75, zIndex: 200
                 }).addTo(map);
             }
         }
 
-        // 5. High-End Real-Time Alert Polygons Drafted onto the Base Radar Canvas Map
-        function updateLiveNWSWarningOverlay() {
-            if (warningGeoJsonLayer) map.removeLayer(warningGeoJsonLayer);
-
-            // Ingests live active event vectors from the official NWS API framework
-            fetch('https://api.weather.gov/alerts/active?status=actual')
-                .then(res => res.json())
-                .then(data => {
-                    warningGeoJsonLayer = L.geoJSON(data, {
-                        style: function(feature) {
-                            const eventType = feature.properties.event;
-                            if (eventType === "Tornado Warning") return { color: "#ef5350", weight: 3, fillOpacity: 0.15 };
-                            if (eventType === "Severe Thunderstorm Warning") return { color: "#ffb74d", weight: 2, fillOpacity: 0.08 };
-                            if (eventType === "Special Marine Warning") return { color: "#2196f3", weight: 2, fillOpacity: 0.05 };
-                            return { color: "#78909c", weight: 1, fillOpacity: 0.02 };
-                        },
-                        onEachFeature: function(feature, layer) {
-                            layer.bindPopup(`<strong>${feature.properties.event}</strong><br>${feature.properties.headline}<br><small>${feature.properties.description || ''}</small>`);
-                        }
-                    }).addTo(map);
-                });
+        function clearMapRadarLayers() {
+            Object.keys(radarLayerCache).forEach(key => {
+                if (map.hasLayer(radarLayerCache[key])) {
+                    map.removeLayer(radarLayerCache[key]);
+                }
+            });
         }
 
-        // 6. Fetch Real API Telemetry Pipelines (No Mock Data)
-        function fetchLiveFeeds() {
-            // A. FETCH CURRENT STATION CONDITIONS PACKET (NWS Observation Pipeline)
-            // Pulls live data from KORD (Chicago O'Hare International Terminal)
+        function toggleRadarLoop() {
+            const actionBtn = document.getElementById('loop-action-btn');
+            if (loopInterval) {
+                clearInterval(loopInterval);
+                loopInterval = null;
+                actionBtn.innerText = "PLAY";
+            } else {
+                actionBtn.innerText = "STOP";
+                loopInterval = setInterval(() => {
+                    currentFrameIndex++;
+                    if (currentFrameIndex >= radarFrames.length) {
+                        currentFrameIndex = 0;
+                    }
+                    document.getElementById('loop-range').value = currentFrameIndex;
+                    renderActiveRadarFrame();
+                }, 700); // 700ms interpolation speed across loops
+            }
+        }
+
+        function manualLoopSelect(val) {
+            if (loopInterval) toggleRadarLoop(); // Kill automated looping if user takes manual scrolling handle control
+            currentFrameIndex = parseInt(val);
+            renderActiveRadarFrame();
+        }
+
+        // 5. Raw Live NWS Telemetry Database Operations (Dashboard, 72h Hourly, 7 Day Outlook, Feeds)
+        function ingestTelemetryFeeds() {
+            // A. CURRENT CONDITIONS BOARD GENERATOR (Using KORD Core Telemetry Frame)
             fetch('https://api.weather.gov/stations/KORD/observations/latest')
                 .then(res => res.json())
                 .then(data => {
-                    const props = data.properties;
-                    const tempC = props.temperature.value;
-                    const tempF = tempC ? ((tempC * 9/5) + 32).toFixed(1) : 'N/A';
-                    const dewC = props.dewpoint.value;
-                    const dewF = dewC ? ((dewC * 9/5) + 32).toFixed(1) : 'N/A';
-                    const rh = props.relativeHumidity.value ? props.relativeHumidity.value.toFixed(0) : 'N/A';
-                    const windSpeedKmh = props.windSpeed.value;
-                    const windSpeedMph = windSpeedKmh ? (windSpeedKmh * 0.621371).toFixed(0) : '0';
-                    const windDir = props.windDirection.value || 'N/A';
+                    const p = data.properties;
+                    const fahrenheit = p.temperature.value ? ((p.temperature.value * 9/5) + 32).toFixed(1) : 'N/A';
+                    const dewpoint = p.dewpoint.value ? ((p.dewpoint.value * 9/5) + 32).toFixed(1) : 'N/A';
+                    const relHum = p.relativeHumidity.value ? p.relativeHumidity.value.toFixed(0) : 'N/A';
+                    const speed = p.windSpeed.value ? (p.windSpeed.value * 0.621371).toFixed(0) : '0';
+                    const dir = p.windDirection.value || '0';
 
-                    document.getElementById('conditions-feed').innerHTML = `
-                        <div class="data-card"><div>STATION TEMP</div><div class="metric-value">${tempF}°F</div></div>
-                        <div class="data-card"><div>DEW POINT</div><div class="metric-value">${dewF}°F</div></div>
-                        <div class="data-card"><div>RELATIVE HUMIDITY</div><div class="metric-value">${rh}%</div></div>
-                        <div class="data-card"><div>WIND METRIC</div><div class="metric-value">${windDir}° @ ${windSpeedMph} MPH</div></div>
+                    document.getElementById('dashboard-metrics').innerHTML = `
+                        <div class="metric-card"><div class="metric-label">SURFACE TEMP</div><div class="metric-data">${fahrenheit}°F</div></div>
+                        <div class="metric-card"><div class="metric-label">DEW POINT</div><div class="metric-data">${dewpoint}°F</div></div>
+                        <div class="metric-card"><div class="metric-label">RELATIVE HUMIDITY</div><div class="metric-data">${relHum}%</div></div>
+                        <div class="metric-card"><div class="metric-label">WIND VECTOR</div><div class="metric-data">${dir}° @ ${speed}MPH</div></div>
                     `;
-                }).catch(() => { document.getElementById('conditions-feed').innerText = "Telemetry packet drop."; });
+                });
 
-            // B. PARSE LIVE ACTIVE CONVECTIVE WATCHES AND WARNING FEEDS (Filter real parameters)
+            // B. HOURLY FORECAST METRIC ARRAYS (72-Hour Data Stream Generator)
+            fetch('https://api.weather.gov/gridpoints/LOT/75,74/forecast/hourly')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.properties && data.properties.periods) {
+                        const periods = data.properties.periods.slice(0, 72); // Snapping exactly to 72 hour array bounds
+                        let hourlyHtml = '';
+                        
+                        periods.forEach(hp => {
+                            const hrTime = new Date(hp.startTime).toLocaleDateString([], {month:'short', day:'numeric'}) + " " + new Date(hp.startTime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                            hourlyHtml += `
+                                <div class="forecast-row">
+                                    <span class="forecast-time">${hrTime}</span>
+                                    <span><strong>${hp.temperature}°F</strong> // WND: ${hp.windSpeed} ${hp.windDirection}</span>
+                                    <span style="color:#4fc3f7;">POP: ${hp.probabilityOfPrecipitation.value || 0}%</span>
+                                </div>
+                            `;
+                        });
+                        document.getElementById('hourly-stream-container').innerHTML = hourlyHtml;
+                        
+                        // Push initial headline readout to Main Dashboard summary viewport card
+                        document.getElementById('dashboard-summary').innerHTML = `
+                            <strong>CURRENT LOCAL ZONE FORECAST SUMMARY:</strong><br>
+                            ${data.properties.periods[0].shortForecast}. Wind patterns holding from the ${data.properties.periods[0].windDirection} heading around ${data.properties.periods[0].windSpeed}.
+                        `;
+                    }
+                });
+
+            // C. 7-DAY SYNOPTIC OUTLOOK STRATIFICATION GENERATOR
+            fetch('https://api.weather.gov/gridpoints/LOT/75,74/forecast')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.properties && data.properties.periods) {
+                        let extendedHtml = '';
+                        data.properties.periods.forEach(p => {
+                            extendedHtml += `
+                                <div class="data-card">
+                                    <h3 style="color:var(--accent-color); margin:0 0 5px 0; font-size:0.85rem;">${p.name.toUpperCase()}</h3>
+                                    <p style="margin:0;"><strong>THERMO: ${p.temperature}°F (${p.temperatureTrend || 'STEADY'})</strong> // POP: ${p.probabilityOfPrecipitation.value || 0}%</p>
+                                    <p style="margin:5px 0 0 0; color:var(--sub-text);">${p.detailedForecast}</p>
+                                </div>
+                            `;
+                        });
+                        document.getElementById('extended-forecast-container').innerHTML = extendedHtml;
+                    }
+                });
+
+            // D. CRITICAL ALERTS AND NATIONAL MESOSCALE DISCUSSION ARRAY PARSERS
             fetch('https://api.weather.gov/alerts/active?status=actual')
                 .then(res => res.json())
                 .then(data => {
-                    const alerts = data.features;
-                    let watchesHtml = '';
+                    const features = data.features;
+                    let mdsHtml = '';
                     let alertsHtml = '';
 
-                    // Filter alerts dynamically by target categorization attributes
-                    const watches = alerts.filter(a => a.properties.event.includes("Watch"));
-                    const activeWarnings = alerts.filter(a => a.properties.event.includes("Warning") || a.properties.event.includes("Emergency"));
+                    const spcMds = features.filter(f => f.properties.event.includes("Statement") || f.properties.event.includes("Outlook") || f.properties.event.includes("Watch"));
+                    const dynamicWarnings = features.filter(f => f.properties.event.includes("Warning") || f.properties.event.includes("Emergency"));
 
-                    if (watches.length === 0) {
-                        watchesHtml = '<div class="data-card">NO CONVECTIVE WATCHES ACTIVE ACROSS THE NATION</div>';
+                    if(spcMds.length === 0) {
+                        mdsHtml = '<div class="data-card">NO ACTIVE CONVECTIVE OUTLOOK INTERPOLATIONS REPORTED IN SYSTEM SECTOR</div>';
                     } else {
-                        watches.forEach(w => {
-                            watchesHtml += `
-                                <div class="data-card">
-                                    <h3>${w.properties.event.toUpperCase()}</h3>
-                                    <p><strong>BOUNDS:</strong> ${w.properties.headline}</p>
-                                    <p>${w.properties.description || ''}</p>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    if (activeWarnings.length === 0) {
-                        alertsHtml = '<div class="data-card">NO ACTIVE CONVECTIVE WARNING PACKETS DETECTED IN LOCAL SECTOR</div>';
-                    } else {
-                        activeWarnings.forEach(a => {
-                            alertsHtml += `
-                                <div class="data-card alert-card">
-                                    <h3 style="color: var(--alert-color);">${a.properties.event.toUpperCase()}</h3>
-                                    <p><strong>CRITICAL READOUT:</strong> ${a.properties.headline}</p>
-                                    <p>${a.properties.description || ''}</p>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    document.getElementById('watches-feed').innerHTML = watchesHtml;
-                    document.getElementById('alerts-feed').innerHTML = alertsHtml;
-                });
-
-            // C. FETCH SPC MESOSCALE DISCUSSIONS (Dynamic NWS parsing)
-            fetch('https://api.weather.gov/alerts/active?area=IA,NE,SD,IL,IN')
-                .then(res => res.json())
-                .then(data => {
-                    const localAlerts = data.features;
-                    let mdsHtml = '';
-                    
-                    // Filters out convective statements or special weather statements serving as mesoscale briefs
-                    const statements = localAlerts.filter(a => a.properties.event.includes("Statement") || a.properties.event.includes("Advisory"));
-                    
-                    if (statements.length === 0) {
-                        mdsHtml = '<div class="data-card">NO ACTIVE CONVECTIVE SEGMENT OUTLOOKS LINKED CURRENTLY</div>';
-                    } else {
-                        statements.slice(0, 5).forEach(s => {
+                        spcMds.slice(0, 10).forEach(m => {
                             mdsHtml += `
-                                <div class="data-card" style="border-left-color: #4fc3f7;">
-                                    <h3>REGIONAL ATMOSPHERIC UPDATE</h3>
-                                    <p><strong>TARGET:</strong> ${s.properties.headline}</p>
-                                    <p>${s.properties.description || ''}</p>
+                                <div class="data-card" style="border-left-color: #ba68c8;">
+                                    <h3>${m.properties.event.toUpperCase()}</h3>
+                                    <strong>ZONE SUMMARY:</strong> ${m.properties.headline}<br>
+                                    <p style="margin:5px 0 0 0; color:var(--sub-text); font-size:11px;">${m.properties.description || ''}</p>
                                 </div>
                             `;
                         });
                     }
-                    document.getElementById('mds-feed').innerHTML = mdsHtml;
+
+                    if(dynamicWarnings.length === 0) {
+                        alertsHtml = '<div class="data-card">NO CRITICAL THREAT WARNING ARRAYS RECORDED IN LOCAL COORDINATES</div>';
+                    } else {
+                        dynamicWarnings.forEach(w => {
+                            alertsHtml += `
+                                <div class="data-card" style="border-left-color:var(--tor-color); background:rgba(239,83,80,0.02);">
+                                    <h3 style="color:var(--tor-color); margin:0 0 5px 0;">${w.properties.event.toUpperCase()}</h3>
+                                    <strong>CRITICAL READOUT:</strong> ${w.properties.headline}<br>
+                                    <p style="margin:5px 0 0 0; color:var(--sub-text); font-size:11px;">${w.properties.description || ''}</p>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    document.getElementById('mds-feed-container').innerHTML = mdsHtml;
+                    document.getElementById('alerts-feed-container').innerHTML = alertsHtml;
                 });
         }
 
-        // Initialize script logic paths
+        // 6. Clock Initialization Routine
+        function updateStationClock() {
+            const now = new Date();
+            const utcStr = now.toUTCString().split(' ')[4] + " UTC";
+            document.getElementById('station-clock').innerText = utcStr;
+        }
+
+        // Launch Application Operations
         window.onload = function() {
-            initMap();
-            fetchLiveFeeds();
-            setInterval(fetchLiveFeeds, 180000); // Dynamic core data polling every 3 minutes
+            initMapGrid();
+            ingestTelemetryFeeds();
+            setInterval(updateStationClock, 1000);
+            setInterval(ingestTelemetryFeeds, 180000); // Master data stream re-polling loop every 3 minutes
         };
     </script>
 </body>
