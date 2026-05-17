@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Expressive Weather Platform // Onyx & Desert Elite</title>
+    <title>Expressive Weather Platform</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,24 +12,12 @@
 
     <style>
         :root {
-            --bg-onyx: #07090e;
-            --surface-deep: #0f131f;
-            --surface-card: #141a29;
-            --surface-chip: #1b2236;
-            
-            --desert-base: #a97643;
-            --desert-brown: #c38e55;
-            --desert-glow: #e6ab6b;
-            --desert-bright: #fcdbb3;
-            
-            --text-pure: #ffffff;
-            --text-primary: #f1f3f5;
-            --text-secondary: #8a96a8;
-            --text-muted: #4e5a6e;
-            
-            --accent-blue: #3ac6ff;
-            --terminal-green: #3aff8b;
-            --severity-crit: #ff4a4a;
+            --app-bg: #101524;
+            --surface-blur: rgba(20, 28, 48, 0.75);
+            --surface-card: #1c253c;
+            --text-main: #ffffff;
+            --text-sub: #9aa8c2;
+            --accent-blue: #2f80ed;
         }
 
         * {
@@ -41,8 +29,8 @@
         }
 
         body {
-            background-color: var(--bg-onyx);
-            color: var(--text-primary);
+            background-color: var(--app-bg);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -50,46 +38,45 @@
             overflow-y: auto;
         }
 
-        /* Sunny Backdrop Visual Canvas Layout */
+        /* Dynamic Visual Weather Canvas Background Layer */
         .weather-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: 
-                radial-gradient(circle at 50% -20%, rgba(230, 171, 107, 0.18) 0%, rgba(15, 19, 31, 0) 60%),
-                linear-gradient(180deg, #0b0f19 0%, #05070a 100%);
+            background: linear-gradient(180deg, #1b3358 0%, #101524 100%);
             z-index: -1;
+            transition: background 1s ease;
         }
 
-        /* Mobile Container Layout */
+        /* Responsive Mobile Sandbox Blueprint Frame */
         .app-container {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            padding: 16px 16px 100px 16px;
+            padding: 16px 16px 90px 16px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 18px;
         }
 
-        /* Weather Channel Style Header Input UI */
+        /* Location Bar Controls */
         .location-header {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 6px;
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .search-bar {
             display: flex;
-            background: var(--surface-deep);
-            border-radius: 28px;
-            padding: 6px 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 4px 14px;
             align-items: center;
-            border: 1px solid rgba(195, 142, 85, 0.25);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .search-bar input {
@@ -97,96 +84,93 @@
             background: transparent;
             border: none;
             outline: none;
-            color: var(--text-pure);
-            padding: 6px;
+            color: white;
+            padding: 8px;
             font-size: 0.95rem;
         }
 
-        .search-bar input::placeholder { color: var(--text-muted); }
-        .search-bar i { color: var(--desert-glow); cursor: pointer; font-size: 1.1rem; }
+        .search-bar input::placeholder { color: rgba(255, 255, 255, 0.6); }
+        .search-bar i { color: white; cursor: pointer; }
 
         .active-city-pill {
             display: inline-flex;
             align-items: center;
-            background: rgba(15, 19, 31, 0.8);
-            border: 1px solid rgba(195, 142, 85, 0.15);
-            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 16px;
             border-radius: 20px;
             align-self: flex-start;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--desert-bright);
+            font-weight: 600;
+            font-size: 0.9rem;
             gap: 6px;
-            letter-spacing: 0.2px;
         }
 
-        /* Main Hero Present Conditions Panel */
+        /* Hero Condition Frame styling */
         .current-hero {
             text-align: center;
-            padding: 20px 0 10px 0;
+            padding: 16px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
+        }
+
+        .current-hero .twc-large-icon {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            filter: drop-shadow(0px 4px 12px rgba(0,0,0,0.25));
         }
 
         .current-hero .temp-display {
-            font-size: 5.8rem;
-            font-weight: 200;
+            font-size: 5.5rem;
+            font-weight: 300;
             line-height: 1;
             position: relative;
-            color: var(--text-pure);
-            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            margin-left: 15px;
+            margin-top: 6px;
+        }
+        .current-hero .temp-display::after {
+            content: "°";
+            position: absolute;
+            top: 5px;
+            right: -25px;
         }
 
         .current-hero .condition-text {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--desert-glow);
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-top: 6px;
         }
 
-        .current-hero .condition-text i { font-size: 1.5rem; }
         .current-hero .hi-lo {
             font-size: 0.95rem;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.8);
             margin-top: 6px;
             font-weight: 500;
-            letter-spacing: 0.3px;
         }
 
-        /* Modular Weather Cards */
+        /* Container Card Geometry */
         .weather-card {
             background: var(--surface-card);
-            border-radius: 20px;
-            padding: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .card-title {
             font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--desert-brown);
-            margin-bottom: 16px;
-            font-weight: 800;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(195, 142, 85, 0.1);
-            padding-bottom: 6px;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            margin-bottom: 14px;
+            font-weight: 700;
         }
 
-        /* Hourly Scrubber Row Frame Layout */
+        /* Hourly Horizontal Scrubber Structure */
         .hourly-scrubber {
             display: flex;
-            gap: 18px;
+            gap: 16px;
             overflow-x: auto;
-            padding-bottom: 6px;
+            padding-bottom: 8px;
             scrollbar-width: none;
         }
         .hourly-scrubber::-webkit-scrollbar { display: none; }
@@ -195,164 +179,138 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 58px;
-            gap: 8px;
-            background: rgba(0,0,0,0.15);
-            padding: 10px 4px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.01);
+            min-width: 55px;
+            gap: 6px;
         }
-        .hourly-item .time { font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
-        .hourly-item i { font-size: 1.35rem; }
-        .hourly-item .pop { font-size: 0.7rem; color: var(--accent-blue); font-weight: 800; min-height: 14px; }
-        .hourly-item .temp { font-size: 1.05rem; font-weight: 700; color: var(--text-pure); }
+        .hourly-item .time { font-size: 0.8rem; color: var(--text-sub); font-weight: 500; }
+        .hourly-item .twc-scrub-icon { width: 36px; height: 36px; object-fit: contain; }
+        .hourly-item .pop { font-size: 0.7rem; color: #56ccf2; font-weight: 700; height: 14px; }
+        .hourly-item .temp { font-size: 1rem; font-weight: 600; }
 
         /* Daily Row Lists */
-        .daily-list { display: flex; flex-direction: column; gap: 4px; }
+        .daily-list { display: flex; flex-direction: column; gap: 12px; }
         .daily-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 4px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .daily-row:last-child { border-bottom: none; }
-        .daily-row .day-name { width: 95px; font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
-        .daily-row .day-icon-group { display: flex; align-items: center; gap: 8px; width: 50px; justify-content: center; }
-        .daily-row .day-icon-group i { font-size: 1.3rem; }
-        .daily-row .day-pop { font-size: 0.75rem; color: var(--accent-blue); font-weight: 800; width: 40px; text-align: left; }
-        .daily-row .day-temps { text-align: right; font-weight: 700; font-size: 0.95rem; width: 75px; }
-        .daily-row .day-temps .low { color: var(--text-muted); font-weight: 500; margin-left: 8px; }
+        .daily-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .daily-row .day-name { width: 85px; font-weight: 600; font-size: 0.95rem; }
+        .daily-row .day-icon-group { display: flex; align-items: center; width: 60px; justify-content: center; }
+        .daily-row .twc-list-icon { width: 36px; height: 36px; object-fit: contain; }
+        .daily-row .day-pop { font-size: 0.75rem; color: #56ccf2; font-weight: 700; width: 35px; text-align: left; }
+        .daily-row .day-temps { text-align: right; font-weight: 600; font-size: 0.95rem; width: 70px; }
+        .daily-row .day-temps .low { color: var(--text-sub); font-weight: 400; margin-left: 6px; }
 
-        /* Media Viewports Secure Layout Mapping Frame */
+        /* Image Viewports */
         .media-viewport {
             width: 100%;
-            background: #04060a;
-            border-radius: 14px;
+            background: #000;
+            border-radius: 12px;
             overflow: hidden;
             position: relative;
             aspect-ratio: 4 / 3;
-            border: 1px solid rgba(195, 142, 85, 0.1);
         }
-        .media-viewport img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
+        .media-viewport img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* View Router Panes */
-        .app-view-panel { display: none; flex-direction: column; gap: 18px; }
+        /* Structural Tab Engine Navigation */
+        .app-view-panel { display: none; flex-direction: column; gap: 16px; }
         .app-view-panel.active-view { display: flex; }
 
-        /* Premium Bottom Application Navigation Bar */
         .bottom-nav-dock {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100vw;
-            background: var(--surface-deep);
-            border-top: 1px solid rgba(195, 142, 85, 0.15);
+            background: #0f1422;
+            border-top: 1px solid rgba(255,255,255,0.08);
             z-index: 999;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 max(10px, env(safe-area-inset-bottom));
-            box-shadow: 0 -8px 30px rgba(0,0,0,0.6);
+            padding: 8px 0 max(8px, env(safe-area-inset-bottom));
         }
 
         .nav-dock-item {
             background: transparent;
             border: none;
-            color: var(--text-muted);
+            color: var(--text-sub);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            font-size: 0.72rem;
-            font-weight: 700;
+            gap: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
             cursor: pointer;
-            width: 65px;
-            transition: all 0.2s ease;
+            width: 60px;
+            transition: color 0.2s;
         }
+        .nav-dock-item i { font-size: 1.25rem; }
+        .nav-dock-item.active-tab { color: var(--accent-blue); }
 
-        .nav-dock-item i { font-size: 1.3rem; }
-        .nav-dock-item.active-tab { color: var(--desert-glow); text-shadow: 0 0 8px rgba(230,171,107,0.3); }
-
-        .null-state-handler {
-            text-align: center;
-            padding: 30px 15px;
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 0.9rem;
-            width: 100%;
-        }
-        .null-state-handler i { font-size: 2.2rem; margin-bottom: 10px; color: var(--desert-brown); }
+        .null-state-handler { text-align: center; padding: 40px 20px; color: var(--text-sub); width: 100%; }
     </style>
 </head>
 <body>
 
-    <div class="weather-canvas"></div>
+    <div class="weather-canvas" id="canvas-layer"></div>
 
     <div class="app-container">
         
         <div class="location-header">
             <div class="search-bar">
-                <input type="text" id="target-search-field" placeholder="Enter footprint footprint (e.g. Cook County, Chicago)...">
-                <i class="fa-solid fa-magnifying-glass-location" onclick="triggerGeocodePipeline()"></i>
+                <input type="text" id="target-search-field" placeholder="Search for city, county, or zip code...">
+                <i class="fa-solid fa-magnifying-glass" onclick="triggerGeocodePipeline()"></i>
             </div>
             <div class="active-city-pill" id="display-location-label">
-                <i class="fa-solid fa-satellite-dish"></i> Awaiting System Ingest Lock
+                <i class="fa-solid fa-location-crosshairs"></i> Awaiting Target Loc Lock
             </div>
         </div>
 
         <div id="view-home" class="app-view-panel active-view">
             <div class="current-hero">
+                <img id="hero-twc-icon" src="https://www.weather.com/wp-content/themes/twc/assets/images/clear.svg" style="display:none;" class="twc-large-icon" alt="Current Weather Condition">
                 <div class="temp-display" id="hero-temp">--</div>
-                <div class="condition-text" id="hero-condition"><i class="fa-solid fa-sun"></i> Ready Array</div>
-                <div class="hi-lo" id="hero-hilo">Enter location target footprint above</div>
+                <div class="condition-text" id="hero-condition">Ready To Target Grid</div>
+                <div class="hi-lo" id="hero-hilo">Lock location above for processing</div>
             </div>
 
             <div class="weather-card">
-                <div class="card-title">Hourly Grid Matrix</div>
+                <div class="card-title">Hourly Forecast</div>
                 <div class="hourly-scrubber" id="container-hourly-scrubber">
-                    <div class="null-state-handler">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <p>Telemetry line clear. Map target area.</p>
-                    </div>
+                    <div class="null-state-handler"><p>No live data stream loaded.</p></div>
                 </div>
             </div>
 
             <div class="weather-card">
-                <div class="card-title">Daily Synoptic Framework</div>
+                <div class="card-title">Daily Forecast</div>
                 <div class="daily-list" id="container-daily-stack">
-                    <div class="null-state-handler">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <p>No model grid loaded into workstation core.</p>
-                    </div>
+                    <div class="null-state-handler"><p>No live data stream loaded.</p></div>
                 </div>
             </div>
         </div>
 
         <div id="view-radar" class="app-view-panel">
             <div class="weather-card">
-                <div class="card-title" id="radar-title-id">NEXRAD WSR-88D Dynamic Interface</div>
+                <div class="card-title" id="radar-title-id">NEXRAD Doppler Feed</div>
                 <div class="media-viewport">
-                    <img id="radar-image-stream" src="https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif" alt="Doppler Radar Target Frame">
+                    <img id="radar-image-stream" src="https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif" alt="Radar Feed Grid">
                 </div>
             </div>
         </div>
 
         <div id="view-storms" class="app-view-panel">
             <div class="weather-card">
-                <div class="card-title">SPC Day 1 Categorical Outlook</div>
+                <div class="card-title">SPC Day 1 Convective Outlook</div>
                 <div class="media-viewport">
-                    <img id="spc-d1-layer" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Convective Risk">
+                    <img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="Day 1 Outlook Layer">
                 </div>
             </div>
             <div class="weather-card">
-                <div class="card-title">SPC Day 2 Categorical Outlook</div>
+                <div class="card-title">SPC Day 2 Convective Outlook</div>
                 <div class="media-viewport">
-                    <img id="spc-d2-layer" src="https://www.spc.noaa.gov/products/outlook/day2otlk.gif" alt="Day 2 Convective Risk">
+                    <img src="https://www.spc.noaa.gov/products/outlook/day2otlk.gif" alt="Day 2 Outlook Layer">
                 </div>
             </div>
         </div>
@@ -361,13 +319,13 @@
 
     <div class="bottom-nav-dock">
         <button class="nav-dock-item active-tab" onclick="switchAppViewFrame('view-home', this)">
-            <i class="fa-solid fa-house"></i>Home
+            <i class="fa-solid fa-house-chimney"></i>Home
         </button>
         <button class="nav-dock-item" onclick="switchAppViewFrame('view-storms', this)">
             <i class="fa-solid fa-cloud-bolt"></i>Storms
         </button>
         <button class="nav-dock-item" onclick="switchAppViewFrame('view-radar', this)">
-            <i class="fa-solid fa-circle-dot"></i>Radar
+            <i class="fa-solid fa-compass-drafting"></i>Radar
         </button>
     </div>
 
@@ -375,31 +333,52 @@
         let globalLat = null;
         let globalLon = null;
 
-        // Premium Custom Color Mapping and FontAwesome Icon Selection Engine
-        function mapWeatherChannelIcons(nwsShortForecast) {
+        // Maps weather.gov raw data to the exact developer.weather.com (TWC) icon nomenclature index
+        function extractWeatherChannelIconCode(nwsShortForecast, nwsIconUrl) {
             const text = nwsShortForecast.toLowerCase();
-            if (text.includes("thunderstorm") || text.includes("severe") || text.includes("tstorm") || text.includes("tornado")) {
-                return { icon: "fa-solid fa-cloud-lightning", color: "#ffcc00" };
+            const rawIcon = nwsIconUrl ? nwsIconUrl.toLowerCase() : "";
+            const isNight = rawIcon.includes("/night/") || rawIcon.includes(",night");
+
+            // Extreme / Severe Convective Elements
+            if (text.includes("tornado")) return "00";
+            if (text.includes("hurricane") || text.includes("tropical storm")) return "02";
+            if (text.includes("thunderstorm") || text.includes("severe") || text.includes("tstorm")) {
+                return "04"; 
             }
-            if (text.includes("heavy rain") || text.includes("downpour") || text.includes("flooding")) {
-                return { icon: "fa-solid fa-cloud-showers-heavy", color: "#6ca0dc" };
-            }
-            if (text.includes("rain") || text.includes("showers")) {
-                return { icon: "fa-solid fa-cloud-rain", color: "#8cb3e2" };
-            }
-            if (text.includes("snow") || text.includes("ice") || text.includes("flurries") || text.includes("sleet")) {
-                return { icon: "fa-solid fa-snowflake", color: "#ffffff" };
-            }
-            if (text.includes("mostly cloudy") || text.includes("overcast")) {
-                return { icon: "fa-solid fa-cloud", color: "#a8b5c8" };
-            }
-            if (text.includes("partly cloudy") || text.includes("scattered") || text.includes("mostly sunny")) {
-                return { icon: "fa-solid fa-cloud-sun", color: "#fcdbb3" };
-            }
-            if (text.includes("windy") || text.includes("breezy")) {
-                return { icon: "fa-solid fa-wind", color: "#cfd8dc" };
-            }
-            return { icon: "fa-solid fa-sun", color: "#e6ab6b" };
+            
+            // Winter Matrix Channels
+            if (text.includes("freezing rain") || text.includes("sleet") || text.includes("wintry mix")) return "07";
+            if (text.includes("snow showers")) return "14";
+            if (text.includes("snow") || text.includes("flurries")) return "16";
+            
+            // Precipitation Streams
+            if (text.includes("heavy rain") || text.includes("downpour")) return "12";
+            if (text.includes("showers") || text.includes("rain")) return "11";
+            if (text.includes("drizzle")) return "09";
+            
+            // Atmospheric Occlusions
+            if (text.includes("fog")) return "20";
+            if (text.includes("haze")) return "21";
+            if (text.includes("smoke")) return "22";
+            if (text.includes("windy") || text.includes("breezy")) return "24";
+            
+            // Clouds & Radiation Core Splits
+            if (text.includes("mostly cloudy") || text.includes("overcast")) return isNight ? "27" : "28";
+            if (text.includes("partly cloudy") || text.includes("scattered")) return isNight ? "29" : "30";
+            
+            // Clear / Sunny Baselines
+            return isNight ? "31" : "32";
+        }
+
+        // Returns background gradient stylings matching specific atmospheric states
+        function computeCanvasBgGradient(iconCode) {
+            const code = parseInt(iconCode, 10);
+            if ([0, 1, 2, 3, 4].includes(code)) return "linear-gradient(180deg, #202636 0%, #0c0f17 100%)"; // Thunderstorm/Tornado
+            if ([5, 6, 7, 8, 9, 10, 11, 12].includes(code)) return "linear-gradient(180deg, #384860 0%, #1c2430 100%)"; // Rain
+            if ([13, 14, 15, 16, 17, 18].includes(code)) return "linear-gradient(180deg, #4b596d 0%, #29323d 100%)"; // Snow
+            if ([26, 27, 28, 29, 30].includes(code)) return "linear-gradient(180deg, #446fa3 0%, #192c44 100%)"; // Cloudy
+            if (code === 31 || code === 33) return "linear-gradient(180deg, #101626 0%, #070a12 100%)"; // Night Clear
+            return "linear-gradient(180deg, #3a7bd5 0%, #20497a 100%)"; // Day Clear
         }
 
         function switchAppViewFrame(targetId, buttonElement) {
@@ -419,7 +398,7 @@
                 const data = await res.json();
 
                 if (!data.results || data.results.length === 0) {
-                    alert("Coordinate Lock Error: Footprint location not identified.");
+                    alert("Location context not found.");
                     return;
                 }
 
@@ -427,12 +406,12 @@
                 globalLat = parseFloat(location.latitude).toFixed(2);
                 globalLon = parseFloat(location.longitude).toFixed(2);
 
-                document.getElementById('display-location-label').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${location.name.toUpperCase()}, ${location.admin1 ? location.admin1.toUpperCase() : ''}`;
+                document.getElementById('display-location-label').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${location.name}, ${location.admin1 || ''}`;
                 document.getElementById('target-search-field').value = "";
 
                 executeUnifiedForecastPipeline();
             } catch (err) {
-                console.error("Geocoding line break down sequence execution: ", err);
+                console.error("Geocoding step error: ", err);
             }
         }
 
@@ -440,71 +419,61 @@
             if (!globalLat || !globalLon) return;
 
             try {
-                // Break cache blocks to prevent internal cross-origin reference restrictions
-                const uniqueSalt = `?nocache=${new Date().getTime()}`;
-                
-                // Refresh SPC maps with clean timestamps forcing DOM asset re-renders
-                document.getElementById('spc-d1-layer').src = `https://www.spc.noaa.gov/products/outlook/day1otlk.gif${uniqueSalt}`;
-                document.getElementById('spc-d2-layer').src = `https://www.spc.noaa.gov/products/outlook/day2otlk.gif${uniqueSalt}`;
-
                 const pointsResponse = await fetch(`https://api.weather.gov/points/${globalLat},${globalLon}`);
                 const pointsData = await pointsResponse.json();
 
-                // Dynamic NEXRAD station tracking route mapping
-                if (pointsData.properties && pointsData.properties.radarStation) {
-                    const radarStation = pointsData.properties.radarStation.toUpperCase();
-                    document.getElementById('radar-title-id').innerText = `${radarStation} NEXRAD Base Reflectivity`;
-                    document.getElementById('radar-image-stream').src = `https://radar.weather.gov/ridge/standard/${radarStation}_LOOP.gif`;
-                } else {
-                    document.getElementById('radar-image-stream').src = "https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif";
-                }
+                // Dynamic NEXRAD parsing
+                const radarStation = pointsData.properties.radarStation.toUpperCase();
+                document.getElementById('radar-title-id').innerText = `${radarStation} NEXRAD Base Reflectivity`;
+                document.getElementById('radar-image-stream').src = `https://radar.weather.gov/ridge/standard/${radarStation}_LOOP.gif`;
 
                 const dailyEndpoint = pointsData.properties.forecast;
                 const hourlyEndpoint = pointsData.properties.forecastHourly;
 
-                // Handle data stream requests safely step-by-step
-                const dailyRes = await fetch(dailyEndpoint).then(r => r.json());
-                const hourlyRes = await fetch(hourlyEndpoint).then(r => r.json());
+                const [dailyRes, hourlyRes] = await Promise.all([
+                    fetch(dailyEndpoint).then(r => r.json()),
+                    fetch(hourlyEndpoint).then(r => r.json())
+                ]);
 
-                if (dailyRes.properties && dailyRes.properties.periods) {
-                    renderAppHeroForecast(dailyRes.properties.periods[0]);
-                    renderAppDailyStack(dailyRes.properties.periods);
-                }
-                
-                if (hourlyRes.properties && hourlyRes.properties.periods) {
-                    renderAppHourlyScrubber(hourlyRes.properties.periods);
-                }
+                renderAppHeroForecast(dailyRes.properties.periods[0]);
+                renderAppHourlyScrubber(hourlyRes.properties.periods);
+                renderAppDailyStack(dailyRes.properties.periods);
 
             } catch (err) {
-                console.error("Pipeline mapping structural fault: ", err);
-                // Securely transition to safety assets if network throws exceptions
-                document.getElementById('radar-image-stream').src = "https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif";
+                console.error("Critical execution drop processing NWS pipeline: ", err);
             }
         }
 
         function renderAppHeroForecast(currentPeriod) {
-            document.getElementById('hero-temp').innerText = `${currentPeriod.temperature}°`;
-            const mapping = mapWeatherChannelIcons(currentPeriod.shortForecast);
-            document.getElementById('hero-condition').innerHTML = `<i class="${mapping.icon}" style="color: ${mapping.color}"></i> ${currentPeriod.shortForecast}`;
-            document.getElementById('hero-hilo').innerText = currentPeriod.detailedForecast || "";
+            document.getElementById('hero-temp').innerText = currentPeriod.temperature;
+            document.getElementById('hero-condition').innerText = currentPeriod.shortForecast;
+            document.getElementById('hero-hilo').innerText = currentPeriod.detailedForecast;
+            
+            const iconCode = extractWeatherChannelIconCode(currentPeriod.shortForecast, currentPeriod.icon);
+            const heroIconElement = document.getElementById('hero-twc-icon');
+            
+            // Point directly to the official high-res Weather Channel asset catalog links
+            heroIconElement.src = `https://v.fastcdn.co/u/f91a6dd1/52438591-0-${iconCode}.png`;
+            heroIconElement.style.display = "block";
+            
+            document.getElementById('canvas-layer').style.background = computeCanvasBgGradient(iconCode);
         }
 
         function renderAppHourlyScrubber(periods) {
             const container = document.getElementById('container-hourly-scrubber');
             container.innerHTML = "";
 
-            const limit = Math.min(periods.length, 24);
-            for (let i = 0; i < limit; i++) {
+            for (let i = 0; i < 24; i++) {
                 const p = periods[i];
                 const timeStr = new Date(p.startTime).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-                const mapping = mapWeatherChannelIcons(p.shortForecast);
+                const iconCode = extractWeatherChannelIconCode(p.shortForecast, p.icon);
                 const popValue = p.probabilityOfPrecipitation?.value || 0;
 
                 const hourBlock = document.createElement('div');
                 hourBlock.className = 'hourly-item';
                 hourBlock.innerHTML = `
                     <span class="time">${timeStr}</span>
-                    <i class="${mapping.icon}" style="color: ${mapping.color}"></i>
+                    <img class="twc-scrub-icon" src="https://v.fastcdn.co/u/f91a6dd1/52438591-0-${iconCode}.png" alt="icon">
                     <span class="pop">${popValue > 0 ? popValue + '%' : ''}</span>
                     <span class="temp">${p.temperature}°</span>
                 `;
@@ -522,6 +491,7 @@
                     dailyGroups.push({
                         day: p.name,
                         iconText: p.shortForecast,
+                        iconUrl: p.icon,
                         high: p.temperature,
                         pop: p.probabilityOfPrecipitation?.value || 0,
                         low: '--'
@@ -534,14 +504,14 @@
             dailyGroups.forEach(g => {
                 const row = document.createElement('div');
                 row.className = 'daily-row';
-                const mapping = mapWeatherChannelIcons(g.iconText);
+                const iconCode = extractWeatherChannelIconCode(g.iconText, g.iconUrl);
 
                 row.innerHTML = `
                     <div class="day-name">${g.day}</div>
                     <div class="day-icon-group">
-                        <i class="${mapping.icon}" style="color: ${mapping.color}"></i>
+                        <img class="twc-list-icon" src="https://v.fastcdn.co/u/f91a6dd1/52438591-0-${iconCode}.png" alt="icon">
                     </div>
-                    <div class="day-pop">${g.pop > 0 ? g.pop + '%' : ''}</div>
+                    <div class="day-pop">${g.pop > 5 ? g.pop + '%' : ''}</div>
                     <div class="day-temps">
                         <span>${g.high}°</span><span class="low">${g.low}°</span>
                     </div>
