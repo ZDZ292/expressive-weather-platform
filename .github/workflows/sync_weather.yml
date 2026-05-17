@@ -1,0 +1,35 @@
+name: Secure Meteorological Data Sync
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # Executes automatically every 15 minutes
+  workflow_dispatch: # Allows you to manually trigger a sync from the GitHub dashboard
+
+jobs:
+  build-and-sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Initialize Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install System Dependencies
+      run: pip install requests
+
+    - name: Execute Secure Data Fetch Engine
+      env:
+        OPEN: ${{ secrets.OPEN }}       # Injects your hidden "OPEN" secret safely
+        PIRATE: ${{ secrets.PIRATE }} # Injects your hidden "PIRATE" secret safely
+      run: python fetch_weather_data.py
+
+    - name: Commit and Push Clean Data Updates
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action Security Engine"
+        git add live_weather_cache.json
+        git commit -m "Syncing real-time satellite telemetry matrices [Secure Build]" || exit 0
+        git push
