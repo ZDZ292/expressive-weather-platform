@@ -1,16 +1,18 @@
-// engine.js - Expressive Weather Platform Processing Core
+// engine.js - Expressive Weather Platform Sandboxed Processing Core
 
-let vectorLat = null;
-let vectorLon = null;
+// ABSOLUTELY HARDCODED SAFE FALLBACK DEFAULT FOCUS - MIAMI, FLORIDA
+let vectorLat = 25.76;
+let vectorLon = -80.19;
+let currentZoneName = "Miami, Florida";
 
 document.addEventListener("DOMContentLoaded", () => {
     executeClockEngine();
     setInterval(executeClockEngine, 1000);
     
-    // Fire automatic internal hardware coordinate resolution queries
-    resolveHardwarePosition();
+    // Auto-engage baseline metrics targeting the Miami matrix block immediately without checking local client telemetry
+    engageTelemetryPipelines();
     
-    // Set 5-minute telemetry refresh iteration loops
+    // Set 5-minute telemetry loop refresh timers
     setInterval(refreshSystemDataAssets, 300000);
 });
 
@@ -19,21 +21,20 @@ function executeClockEngine() {
     document.getElementById("clock").innerText = now.toUTCString().replace("GMT", "UTC");
 }
 
-// Exception Logging Core Engine Function
+// Exception Logger Module Display Handler
 function reportSystemException(faultOrigin, exceptionMessage) {
     const consoleBox = document.getElementById("system-fault-logger");
     const timestamp = new Date().toLocaleTimeString();
     
-    // If clearing baseline configuration log text block first
-    if (consoleBox.innerText.includes("No active operational exceptions")) {
+    if (consoleBox.innerText.includes("No unexpected execution faults")) {
         consoleBox.innerText = "";
     }
     
-    consoleBox.innerText += `[EXCEPTION CRITICAL // ${timestamp}] AT SOURCE: ${faultOrigin.toUpperCase()} -> ${exceptionMessage}\n`;
+    consoleBox.innerText += `[LOG ANOMALY // ${timestamp}] SOURCE: ${faultOrigin.toUpperCase()} -> ${exceptionMessage}\n`;
     consoleBox.scrollTop = consoleBox.scrollHeight;
 }
 
-// Vector Pane Switcher Controls Layout Handler
+// Multi-Tab Layout Navigation Handler Toggle
 function switchVectorPane(targetPaneId) {
     const views = document.querySelectorAll('.vector-view-pane');
     views.forEach(v => v.classList.remove('active-view'));
@@ -45,53 +46,51 @@ function switchVectorPane(targetPaneId) {
     event.currentTarget.classList.add('active-tab');
 }
 
-// Coordinate Capture Handling Sequence
-function resolveHardwarePosition() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                vectorLat = pos.coords.latitude.toFixed(2);
-                vectorLon = pos.coords.longitude.toFixed(2);
-                document.getElementById("vector-init-panel").style.display = "none";
-                engageTelemetryPipelines();
-            },
-            (err) => {
-                reportSystemException("Hardware Geolocation Engine", `Access Blocked or Intercept Timeout: (Code ${err.code}) ${err.message}`);
-                document.getElementById("vector-location-title").innerText = "AWAITING POSITION VECTOR INPUT";
-            }
-        );
-    } else {
-        reportSystemException("Hardware Geolocation Engine", "Target system browser does not contain geolocation API hooks.");
+// Secure Geocoding Parser Engine Interface - Zero IP / Hardware Extraction Footprint
+async function executeCitySearchIngest() {
+    const searchVal = document.getElementById("city-search-field").value.trim();
+    if (!searchVal) {
+        reportSystemException("UI Search Form Input", "Submission rejected: String parameters remain blank.");
+        return;
     }
-}
-
-function overrideVectorCoordinates() {
-    const rawVal = document.getElementById("vector-coordinates-field").value;
-    const cleanArr = rawVal.split(",");
-    if (cleanArr.length === 2) {
-        vectorLat = parseFloat(cleanArr[0]).toFixed(2);
-        vectorLon = parseFloat(cleanArr[1]).toFixed(2);
+    
+    try {
+        const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchVal)}&count=1&language=en&format=json`;
+        const response = await fetch(geoUrl);
+        if (!response.ok) throw new Error(`Geocoding server rejected connection state: ${response.status}`);
         
-        if (isNaN(vectorLat) || isNaN(vectorLon)) {
-            reportSystemException("Manual Input Form Validation", "Parsed float values evaluate directly to NaN vectors.");
+        const data = await response.json();
+        if (!data.results || data.results.length === 0) {
+            reportSystemException("Geocoding Core Resolution", `Zero spatial parameters returned matching string: "${searchVal}"`);
+            alert("Location text could not be mapped into spatial vectors. Try again.");
             return;
         }
         
-        document.getElementById("vector-init-panel").style.display = "none";
+        const targetSector = data.results[0];
+        vectorLat = parseFloat(targetSector.latitude).toFixed(2);
+        vectorLon = parseFloat(targetSector.longitude).toFixed(2);
+        
+        // Assemble clean regional identity display string
+        const regionLabel = targetSector.admin1 ? `, ${targetSector.admin1}` : "";
+        const countryLabel = targetSector.country_code ? ` [${targetSector.country_code.toUpperCase()}]` : "";
+        currentZoneName = `${targetSector.name}${regionLabel}${countryLabel}`;
+        
+        // Clear search line safely
+        document.getElementById("city-search-field").value = "";
+        
+        // Push newly acquired spatial markers through core processing arrays
         engageTelemetryPipelines();
-    } else {
-        reportSystemException("Manual Input Form Validation", "Invalid coordinate array string partitioning. Use: Lat, Lon format.");
+        
+    } catch (err) {
+        reportSystemException("Geocoding Location Pipeline", err.message);
     }
 }
 
 function engageTelemetryPipelines() {
-    if (!vectorLat || !vectorLon) return;
+    document.getElementById("vector-location-title").innerText = `${currentZoneName.toUpperCase()} MATRIX // [${vectorLat}°N, ${vectorLon}°W]`;
     
-    document.getElementById("vector-location-title").innerText = `POSITION VECTOR LOCKED: [${vectorLat}°N, ${vectorLon}°W]`;
-    
-    // Inject dynamic interactive NWS RIDGE local sector image parameters if known
+    // Safe asynchronous redirection cascades
     resolveLocalNWSRidgeStationCode();
-    
     fetchOpenMeteoTelemetry();
     fetchNWSLiveAdvisories();
     fetchSPCConvectiveDiscussionRSS();
@@ -103,56 +102,54 @@ function refreshSystemDataAssets() {
     engageTelemetryPipelines();
 }
 
-// Optional Resolution: Maps Coordinates into closest operational NWS Radar Station Site to update the RIDGE Frame
+// Maps Search Grid coordinates to lock nearby NWS Nexrad identifiers for RIDGE overlays
 async function resolveLocalNWSRidgeStationCode() {
     try {
         const res = await fetch(`https://api.weather.gov/points/${vectorLat},${vectorLon}`);
-        if (!res.ok) throw new Error(`HTTP System Return Status: ${res.status}`);
+        if (!res.ok) throw new Error(`HTTP NWS Core Fault Flag: ${res.status}`);
         const data = await res.json();
         
         const radarStation = data.properties.radarStation.toLowerCase();
-        // Dynamically alter default CONUS overlay block to use localized high-res RIDGE base loops completely free
         document.getElementById("nws-ridge-radar").src = `https://radar.weather.gov/ridge/standard/${radarStation.toUpperCase()}_LOOP.gif`;
         
     } catch(err) {
-        reportSystemException("NWS Station Resolution Target", `RIDGE redirection error fallback to CONUS standard: ${err.message}`);
+        reportSystemException("NWS Radar Mapping Intercept", `${err.message} - Reverting radar stream frame safely to global CONUS projection loop layout.`);
         document.getElementById("nws-ridge-radar").src = "https://radar.weather.gov/ridge/standard/CONUS_LOOP.gif";
     }
 }
 
-// 1. Open-Meteo Comprehensive Database Parsing Core
+// Open-Meteo Synoptic Forecast & Live Observation Processing Framework
 async function fetchOpenMeteoTelemetry() {
     try {
         const queryUrl = `https://api.open-meteo.com/v1/forecast?latitude=${vectorLat}&longitude=${vectorLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,pressure_msl,wind_speed_10m,wind_gusts_10m&hourly=temperature_2m,dew_point_2m,precipitation_probability,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`;
         const res = await fetch(queryUrl);
-        if (!res.ok) throw new Error(`Open-Meteo Server network error code flag: ${res.status}`);
+        if (!res.ok) throw new Error(`Data transport channel reported exception: ${res.status}`);
         const data = await res.json();
         
-        // Tab 1 UI
+        // Feed View Pane 1 Conditions Card
         const cur = data.current;
         document.getElementById("vector-temp-out").innerText = `${Math.round(cur.temperature_2m)}°F`;
         document.getElementById("vector-humidity-txt").innerText = `${cur.relative_humidity_2m}%`;
         document.getElementById("vector-wind-txt").innerText = `${Math.round(cur.wind_speed_10m)} MPH`;
         document.getElementById("vector-pressure-txt").innerText = `${(cur.pressure_msl * 0.02953).toFixed(2)}`;
         
-        // Calculate dynamic surface dewpoints relative to output matrix values
         const dewCalc = Math.round(cur.temperature_2m - ((100 - cur.relative_humidity_2m) / 5));
         document.getElementById("vector-dew-txt").innerText = `${dewCalc}°F`;
         
         processWmoCodeToVectorIcon(cur.weather_code, "vector-flowers-icon", "vector-cond-txt");
         
-        // Tab 4 UI
+        // Feed View Pane 4 Environmental Matrix Fields
         document.getElementById("v-env-apparent").innerText = `${Math.round(cur.apparent_temperature)}°F`;
         document.getElementById("v-env-precip").innerText = `${cur.precipitation} IN`;
         document.getElementById("v-env-gusts").innerText = `${Math.round(cur.wind_gusts_10m)} MPH`;
         document.getElementById("v-env-clouds").innerText = `${data.hourly.precipitation_probability[0] || 0}%`;
         
-        // Construct programmatic table arrays
+        // Dynamically build extended output data maps arrays
         build7DayVectorMatrix(data.daily);
         build72HourVectorMatrix(data.hourly);
         
     } catch(err) {
-        reportSystemException("Open-Meteo Telemetry Stream", err.message);
+        reportSystemException("Open-Meteo Ingest Pipeline", err.message);
     }
 }
 
@@ -244,20 +241,20 @@ function build72HourVectorMatrix(hourly) {
     }
 }
 
-// 2. NWS Live Emergency Advisory Terminal API Parser
+// National Weather Service Live Advisory Wire Ingest Parsing Module
 async function fetchNWSLiveAdvisories() {
     const terminal = document.getElementById("vector-nws-terminal");
     const banner = document.getElementById("alert-banner");
     
     try {
         const resPoint = await fetch(`https://api.weather.gov/points/${vectorLat},${vectorLon}`);
-        if (!resPoint.ok) throw new Error(`Grid definition intercept error code: ${resPoint.status}`);
+        if (!resPoint.ok) throw new Error(`Target location falls outside standard NWS tracking margins: ${resPoint.status}`);
         const pData = await resPoint.json();
         
         const zoneId = pData.properties.county.split('/').pop();
         
         const resAlerts = await fetch(`https://api.weather.gov/alerts/active/zone/${zoneId}`);
-        if (!resAlerts.ok) throw new Error(`Active notification layer link time out: ${resAlerts.status}`);
+        if (!resAlerts.ok) throw new Error(`Active notification layer connection drop: ${resAlerts.status}`);
         const aData = await resAlerts.json();
         
         if (aData.features && aData.features.length > 0) {
@@ -267,7 +264,7 @@ async function fetchNWSLiveAdvisories() {
             aData.features.forEach(f => {
                 const h = f.properties.headline;
                 const d = f.properties.description;
-                logBlocks += `>>> INGESTION THREAT ARRAYS PARSED\nINDICATOR: ${h}\n\n${d}\n\n=========================================\n\n`;
+                logBlocks += `>>> INGESTED INCIDENT REPORT RECORD ENCOUNTERED\nIDENTIFIER: ${h}\n\n${d}\n\n=========================================\n\n`;
                 
                 if (d.toUpperCase().includes("TORNADO") || d.toUpperCase().includes("PARTICULARLY DANGEROUS SITUATION") || d.toUpperCase().includes("SEVERE THUNDERSTORM WARNING")) {
                     coreCriticalWarnPresent = true;
@@ -278,33 +275,33 @@ async function fetchNWSLiveAdvisories() {
             
             if (coreCriticalWarnPresent) {
                 banner.style.display = "block";
-                banner.innerText = "🚨 EXTREME THREAT INTERCEPT DETECTED IN LOCAL RADAR SPHERE";
-                banner.style.background = "linear-gradient(90deg, rgba(255,0,0,0.2) 0%, rgba(255,0,0,0.8) 50%, rgba(255,0,0,0.2) 100%)";
+                banner.innerText = "🚨 EXTREME WEATHER WARNING: SEVERE HAZARD VECTORS DETECTED IN LOCAL SUBGRID CELL";
+                banner.style.background = "linear-gradient(90deg, rgba(255,0,0,0.1) 0%, rgba(255,0,0,0.7) 50%, rgba(255,0,0,0.1) 100%)";
             } else {
                 banner.style.display = "block";
-                banner.innerText = "REGIONAL WATCH STRATIFICATIONS TRANSMITTED VIA LOCAL BASES";
-                banner.style.background = "linear-gradient(90deg, rgba(255,189,0,0.2) 0%, rgba(255,189,0,0.8) 50%, rgba(255,189,0,0.2) 100%)";
+                banner.innerText = "REGIONAL ADVISORIES OR METEOROLOGICAL DISCREPANCIES RECORDED";
+                banner.style.background = "linear-gradient(90deg, rgba(255,189,0,0.1) 0%, rgba(255,189,0,0.7) 50%, rgba(255,189,0,0.1) 100%)";
             }
         } else {
-            terminal.innerText = "NO ACTIVE CRITICAL VECTOR BULLETINS DISCOVERED FOR THE TARGET BOUNDARY LAYER.";
+            terminal.innerText = "NO ACTIVE SEVERE BULLETINS DISCOVERED WITHIN THE SCOPE OF THE CHOSEN GEOSPATIAL VECTOR AREA.";
             banner.style.display = "none";
         }
         
     } catch(err) {
-        reportSystemException("National Weather Service API Core", err.message);
-        terminal.innerText = `[NWS API DEGRADATION] Operational pipeline failure during data conversion.`;
+        reportSystemException("National Weather Service API Wire", err.message);
+        terminal.innerText = `[NWS TARGET STALL] Target location coordinates are either located outside NWS territorial observation bounds, or the core endpoint returned an array fault.`;
         banner.style.display = "none";
     }
 }
 
-// 3. Storm Prediction Center XML RSS Feed Parser
+// Storm Prediction Center Mesoscale Discussions XML RSS Scraper Pipeline Engine
 async function fetchSPCConvectiveDiscussionRSS() {
     const box = document.getElementById("v-spc-md-feed");
     
     try {
         const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.spc.noaa.gov/products/md/md-rss.xml");
         const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error(`CORS Proxy network failure status code: ${res.status}`);
+        if (!res.ok) throw new Error(`XML Feed CORS Relay handshake degraded: ${res.status}`);
         const data = await res.json();
         
         const parser = new DOMParser();
@@ -312,7 +309,7 @@ async function fetchSPCConvectiveDiscussionRSS() {
         const entries = xml.getElementsByTagName("item");
         
         if (entries.length === 0) {
-            box.innerText = "NO ACTIVE MESOSCALE DISCUSSIONS DETECTED BY THE STORM PREDICTION CENTER.";
+            box.innerText = "NO ACTIVE CONVECTIVE MESOSCALE DISCUSSIONS DETECTED BY THE STORM PREDICTION CENTER NATIONWIDE.";
             return;
         }
         
@@ -332,7 +329,7 @@ async function fetchSPCConvectiveDiscussionRSS() {
         box.innerHTML = compiledHtml;
         
     } catch(err) {
-        reportSystemException("SPC Mesoscale RSS Database", err.message);
-        box.innerText = `[SPC SERVER DISCONNECT] Automated fetch array stalled during execution sequence.`;
+        reportSystemException("SPC Convective RSS Threader", err.message);
+        box.innerText = `[SPC DISCONNECT ERROR] Network connection refused. Failed to translate core XML structural objects.`;
     }
 }
