@@ -3,238 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SlateWeather PRO - Synoptic Dashboard</title>
+    <title>SlateWeather PRO - Onyx Tactical HUD</title>
     <style>
-        /* Retro-Technical Overlay Styles with Unsplash Backdrop */
+        /* Modern Onyx Black Desert Design System */
         :root {
-            --bg-overlay: rgba(0, 0, 128, 0.75); /* Translucent 80s TWC Blue */
-            --text-primary: #ffffff;
-            --text-accent: #ffff00; /* Weather Channel Yellow */
-            --text-alert: #ff2a2a;
-            --panel-bg: rgba(0, 0, 192, 0.85);
-            --border-color: #00a8a8;
+            --bg-base: #0a0a0c;
+            --bg-panel: #121216;
+            --border-glow: #24242b;
+            --text-primary: #f4f4f6;
+            --accent-orange: #ff6b35; /* Desert Fire */
+            --accent-gold: #ffb703;   /* Amber Warning */
+            --text-muted: #6c6c7d;
+            --alert-red: #ff3333;
         }
 
         body {
-            /* Exact Unsplash Lightning Bolt Backdrop Asset */
-            background-image: url('https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-color: var(--bg-base);
             color: var(--text-primary);
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 20px;
-            text-transform: uppercase;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        /* Scanline ambient overlay filter to mimic a classic 1980s CRT tube monitor */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06));
-            z-index: 9999;
-            opacity: 0.4;
-            pointer-events: none;
-            background-size: 100% 4px, 6px 100%;
+            padding: 24px;
+            letter-spacing: 0.5px;
         }
 
         header {
-            background-color: var(--bg-overlay);
-            border: 4px double var(--border-color);
-            padding: 15px;
-            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            box-shadow: 5px 5px 0px #000;
+            align-items: center;
+            border-bottom: 1px solid var(--border-glow);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
         }
 
-        h1 {
-            color: var(--text-accent);
+        .brand-zone h1 {
             margin: 0;
-            font-size: 2rem;
-            letter-spacing: 2px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-primary);
         }
 
-        .source-tag {
-            font-size: 1rem;
-            background: var(--border-color);
-            color: #000;
-            padding: 4px 10px;
+        .brand-zone h1 span {
+            color: var(--accent-orange);
         }
 
-        .grid-container {
+        .station-ticker {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: #181820;
+            border: 1px solid var(--border-glow);
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+        }
+
+        .grid-matrix {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 20px;
         }
 
-        .panel {
-            background-color: var(--panel-bg);
-            border: 3px solid var(--border-color);
-            box-shadow: 5px 5px 0px #000;
+        .panel-card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
             padding: 20px;
-            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
-        .panel-title {
-            color: var(--text-accent);
-            border-bottom: 2px solid var(--border-color);
-            margin-top: 0;
-            padding-bottom: 5px;
-            font-size: 1.3rem;
+        .panel-header {
+            font-family: monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .weather-identity {
+        .metric-hero {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 15px 0;
+            margin-bottom: 24px;
         }
 
-        .large-temp {
-            font-size: 4.5rem;
-            color: #fff;
-            margin: 0;
+        .hero-status {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
         }
 
-        .twc-icon {
-            width: 96px;
-            height: 96px;
-            image-rendering: pixelated; /* Keeps crisp 80s pixels on high-res displays */
-            background-color: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+        .twc-hud-icon {
+            width: 64px;
+            height: 64px;
+            background: #181820;
+            border-radius: 6px;
+            border: 1px solid var(--border-glow);
+            padding: 4px;
         }
 
-        .data-row {
+        .data-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .data-node {
             display: flex;
             justify-content: space-between;
-            margin: 12px 0;
-            font-size: 1.2rem;
-            border-bottom: 1px dotted rgba(255,255,255,0.2);
-            padding-bottom: 4px;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #181820;
+            font-size: 0.95rem;
         }
 
-        .data-value {
-            color: var(--text-accent);
+        .node-label {
+            color: var(--text-muted);
+            font-family: monospace;
+            font-size: 0.85rem;
         }
 
-        .alert-mode {
-            color: var(--text-alert);
+        .node-value {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .node-value.highlight {
+            color: var(--accent-orange);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div>
-            <h1>SYNOPTIC WEATHER DATA</h1>
-            <div id="station-info">STATION: EVANSTON, IL // HQ WORKSTATION</div>
+        <div class="brand-zone">
+            <h1>SLATEWEATHER <span>PRO</span></h1>
+            <div class="station-ticker" id="dyn-corridor-label">SYSTEM INITIALIZING...</div>
         </div>
-        <div class="source-tag" id="api-source">SYS: LOADING...</div>
+        <div class="status-badge" id="dyn-badge">SYS: CC_LOAD</div>
     </header>
 
-    <main class="grid-container">
-        <section class="panel">
-            <h2 class="panel-title">MESOSCALE ANALYSIS</h2>
-            
-            <div class="weather-identity">
-                <div class="large-temp" id="display-status">--</div>
-                <img id="twc-condition-icon" class="twc-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Weather Icon">
+    <main class="grid-matrix">
+        <section class="panel-card">
+            <div class="panel-header">
+                <span>METRIC TARGETING</span>
+                <span style="color: var(--accent-orange);">● LIVE</span>
             </div>
             
-            <div class="data-row">
-                <span>CONVECTIVE FLOW:</span>
-                <span class="data-value" id="meso-corridor">LOADING...</span>
+            <div class="metric-hero">
+                <div class="hero-status" id="hud-status">--</div>
+                <img id="twc-hud-icon" class="twc-hud-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="HUD Icon">
             </div>
-            <div class="data-row">
-                <span>HAIL PROBABILITY:</span>
-                <span class="data-value" id="hail-prob">--%</span>
+            
+            <div class="data-grid">
+                <div class="data-node">
+                    <span class="node-label">HAIL METRIC</span>
+                    <span class="node-value highlight" id="hud-hail">--%</span>
+                </div>
             </div>
         </section>
 
-        <section class="panel">
-            <h2 class="panel-title">RADAR VORTEX TRACKING</h2>
-            <div class="data-row">
-                <span>VORTEX LATITUDE:</span>
-                <span class="data-value" id="vortex-lat">--</span>
-            </div>
-            <div class="data-row">
-                <span>VORTEX LONGITUDE:</span>
-                <span class="data-value" id="vortex-lon">--</span>
+        <section class="panel-card">
+            <div class="panel-header">RADAR VORTEX KINEMATICS</div>
+            
+            <div class="data-grid" style="margin-top: 10px;">
+                <div class="data-node">
+                    <span class="node-label">TARGET LATITUDE</span>
+                    <span class="node-value" id="hud-lat">--</span>
+                </div>
+                <div class="data-node">
+                    <span class="node-label">TARGET LONGITUDE</span>
+                    <span class="node-value" id="hud-lon">--</span>
+                </div>
             </div>
         </section>
     </main>
 
     <script>
-        // TWC Code Translator Mapper using your explicit string parameters
+        // Production Weather Channel API image reference asset codes
         function getTWCCode(analysisStr) {
             const text = analysisStr.toLowerCase();
-            
             if (text.includes("tornado") || text.includes("vortex")) return "00";
             if (text.includes("severe") || text.includes("hail")) return "03";
             if (text.includes("convective") || text.includes("storm") || text.includes("thunder")) return "04";
             if (text.includes("rain") || text.includes("shower")) return "12";
             if (text.includes("cloudy")) return "26";
-            if (text.includes("clear") || text.includes("sunny")) return "32";
-            
-            return "44"; // Baseline missing/NA code
+            return "44"; 
         }
 
-        // TWC Icon Builder targeting production asset repositories
-        function updateTWCIcon(analysisStr) {
+        function updateHUDIcon(analysisStr) {
             const iconCode = getTWCCode(analysisStr);
-            const assetUrl = `https://www.weather.com/wximage/wxdigitalicons/${iconCode}.png`;
-            document.getElementById('twc-condition-icon').src = assetUrl;
+            document.getElementById('twc-hud-icon').src = `https://www.weather.com/wximage/wxdigitalicons/${iconCode}.png`;
         }
 
-        // Core Data Processing Logic parsing live_weather_cache.json keys directly
-        async function updateDashboard() {
+        async function pullPipelineCache() {
             try {
+                // Queries your exact python payload cache file path
                 const response = await fetch('live_weather_cache.json');
+                if (!response.ok) throw new Error(`HTTP network error: ${response.status}`);
+                
                 const data = await response.json();
 
-                // 1. Process System Infrastructure Status Keys
-                document.getElementById('api-source').innerText = `SYS: ${data.status}`;
-                document.getElementById('display-status').innerText = data.status;
+                // 1. Dynamic Infrastructure Header Text Mapping
+                document.getElementById('dyn-badge').innerText = `SYS: ${data.status}`;
+                document.getElementById('hud-status').innerText = data.status;
+                
+                // NO HARDCODING: Directly binds your python string text directly into the layout label
+                document.getElementById('dyn-corridor-label').innerText = `REGION CORE // ${data.meso_analysis}`;
 
-                // 2. Parse the Mesoscale Text Description String
-                const mesoAnalysisText = data.meso_analysis;
-                document.getElementById('meso-corridor').innerText = mesoAnalysisText;
+                // 2. Extract nested metrics payload safely
+                const metrics = data.provider_packaged_data;
+                document.getElementById('hud-hail').innerText = (metrics.hail_probability || 0) + "%";
 
-                // 3. Drill down into the nested provider data matrix payload
-                const packageData = data.provider_packaged_data;
-                document.getElementById('hail-prob').innerText = packageData.hail_probability + "%";
-
-                // 4. Handle structural validation for coordinates in the array
-                if (packageData.radar_vortex_points && packageData.radar_vortex_points.length >= 2) {
-                    document.getElementById('vortex-lat').innerText = packageData.radar_vortex_points[0] + "°N";
-                    document.getElementById('vortex-lon').innerText = packageData.radar_vortex_points[1] + "°W";
+                // 3. Process geographical location coordinates list metrics
+                if (metrics.radar_vortex_points && metrics.radar_vortex_points.length >= 2) {
+                    document.getElementById('hud-lat').innerText = metrics.radar_vortex_points[0].toFixed(4) + "° N";
+                    document.getElementById('hud-lon').innerText = metrics.radar_vortex_points[1].toFixed(4) + "° W";
                 } else {
-                    document.getElementById('vortex-lat').innerText = "NO DATA";
-                    document.getElementById('vortex-lon').innerText = "NO DATA";
+                    document.getElementById('hud-lat').innerText = "CLEAR";
+                    document.getElementById('hud-lon').innerText = "CLEAR";
                 }
 
-                // Run the text through the icon translation layer
-                updateTWCIcon(mesoAnalysisText);
+                updateHUDIcon(data.meso_analysis);
 
             } catch (error) {
-                console.error("Dashboard engine link error:", error);
-                document.getElementById('meso-corridor').innerText = "LINK ERROR / OFFLINE";
-                document.getElementById('api-source').innerText = "SYS: ERROR";
+                console.error("Pipeline failure:", error);
+                document.getElementById('dyn-badge').innerText = "SYS: OFFLINE";
+                document.getElementById('hud-status').innerText = "ERR";
+                document.getElementById('dyn-corridor-label').innerText = "PIPELINE RECOVERY LINK OFFLINE";
             }
         }
 
-        // Initialize dashboard sync sequence loop
-        updateDashboard();
-        setInterval(updateDashboard, 5000); // 5-second aggressive refresh interval for radar integration tracking
+        // Run dashboard tracking engine loop
+        pullPipelineCache();
+        setInterval(pullPipelineCache, 3000); // Super responsive 3-second cycle
     </script>
 </body>
 </html>
