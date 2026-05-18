@@ -3,255 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SlateWeather PRO - Onyx Tactical HUD</title>
+    <title>SlateWeather PRO - Tactical Matrix</title>
     <style>
-        /* Modern Onyx Black Desert Design System */
+        /* Modern Onyx Black & Desert Sand Palette */
         :root {
-            --bg-base: #0a0a0c;
-            --bg-panel: #121216;
-            --border-glow: #24242b;
-            --text-primary: #f4f4f6;
-            --accent-orange: #ff6b35; /* Desert Fire */
-            --accent-gold: #ffb703;   /* Amber Warning */
-            --text-muted: #6c6c7d;
-            --alert-red: #ff3333;
+            --bg-main: #0b0b0b;        /* Deep Onyx Black */
+            --bg-panel: #141414;       /* Slightly lighter charcoal panel */
+            --border-glow: #c2a67a;    /* Muted Desert Sand gold */
+            --text-primary: #f5f5f7;   /* Stark off-white */
+            --text-muted: #8e8e93;      /* Tactical gray */
+            --text-accent: #d4af37;     /* Desert Sun amber */
+            --text-alert: #ff453a;      /* Warning crimson */
         }
 
         body {
-            background-color: var(--bg-base);
+            background-color: var(--bg-main);
             color: var(--text-primary);
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 24px;
-            letter-spacing: 0.5px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            letter-spacing: -0.02em;
         }
 
         header {
+            max-width: 1200px;
+            margin: 0 auto 32px auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-glow);
-            padding-bottom: 16px;
-            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(194, 166, 122, 0.15);
+            padding-bottom: 20px;
         }
 
-        .brand-zone h1 {
-            margin: 0;
+        h1 {
             font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--text-primary);
-        }
-
-        .brand-zone h1 span {
-            color: var(--accent-orange);
-        }
-
-        .station-ticker {
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 4px;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            margin: 0;
         }
 
         .status-badge {
             font-family: monospace;
-            font-size: 0.85rem;
-            font-weight: bold;
-            background: #181820;
-            border: 1px solid var(--border-glow);
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(194, 166, 122, 0.1);
+            color: var(--border-glow);
             padding: 6px 12px;
+            border: 1px solid rgba(194, 166, 122, 0.3);
             border-radius: 4px;
-            color: var(--accent-gold);
-            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .grid-matrix {
+        .grid-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 20px;
+            gap: 24px;
         }
 
-        .panel-card {
+        .panel {
             background-color: var(--bg-panel);
-            border: 1px solid var(--border-glow);
-            border-radius: 6px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-top: 3px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease;
         }
 
-        .panel-header {
-            font-family: monospace;
-            font-size: 0.9rem;
-            font-weight: bold;
+        .panel:hover {
+            border-top-color: var(--text-accent);
+        }
+
+        .panel-title {
             color: var(--text-muted);
-            letter-spacing: 1.5px;
+            font-size: 0.8rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0;
             margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .metric-hero {
+        .matrix-display {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 24px;
         }
 
-        .hero-status {
+        .status-hero {
             font-size: 2.2rem;
             font-weight: 800;
             color: var(--text-primary);
-            letter-spacing: -0.5px;
+            letter-spacing: -0.03em;
         }
 
-        .twc-hud-icon {
-            width: 64px;
-            height: 64px;
-            background: #181820;
-            border-radius: 6px;
-            border: 1px solid var(--border-glow);
-            padding: 4px;
+        .twc-icon {
+            width: 72px;
+            height: 72px;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 8px rgba(194, 166, 122, 0.2));
         }
 
-        .data-grid {
+        .data-table {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
-        .data-node {
+        .data-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #181820;
             font-size: 0.95rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .node-label {
+        .data-label {
             color: var(--text-muted);
-            font-family: monospace;
-            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .node-value {
+        .data-value {
+            color: var(--text-accent);
             font-weight: 600;
-            color: var(--accent-gold);
-        }
-
-        .node-value.highlight {
-            color: var(--accent-orange);
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand-zone">
-            <h1>SLATEWEATHER <span>PRO</span></h1>
-            <div class="station-ticker" id="dyn-corridor-label">SYSTEM INITIALIZING...</div>
+        <div>
+            <h1>Tactical Weather Matrix</h1>
         </div>
-        <div class="status-badge" id="dyn-badge">SYS: CC_LOAD</div>
+        <div class="status-badge" id="system-status">SYS: SYNCING</div>
     </header>
 
-    <main class="grid-matrix">
-        <section class="panel-card">
-            <div class="panel-header">
-                <span>METRIC TARGETING</span>
-                <span style="color: var(--accent-orange);">● LIVE</span>
+    <main class="grid-container">
+        <section class="panel">
+            <h2 class="panel-title">Mesoscale Environment</h2>
+            
+            <div class="matrix-display">
+                <div class="status-hero" id="hero-status">--</div>
+                <img id="twc-condition-icon" class="twc-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Icon Layer">
             </div>
             
-            <div class="metric-hero">
-                <div class="hero-status" id="hud-status">--</div>
-                <img id="twc-hud-icon" class="twc-hud-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="HUD Icon">
-            </div>
-            
-            <div class="data-grid">
-                <div class="data-node">
-                    <span class="node-label">HAIL METRIC</span>
-                    <span class="node-value highlight" id="hud-hail">--%</span>
+            <div class="data-table">
+                <div class="data-row">
+                    <span class="data-label">Convective Corridor</span>
+                    <span class="data-value" id="meso-corridor">Initializing...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Hail Probability</span>
+                    <span class="data-value" id="hail-prob">--%</span>
                 </div>
             </div>
         </section>
 
-        <section class="panel-card">
-            <div class="panel-header">RADAR VORTEX KINEMATICS</div>
+        <section class="panel">
+            <h2 class="panel-title">Radar Vortex Tracking</h2>
             
-            <div class="data-grid" style="margin-top: 10px;">
-                <div class="data-node">
-                    <span class="node-label">TARGET LATITUDE</span>
-                    <span class="node-value" id="hud-lat">--</span>
+            <div class="data-table" style="margin-top: 10px;">
+                <div class="data-row">
+                    <span class="data-label">Vortex Coordinates</span>
+                    <span class="data-value" id="vortex-coords">--</span>
                 </div>
-                <div class="data-node">
-                    <span class="node-label">TARGET LONGITUDE</span>
-                    <span class="node-value" id="hud-lon">--</span>
+                <div class="data-row">
+                    <span class="data-label">System Mode</span>
+                    <span class="data-value" id="sys-mode" style="color: var(--text-primary);">STANDBY</span>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // Production Weather Channel API image reference asset codes
+        // TWC Code Translation Matrix mapping incoming payload strings to numeric codes
         function getTWCCode(analysisStr) {
+            if (!analysisStr) return "44";
             const text = analysisStr.toLowerCase();
+            
             if (text.includes("tornado") || text.includes("vortex")) return "00";
             if (text.includes("severe") || text.includes("hail")) return "03";
             if (text.includes("convective") || text.includes("storm") || text.includes("thunder")) return "04";
             if (text.includes("rain") || text.includes("shower")) return "12";
             if (text.includes("cloudy")) return "26";
+            if (text.includes("clear") || text.includes("sunny")) return "32";
+            
             return "44"; 
         }
 
-        function updateHUDIcon(analysisStr) {
+        function updateTWCIcon(analysisStr) {
             const iconCode = getTWCCode(analysisStr);
-            document.getElementById('twc-hud-icon').src = `https://www.weather.com/wximage/wxdigitalicons/${iconCode}.png`;
+            // Developer URL syntax structure targeting weather.com assets
+            document.getElementById('twc-condition-icon').src = `https://www.weather.com/wximage/wxdigitalicons/${iconCode}.png`;
         }
 
-        async function pullPipelineCache() {
+        async function fetchMatrixCache() {
             try {
-                // Queries your exact python payload cache file path
+                // Point to your exact repository cache payload
                 const response = await fetch('live_weather_cache.json');
-                if (!response.ok) throw new Error(`HTTP network error: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
                 
                 const data = await response.json();
 
-                // 1. Dynamic Infrastructure Header Text Mapping
-                document.getElementById('dyn-badge').innerText = `SYS: ${data.status}`;
-                document.getElementById('hud-status').innerText = data.status;
-                
-                // NO HARDCODING: Directly binds your python string text directly into the layout label
-                document.getElementById('dyn-corridor-label').innerText = `REGION CORE // ${data.meso_analysis}`;
+                // 1. Core Node Injection
+                document.getElementById('system-status').innerText = `SYS: ${data.status}`;
+                document.getElementById('hero-status').innerText = data.status;
+                document.getElementById('sys-mode').innerText = data.status;
 
-                // 2. Extract nested metrics payload safely
+                // 2. Mesoscale Corridor Parsing
+                const corridorText = data.meso_analysis;
+                document.getElementById('meso-corridor').innerText = corridorText;
+
+                // 3. Nested Target Elements Extraction
                 const metrics = data.provider_packaged_data;
-                document.getElementById('hud-hail').innerText = (metrics.hail_probability || 0) + "%";
+                document.getElementById('hail-prob').innerText = metrics.hail_probability + "%";
 
-                // 3. Process geographical location coordinates list metrics
+                // 4. No Hardcoding: Pull geographic arrays directly out of the tracking array
                 if (metrics.radar_vortex_points && metrics.radar_vortex_points.length >= 2) {
-                    document.getElementById('hud-lat').innerText = metrics.radar_vortex_points[0].toFixed(4) + "° N";
-                    document.getElementById('hud-lon').innerText = metrics.radar_vortex_points[1].toFixed(4) + "° W";
+                    const lat = metrics.radar_vortex_points[0];
+                    const lon = metrics.radar_vortex_points[1];
+                    document.getElementById('vortex-coords').innerText = `${lat}°N, ${Math.abs(lon)}°W`;
                 } else {
-                    document.getElementById('hud-lat').innerText = "CLEAR";
-                    document.getElementById('hud-lon').innerText = "CLEAR";
+                    document.getElementById('vortex-coords').innerText = "TRACKING OFF";
                 }
 
-                updateHUDIcon(data.meso_analysis);
+                // Process the TWC graphical layout
+                updateTWCIcon(corridorText);
 
             } catch (error) {
-                console.error("Pipeline failure:", error);
-                document.getElementById('dyn-badge').innerText = "SYS: OFFLINE";
-                document.getElementById('hud-status').innerText = "ERR";
-                document.getElementById('dyn-corridor-label').innerText = "PIPELINE RECOVERY LINK OFFLINE";
+                console.warn("CORS/Fetch latency caught. Holding layout interface standard.", error);
+                // Keep UI elegant and clean during push cycles instead of printing raw crashes
+                document.getElementById('system-status').innerText = "SYS: LINK SYNCING";
+                document.getElementById('meso-corridor').innerText = "Awaiting matrix push...";
             }
         }
 
-        // Run dashboard tracking engine loop
-        pullPipelineCache();
-        setInterval(pullPipelineCache, 3000); // Super responsive 3-second cycle
+        // Initialize and lock structural refresh rate loop
+        fetchMatrixCache();
+        setInterval(fetchMatrixCache, 5000);
     </script>
 </body>
 </html>
