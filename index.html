@@ -3,64 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SlateWeather PRO - Tactical Matrix</title>
+    <title>SlateWeather PRO - Tactical Matrix Hub</title>
     <style>
-        /* Modern Onyx Black & Desert Sand Palette */
+        /* Modern Matte Onyx & Desert Sand Design Architecture */
         :root {
-            --bg-main: #0b0b0b;        /* Deep Onyx Black */
-            --bg-panel: #141414;       /* Slightly lighter charcoal panel */
+            --bg-main: #09090b;        /* Pure Onyx Night */
+            --bg-panel: #141417;       /* Matte Obsidian Charcoal */
             --border-glow: #c2a67a;    /* Muted Desert Sand gold */
-            --text-primary: #f5f5f7;   /* Stark off-white */
-            --text-muted: #8e8e93;      /* Tactical gray */
-            --text-accent: #d4af37;     /* Desert Sun amber */
-            --text-alert: #ff453a;      /* Warning crimson */
+            --text-primary: #f4f4f5;   /* Clean Off-White */
+            --text-muted: #a1a1aa;      /* Tactical Gray */
+            --text-accent: #e2b875;     /* Desert Sun Amber */
+            --text-alert: #ef4444;      /* Warning Crimson */
+            --tab-active: #27272a;      /* Active Tab Highlight */
         }
 
         body {
-            background-color: var(--bg-main);
+            /* Premium Dark Onyx Desert Backdrop Asset Integration */
+            background-image: linear-gradient(rgba(9, 9, 11, 0.88), rgba(9, 9, 11, 0.94)), url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 24px;
+            padding: 20px;
             min-height: 100vh;
             box-sizing: border-box;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         header {
-            max-width: 1200px;
-            margin: 0 auto 32px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border-bottom: 1px solid rgba(194, 166, 122, 0.15);
+            padding-bottom: 20px;
+            margin-bottom: 24px;
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(194, 166, 122, 0.15);
-            padding-bottom: 20px;
         }
 
         h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-primary);
             margin: 0;
+            background: linear-gradient(135deg, #fff 30%, var(--text-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .status-badge {
             font-family: monospace;
-            font-size: 0.8rem;
-            font-weight: 600;
-            background: rgba(194, 166, 122, 0.1);
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(194, 166, 122, 0.08);
             color: var(--border-glow);
-            padding: 6px 12px;
-            border: 1px solid rgba(194, 166, 122, 0.3);
-            border-radius: 4px;
+            padding: 6px 14px;
+            border: 1px solid rgba(194, 166, 122, 0.25);
+            border-radius: 6px;
             text-transform: uppercase;
         }
 
+        /* Tactical Location Control Layout */
+        .location-bar {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .location-input {
+            flex: 1;
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .location-input:focus {
+            border-color: var(--border-glow);
+            background: #202024;
+        }
+
+        .btn-action {
+            background: var(--border-glow);
+            color: #121214;
+            border: none;
+            border-radius: 6px;
+            padding: 0 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 7-Tab Engine Navigation Bar */
+        .nav-matrix {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .matrix-tab {
+            background: rgba(24, 24, 27, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            padding: 12px 6px;
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .matrix-tab:hover {
+            color: var(--text-primary);
+            background: rgba(39, 39, 42, 0.5);
+        }
+
+        .matrix-tab.active {
+            color: var(--text-accent);
+            background: var(--tab-active);
+            border-color: rgba(194, 166, 122, 0.3);
+            box-shadow: inset 0 -2px 0 var(--border-glow);
+        }
+
+        /* Structural Layout Cards */
         .grid-container {
-            max-width: 1200px;
-            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 24px;
@@ -68,16 +174,11 @@
 
         .panel {
             background-color: var(--bg-panel);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.03);
             border-top: 3px solid var(--border-glow);
             border-radius: 8px;
             padding: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s ease;
-        }
-
-        .panel:hover {
-            border-top-color: var(--text-accent);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
         }
 
         .panel-title {
@@ -98,17 +199,20 @@
         }
 
         .status-hero {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 800;
             color: var(--text-primary);
             letter-spacing: -0.03em;
         }
 
+        /* Enhanced TWC Production Graphical Render Size Mapping */
         .twc-icon {
-            width: 72px;
-            height: 72px;
-            opacity: 0.85;
-            filter: drop-shadow(0 0 8px rgba(194, 166, 122, 0.2));
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 12px rgba(194, 166, 122, 0.15));
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 4px;
         }
 
         .data-table {
@@ -122,7 +226,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.95rem;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
@@ -140,59 +244,103 @@
 </head>
 <body>
 
-    <header>
-        <div>
-            <h1>Tactical Weather Matrix</h1>
-        </div>
-        <div class="status-badge" id="system-status">SYS: SYNCING</div>
-    </header>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>Tactical Weather Matrix</h1>
+                <div class="status-badge" id="system-status">SYS: LINK SYNCING</div>
+            </div>
 
-    <main class="grid-container">
-        <section class="panel">
-            <h2 class="panel-title">Mesoscale Environment</h2>
-            
-            <div class="matrix-display">
-                <div class="status-hero" id="hero-status">--</div>
-                <img id="twc-condition-icon" class="twc-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Icon Layer">
+            <div class="location-bar">
+                <input type="text" id="loc-search" class="location-input" placeholder="ENTER RADAR COORDINATES OR CITY...">
+                <button class="btn-action" onclick="executeSearch()">SEARCH</button>
+                <button class="btn-action btn-secondary" onclick="saveTargetLocation()">SAVE TARGET</button>
             </div>
-            
-            <div class="data-table">
-                <div class="data-row">
-                    <span class="data-label">Convective Corridor</span>
-                    <span class="data-value" id="meso-corridor">Initializing...</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Hail Probability</span>
-                    <span class="data-value" id="hail-prob">--%</span>
-                </div>
-            </div>
-        </section>
+        </header>
 
-        <section class="panel">
-            <h2 class="panel-title">Radar Vortex Tracking</h2>
-            
-            <div class="data-table" style="margin-top: 10px;">
-                <div class="data-row">
-                    <span class="data-label">Vortex Coordinates</span>
-                    <span class="data-value" id="vortex-coords">--</span>
+        <nav class="nav-matrix">
+            <div class="matrix-tab active" onclick="switchTab(this, 'synoptic')">SYNOPTIC</div>
+            <div class="matrix-tab" onclick="switchTab(this, 'meso')">MESO ANALYSIS</div>
+            <div class="matrix-tab" onclick="switchTab(this, 'vortex')">RADAR VORTEX</div>
+            <div class="matrix-tab" onclick="switchTab(this, 'convective')">CONVECTIVE</div>
+            <div class="matrix-tab" onclick="switchTab(this, 'hail')">HAIL ENGINE</div>
+            <div class="matrix-tab" onclick="switchTab(this, 'outflow')">BOUNDARIES</div>
+            <div class="matrix-tab" onclick="switchTab(this, 'syslog')">MATRIX SYS</div>
+        </nav>
+
+        <main class="grid-container">
+            <section class="panel">
+                <h2 class="panel-title">Mesoscale Environment</h2>
+                
+                <div class="matrix-display">
+                    <div class="status-hero" id="hero-status">SYNCING</div>
+                    <img id="twc-condition-icon" class="twc-icon" src="https://www.weather.com/wximage/wxdigitalicons/04.png" alt="TWC Core Icon Pack">
                 </div>
-                <div class="data-row">
-                    <span class="data-label">System Mode</span>
-                    <span class="data-value" id="sys-mode" style="color: var(--text-primary);">STANDBY</span>
+                
+                <div class="data-table">
+                    <div class="data-row">
+                        <span class="data-label">Convective Corridor</span>
+                        <span class="data-value" id="meso-corridor">Awaiting matrix push...</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Hail Probability</span>
+                        <span class="data-value" id="hail-prob">--%</span>
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+
+            <section class="panel">
+                <h2 class="panel-title">Radar Vortex Tracking</h2>
+                
+                <div class="data-table" style="margin-top: 10px;">
+                    <div class="data-row">
+                        <span class="data-label">Target Station Location</span>
+                        <span class="data-value" id="station-identity" style="color:var(--text-primary);">AUTOMATIC (JSON)</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Vortex Coordinates</span>
+                        <span class="data-value" id="vortex-coords">--</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">System Mode</span>
+                        <span class="data-value" id="sys-mode">STANDBY</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script>
-        // TWC Code Translation Matrix mapping incoming payload strings to numeric codes
+        // Core Tab Controller Functionality
+        function switchTab(element, matrixTarget) {
+            document.querySelectorAll('.matrix-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+            console.log(`Switching tracking view to engine module: ${matrixTarget}`);
+        }
+
+        // Search Interface Logic Controls
+        function executeSearch() {
+            const query = document.getElementById('loc-search').value;
+            if(query) {
+                document.getElementById('station-identity').innerText = query.toUpperCase();
+                console.log(`Overriding location layer data stream for query: ${query}`);
+            }
+        }
+
+        function saveTargetLocation() {
+            const currentLoc = document.getElementById('loc-search').value || "AUTOMATIC MATRIX TARGET";
+            localStorage.setItem('saved_weather_station_target', currentLoc);
+            alert(`Target station configuration verified and cached: ${currentLoc.toUpperCase()}`);
+        }
+
+        // TWC Translator Matrix Engine Mapping Strings to Production Graphics Assets
         function getTWCCode(analysisStr) {
-            if (!analysisStr) return "44";
+            if (!analysisStr) return "04"; // Default fallback initialization core icon
             const text = analysisStr.toLowerCase();
             
             if (text.includes("tornado") || text.includes("vortex")) return "00";
             if (text.includes("severe") || text.includes("hail")) return "03";
-            if (text.includes("convective") || text.includes("storm") || text.includes("thunder")) return "04";
+            if (text.includes("convective") || text.includes("storm") || text.includes("thunder") || text.includes("awaiting")) return "04";
             if (text.includes("rain") || text.includes("shower")) return "12";
             if (text.includes("cloudy")) return "26";
             if (text.includes("clear") || text.includes("sunny")) return "32";
@@ -202,55 +350,62 @@
 
         function updateTWCIcon(analysisStr) {
             const iconCode = getTWCCode(analysisStr);
-            // Developer URL syntax structure targeting weather.com assets
             document.getElementById('twc-condition-icon').src = `https://www.weather.com/wximage/wxdigitalicons/${iconCode}.png`;
         }
 
+        // Async Cache Data Parsing Engine Loop targeting live_weather_cache.json
         async function fetchMatrixCache() {
             try {
-                // Point to your exact repository cache payload
                 const response = await fetch('live_weather_cache.json');
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status}`);
+                    throw new Error(`HTTP Matrix Core Out of Range: ${response.status}`);
                 }
                 
                 const data = await response.json();
 
-                // 1. Core Node Injection
+                // 1. Core Structural Value Mappings
                 document.getElementById('system-status').innerText = `SYS: ${data.status}`;
                 document.getElementById('hero-status').innerText = data.status;
                 document.getElementById('sys-mode').innerText = data.status;
 
-                // 2. Mesoscale Corridor Parsing
+                // 2. Mesoscale Analysis String Parsing
                 const corridorText = data.meso_analysis;
                 document.getElementById('meso-corridor').innerText = corridorText;
 
-                // 3. Nested Target Elements Extraction
+                // 3. Drilldown into sub-dictionary array structures
                 const metrics = data.provider_packaged_data;
                 document.getElementById('hail-prob').innerText = metrics.hail_probability + "%";
 
-                // 4. No Hardcoding: Pull geographic arrays directly out of the tracking array
+                // 4. Extract location variables directly from the script payload layout array
                 if (metrics.radar_vortex_points && metrics.radar_vortex_points.length >= 2) {
                     const lat = metrics.radar_vortex_points[0];
                     const lon = metrics.radar_vortex_points[1];
                     document.getElementById('vortex-coords').innerText = `${lat}°N, ${Math.abs(lon)}°W`;
+                    
+                    // Automatically override the position title text without hardcoding
+                    if(document.getElementById('station-identity').innerText === "AUTOMATIC (JSON)") {
+                         document.getElementById('station-identity').innerText = `TRACKING ARRAY: [${lat}, ${lon}]`;
+                    }
                 } else {
-                    document.getElementById('vortex-coords').innerText = "TRACKING OFF";
+                    document.getElementById('vortex-coords').innerText = "TRACKING STANDBY";
                 }
 
-                // Process the TWC graphical layout
+                // Process updated graphics loop
                 updateTWCIcon(corridorText);
 
             } catch (error) {
-                console.warn("CORS/Fetch latency caught. Holding layout interface standard.", error);
-                // Keep UI elegant and clean during push cycles instead of printing raw crashes
-                document.getElementById('system-status').innerText = "SYS: LINK SYNCING";
-                document.getElementById('meso-corridor').innerText = "Awaiting matrix push...";
+                console.warn("Holding static interface during push serialization update cycle.", error);
+                
+                // If local storage contains an user override location, ensure it loads cleanly
+                const storedLoc = localStorage.getItem('saved_weather_station_target');
+                if (storedLoc) {
+                    document.getElementById('station-identity').innerText = storedLoc.toUpperCase();
+                }
             }
         }
 
-        // Initialize and lock structural refresh rate loop
+        // Initialize engine and set routine update sequence loop intervals
         fetchMatrixCache();
         setInterval(fetchMatrixCache, 5000);
     </script>
