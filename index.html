@@ -3,475 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synoytic Weather</title>
+    <title>SlateWeather PRO - Synoptic Dashboard</title>
     <style>
+        /* Retro-Technical Overlay Styles with Unsplash Backdrop */
         :root {
-            --onyx: #0f0f12;
-            --desert: #e6b87d;
-            --desert-dim: #b58d59;
-            --panel-bg: rgba(15, 15, 18, 0.92);
-            --border-color: #26262b;
-            --text-main: #f5f5f7;
-            --text-sub: #a0a0aa;
+            --bg-overlay: rgba(0, 0, 128, 0.75); /* Translucent 80s TWC Blue */
+            --text-primary: #ffffff;
+            --text-accent: #ffff00; /* Weather Channel Yellow */
+            --text-alert: #ff2a2a;
+            --panel-bg: rgba(0, 0, 192, 0.85);
+            --border-color: #00a8a8;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), 
-                        url('https://images.unsplash.com/photo-1562155618-e1a8bc2eb04f?q=80&w=3840&auto=format&fit=crop') no-repeat center center fixed;
+            /* Exact Unsplash Lightning Bolt Backdrop Asset Placement */
+            background-image: url('https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
             font-family: 'Courier New', Courier, monospace;
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        header {
-            background-color: var(--onyx);
-            border-bottom: 2px solid var(--border-color);
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .station-title {
-            color: var(--desert);
             font-weight: bold;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-        }
-
-        .search-container {
-            display: flex;
-            border: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.6);
-            padding: 6px 12px;
-        }
-
-        .search-input {
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-family: monospace;
-            outline: none;
-            width: 280px;
-            font-size: 0.9rem;
-        }
-
-        .search-btn {
-            background: transparent;
-            border: none;
-            color: var(--desert);
-            cursor: pointer;
-            font-family: monospace;
-            font-weight: bold;
-        }
-
-        .workspace {
-            flex: 1;
-            display: flex;
-            padding: 25px;
-            gap: 25px;
-            height: calc(100vh - 160px);
+            margin: 0;
+            padding: 20px;
+            text-transform: uppercase;
+            min-height: 100vh;
             box-sizing: border-box;
         }
 
-        /* Feed Matrix */
-        .feed-container {
-            flex: 1.3;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        /* Detail/Readout Matrix */
-        .detail-container {
-            flex: 0.7;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .tab-content {
-            display: none;
-            height: 100%;
-        }
-
-        .tab-content.active {
+        /* Ambient scanline filter over background to scream 1980s tube monitor */
+        body::before {
+            content: " ";
             display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            opacity: 0.4;
+            pointer-events: none;
+            background-size: 100% 4px, 6px 100%;
         }
 
-        h2 {
-            color: var(--desert);
-            border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 10px;
-            margin-top: 0;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-        }
-
-        .grid-metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .metric-card {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
+        header {
+            background-color: var(--bg-overlay);
+            border: 4px double var(--border-color);
             padding: 15px;
-            border-left: 3px solid var(--desert);
-        }
-
-        .metric-label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; }
-        .metric-value { font-size: 1.6rem; font-weight: bold; color: var(--text-main); margin-top: 5px; }
-
-        .data-item {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .data-item:hover {
-            border-color: var(--desert);
-            background: rgba(230, 184, 125, 0.05);
-        }
-
-        .data-item-title {
-            color: var(--desert);
-            font-weight: bold;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-
-        /* Control Terminal Dock Navigation */
-        nav.control-dock {
-            background-color: var(--onyx);
-            border-top: 2px solid var(--border-color);
-            height: 60px;
+            margin-bottom: 20px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: flex-end;
+            box-shadow: 5px 5px 0px #000;
+        }
+
+        h1 {
+            color: var(--text-accent);
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .source-tag {
+            font-size: 1rem;
+            background: var(--border-color);
+            color: #000;
+            padding: 4px 10px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            box-shadow: 5px 5px 0px #000;
+            padding: 20px;
+            backdrop-filter: blur(4px); /* Blend the panels smoothly against the background */
+        }
+
+        .panel-title {
+            color: var(--text-accent);
+            border-bottom: 2px solid var(--border-color);
+            margin-top: 0;
+            padding-bottom: 5px;
+            font-size: 1.3rem;
+        }
+
+        /* TWC Icon Container Structure */
+        .weather-identity {
+            display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            margin: 15px 0;
         }
 
-        .dock-btn {
-            background: #141417;
-            color: var(--text-sub);
+        .large-temp {
+            font-size: 4.5rem;
+            color: #fff;
+            margin: 0;
+        }
+
+        .twc-icon {
+            width: 96px;
+            height: 96px;
+            image-rendering: pixelated; /* Keeps that retro crunch on the graphics */
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 8px;
             border: 1px solid var(--border-color);
-            padding: 10px 22px;
-            font-family: monospace;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.85rem;
         }
 
-        .dock-btn:hover {
-            color: var(--text-main);
-            background: #1c1c22;
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 1.2rem;
+            border-bottom: 1px dotted rgba(255,255,255,0.2);
+            padding-bottom: 4px;
         }
 
-        .dock-btn.active {
-            background: var(--desert);
-            color: var(--onyx);
-            border-color: var(--desert);
-        }
-
-        .discussion-img {
-            width: 100%;
-            border: 1px solid var(--border-color);
-            margin-top: 15px;
-            background: #000;
-        }
-
-        .system-status-banner {
-            background: rgba(230, 184, 125, 0.1);
-            border: 1px dashed var(--desert);
-            padding: 15px;
-            color: var(--desert);
-            text-align: center;
-            font-weight: bold;
+        .data-value {
+            color: var(--text-accent);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="station-title">SLATEWEATHER PRO // CONVECTIVE WORKSTATION</div>
-        <div class="search-container">
-            <input type="text" id="station-search" class="search-input" placeholder="ENTER US CITY OR ZIP CODE TO START...">
-            <button class="search-btn" onclick="initiateLocationStream()">INITIALIZE</button>
+        <div>
+            <h1>SYNOPTIC WEATHER DATA</h1>
+            <div id="station-info">STATION: EVANSTON, IL // HQ WORKSTATION</div>
         </div>
+        <div class="source-tag" id="api-source">SRC: INITIALIZING...</div>
     </header>
 
-    <div class="workspace">
-        <div class="feed-container">
+    <main class="grid-container">
+        <section class="panel">
+            <h2 class="panel-title">CURRENT CONDITIONS</h2>
             
-            <div id="tab-conditions" class="tab-content active">
-                <h2>SURFACE METAR TELETREMETRY</h2>
-                <div id="conditions-fallback" class="system-status-banner">SYSTEM OFFLINE // AWAITING LOCATION CAPTURE INPUT</div>
-                <div class="grid-metrics" id="metrics-output" style="display:none;"></div>
+            <div class="weather-identity">
+                <div class="large-temp"><span id="current-temp">--</span>°F</div>
+                <img id="twc-condition-icon" class="twc-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Icon">
             </div>
-
-            <div id="tab-hourly" class="tab-content">
-                <h2>72-HOUR MESOSCALE TREND TIMELINE</h2>
-                <div id="hourly-fallback" class="system-status-banner">SYSTEM OFFLINE // AWAITING LOCATION CAPTURE INPUT</div>
-                <div id="hourly-output" style="display:none;"></div>
+            
+            <div class="data-row">
+                <span>CONDITION:</span>
+                <span class="data-value" id="weather-summary">LOADING...</span>
             </div>
-
-            <div id="tab-outlook" class="tab-content">
-                <h2>7-DAY CONVECTIVE OUTLOOK TREND</h2>
-                <div id="outlook-fallback" class="system-status-banner">SYSTEM OFFLINE // AWAITING LOCATION CAPTURE INPUT</div>
-                <div id="outlook-output" style="display:none;"></div>
+            <div class="data-row">
+                <span>DEW POINT:</span>
+                <span class="data-value" id="dew-point">--°F</span>
             </div>
-
-            <div id="tab-discussions" class="tab-content">
-                <h2>NATIONWIDE MESOSCALE &amp; PRECIPITATION DISCUSSIONS</h2>
-                <div id="discussions-fallback" class="system-status-banner">SYSTEM OFFLINE // AWAITING LOCATION CAPTURE INPUT</div>
-                <div id="discussions-output" style="display:none;"></div>
+            <div class="data-row">
+                <span>HUMIDITY:</span>
+                <span class="data-value" id="humidity">--%</span>
             </div>
+        </section>
 
-            <div id="tab-watches" class="tab-content">
-                <h2>CONUS ACTIVE SEVERE WATCH BOXES</h2>
-                <div id="watches-fallback" class="system-status-banner">SYSTEM OFFLINE // AWAITING LOCATION CAPTURE INPUT</div>
-                <div id="watches-output" style="display:none;"></div>
+        <section class="panel">
+            <h2 class="panel-title">ATMOSPHERIC DYNAMICS</h2>
+            <div class="data-row">
+                <span>WIND SPEED:</span>
+                <span class="data-value" id="wind-speed">-- MPH</span>
             </div>
-
-        </div>
-
-        <div class="detail-container">
-            <h2>DIAGNOSTIC READOUT RECORD</h2>
-            <div id="detail-output" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-sub);">
-                Awaiting workstation initialization sequence. Please input a severe tracking target region.
+            <div class="data-row">
+                <span>WIND DIR:</span>
+                <span class="data-value" id="wind-dir">--°</span>
             </div>
-        </div>
-    </div>
-
-    <nav class="control-dock">
-        <button class="dock-btn active" onclick="switchConsoleTab('conditions', this)">CONDITIONS</button>
-        <button class="dock-btn" onclick="switchConsoleTab('hourly', this)">72 HR HOURLY</button>
-        <button class="dock-btn" onclick="switchConsoleTab('outlook', this)">7 DAY OUTLOOK</button>
-        <button class="dock-btn" onclick="switchConsoleTab('discussions', this)">SPC/WPC DISCUSSIONS</button>
-        <button class="dock-btn" onclick="switchConsoleTab('watches', this)">WATCHES</button>
-    </nav>
+            <div class="data-row">
+                <span>BAROMETER:</span>
+                <span class="data-value" id="pressure">-- MB</span>
+            </div>
+        </section>
+    </main>
 
     <script>
-        let userLat = null;
-        let userLon = null;
-
-        function switchConsoleTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            btn.classList.add('active');
+        // TWC Code Translator Function mapping incoming strings to standard icon codes
+        function getTWCCode(conditionStr, isNight = false) {
+            const cleanText = conditionStr.toLowerCase();
+            
+            if (cleanText.includes("tornado")) return "00";
+            if (cleanText.includes("tropical storm")) return "01";
+            if (cleanText.includes("hurricane")) return "02";
+            if (cleanText.includes("severe") || cleanText.includes("hail")) return "03";
+            if (cleanText.includes("thunderstorm") || cleanText.includes("thunder") || cleanText.includes("storm")) return "04";
+            if (cleanText.includes("freezing rain")) return "10";
+            if (cleanText.includes("showers")) return "11";
+            if (cleanText.includes("rain")) return "12";
+            if (cleanText.includes("snow")) return "16";
+            if (cleanText.includes("fog")) return "20";
+            if (cleanText.includes("haze")) return "21";
+            if (cleanText.includes("smokey") || cleanText.includes("smoke")) return "22";
+            if (cleanText.includes("windy") || cleanText.includes("breezy")) return "24";
+            if (cleanText.includes("cloudy") && !cleanText.includes("partly") && !cleanText.includes("mostly")) return "26";
+            if (cleanText.includes("mostly cloudy")) return isNight ? "27" : "28";
+            if (cleanText.includes("partly cloudy") || cleanText.includes("scattered clouds")) return isNight ? "29" : "30";
+            if (cleanText.includes("clear") || cleanText.includes("sunny") || cleanText.includes("fair")) return isNight ? "31" : "32";
+            
+            return "44"; // N/A or Missing Code baseline
         }
 
-        // Clean System Lock: Triggered strictly upon user initialization input
-        function initiateLocationStream() {
-            const query = document.getElementById('station-search').value.trim();
-            if (!query) return;
-
-            document.getElementById('detail-output').innerHTML = "Locating network node coordinates...";
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&limit=1&q=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data && data.length > 0) {
-                        userLat = parseFloat(data[0].lat);
-                        userLon = parseFloat(data[0].lon);
-                        
-                        // Drop all fallback banners
-                        document.querySelectorAll('.system-status-banner').forEach(banner => banner.style.display = 'none');
-                        document.getElementById('metrics-output').style.display = 'grid';
-                        document.getElementById('hourly-output').style.display = 'block';
-                        document.getElementById('outlook-output').style.display = 'block';
-                        document.getElementById('discussions-output').style.display = 'block';
-                        document.getElementById('watches-output').style.display = 'block';
-
-                        document.getElementById('detail-output').innerHTML = `Location Locked: [${userLat.toFixed(4)}, ${userLon.toFixed(4)}]. Parsing active weather feeds...`;
-                        
-                        syncNwsGridData();
-                        fetchSecureWeatherCache();
-                        fetchSpcWpcDiscussionsAndWatches();
-                    } else {
-                        document.getElementById('detail-output').innerHTML = "ERROR: Specified tracking region not found in domain index.";
-                    }
-                });
+        // TWC Asset URL compiler mapping directly into developer.weather.com format guidelines
+        function updateTWCIcon(conditionText) {
+            const currentHour = new Date().getHours();
+            const isNightMode = (currentHour < 6 || currentHour > 20);
+            const iconCode = getTWCCode(conditionText, isNightMode);
+            
+            // Build absolute path utilizing weather.com standard asset formatting
+            const assetUrl = `https://www.weather.com/wximage/wxdigitalicons/${iconCode}.png`;
+            document.getElementById('twc-condition-icon').src = assetUrl;
         }
 
-        function syncNwsGridData() {
-            fetch(`https://api.weather.gov/points/${userLat},${userLon}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.properties) {
-                        fetchCurrentConditions(data.properties.observationStations);
-                        fetchTimelines(data.properties.forecastHourly, data.properties.forecast);
-                    }
-                });
-        }
+        async function updateDashboard() {
+            try {
+                const response = await fetch('weather_output.json');
+                const data = await response.json();
+                let summaryText = "";
 
-        function fetchCurrentConditions(stationsUrl) {
-            fetch(stationsUrl)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.features && data.features.length > 0) {
-                        const stationId = data.features[0].properties.stationIdentifier;
-                        fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`)
-                            .then(res => res.json())
-                            .then(obs => {
-                                const p = obs.properties;
-                                const temp = p.temperature.value ? ((p.temperature.value * 9/5) + 32).toFixed(1) : 'N/A';
-                                const dew = p.dewpoint.value ? ((p.dewpoint.value * 9/5) + 32).toFixed(1) : 'N/A';
-                                const hum = p.relativeHumidity.value ? p.relativeHumidity.value.toFixed(0) : 'N/A';
-                                const wind = p.windSpeed.value ? (p.windSpeed.value * 0.621371).toFixed(0) : '0';
-
-                                document.getElementById('metrics-output').innerHTML = `
-                                    <div class="metric-card"><div class="metric-label">Station ID</div><div class="metric-value" style="color:var(--desert);">${stationId}</div></div>
-                                    <div class="metric-card"><div class="metric-label">Temperature</div><div class="metric-value">${temp}°F</div></div>
-                                    <div class="metric-card"><div class="metric-label">Dew Point</div><div class="metric-value">${dew}°F</div></div>
-                                    <div class="metric-card"><div class="metric-label">Surface Winds</div><div class="metric-value">${wind} MPH</div></div>
-                                `;
-                            });
-                    }
-                });
-        }
-
-        function fetchTimelines(hourlyUrl, dailyUrl) {
-            // 72-Hour Meso-Trend Stream Loader
-            fetch(hourlyUrl)
-                .then(res => res.json())
-                .then(data => {
-                    const container = document.getElementById('hourly-output');
-                    container.innerHTML = '';
-                    if(data.properties && data.properties.periods) {
-                        data.properties.periods.slice(0, 72).forEach(p => {
-                            const div = document.createElement('div');
-                            div.className = 'data-item';
-                            div.innerHTML = `<div class="data-item-title">${p.startTime.substring(11,16)} Z - ${p.temperature}°F</div><div style="font-size:0.75rem;">Winds: ${p.windSpeed} ${p.windDirection} // ${p.shortForecast}</div>`;
-                            container.appendChild(div);
-                        });
-                    }
-                });
-
-            // 7-Day Convective Outlook Stream Loader
-            fetch(dailyUrl)
-                .then(res => res.json())
-                .then(data => {
-                    const container = document.getElementById('outlook-output');
-                    container.innerHTML = '';
-                    if(data.properties && data.properties.periods) {
-                        data.properties.periods.forEach(p => {
-                            const div = document.createElement('div');
-                            div.className = 'data-item';
-                            div.innerHTML = `<div class="data-item-title">${p.name} // ${p.temperature}°F</div><div style="font-size:0.75rem; color:var(--text-sub);">${p.detailedForecast}</div>`;
-                            container.appendChild(div);
-                        });
-                    }
-                });
-        }
-
-        // Strict Filtering: Processes ONLY target SPC/WPC Convective and Precipitation blocks
-        function fetchSpcWpcDiscussionsAndWatches() {
-            fetch('https://api.weather.gov/alerts/active?status=actual')
-                .then(res => res.json())
-                .then(data => {
-                    const features = data.features;
-                    const discContainer = document.getElementById('discussions-output');
-                    const watchContainer = document.getElementById('watches-output');
+                if (data.source === "PIRATE") {
+                    document.getElementById('api-source').innerText = "SRC: PIRATE ENG";
                     
-                    discContainer.innerHTML = '';
-                    watchContainer.innerHTML = '';
+                    document.getElementById('current-temp').innerText = Math.round(data.currently.temperature);
+                    summaryText = data.currently.summary;
+                    document.getElementById('weather-summary').innerText = summaryText;
+                    document.getElementById('dew-point').innerText = Math.round(data.currently.dewPoint) + "°F";
+                    document.getElementById('humidity').innerText = Math.round(data.currently.humidity * 100) + "%";
+                    document.getElementById('wind-speed').innerText = Math.round(data.currently.windSpeed) + " MPH";
+                    document.getElementById('wind-dir').innerText = data.currently.windBearing + "°";
+                    document.getElementById('pressure').innerText = data.currently.pressure.toFixed(1) + " MB";
 
-                    const watches = features.filter(f => f.properties.event.includes("Watch"));
+                } else if (data.source === "OPEN") {
+                    document.getElementById('api-source').innerText = "SRC: OPEN MAP";
                     
-                    // Filter: Only pull valid Mesoscale (SPC) and Precipitation (WPC) discussions
-                    const discussions = features.filter(f => {
-                        const desc = f.properties.description || '';
-                        const text = f.properties.headline || '';
-                        return desc.includes("MESOSCALE DISCUSSION") || text.includes("MESOSCALE DISCUSSION") || desc.includes("PRECIPITATION DISCUSSION");
-                    });
+                    document.getElementById('current-temp').innerText = Math.round(data.current.temp);
+                    summaryText = data.current.weather[0].description;
+                    document.getElementById('weather-summary').innerText = summaryText;
+                    document.getElementById('dew-point').innerText = Math.round(data.current.dew_point) + "°F";
+                    document.getElementById('humidity').innerText = data.current.humidity + "%";
+                    document.getElementById('wind-speed').innerText = Math.round(data.current.wind_speed) + " MPH";
+                    document.getElementById('wind-dir').innerText = data.current.wind_deg + "°";
+                    document.getElementById('pressure').innerText = data.current.pressure + " MB";
+                }
 
-                    // Watches Render Loop
-                    if(watches.length === 0) {
-                        watchContainer.innerHTML = '<div style="color:var(--text-sub);">No active national severe watch boxes reported inside CONUS grids.</div>';
-                    } else {
-                        watches.forEach(w => {
-                            const p = w.properties;
-                            const div = document.createElement('div');
-                            div.className = 'data-item';
-                            div.innerHTML = `<div class="data-item-title">${p.event.toUpperCase()}</div><div style="font-size:0.75rem;">${p.headline}</div>`;
-                            div.onclick = () => {
-                                document.getElementById('detail-output').innerHTML = `<h3 style="color:var(--desert);">${p.event}</h3><p style="white-space:pre-wrap; background:rgba(0,0,0,0.4); padding:12px;">${p.description}</p>`;
-                            };
-                            watchContainer.appendChild(div);
-                        });
-                    }
+                // Execute icon asset compilation loop
+                updateTWCIcon(summaryText);
 
-                    // Pure SPC/WPC Discussions Render Loop
-                    if(discussions.length === 0) {
-                        discContainer.innerHTML = '<div style="color:var(--text-sub);">No active SPC Mesoscale or WPC Precipitation frame arrays detected.</div>';
-                    } else {
-                        discussions.forEach(d => {
-                            const p = d.properties;
-                            const div = document.createElement('div');
-                            div.className = 'data-item';
-                            
-                            // Auto-formatting title based on discussion type
-                            const isWpc = p.description.includes("WPC") || p.description.includes("PRECIPITATION");
-                            const label = isWpc ? "WPC PRECIPITATION DISCUSSION" : "SPC MESOSCALE DISCUSSION";
-                            
-                            div.innerHTML = `<div class="data-item-title">${label}</div><div style="font-size:0.75rem;">${p.headline || 'Active Convective Risk Frame'}</div>`;
-                            
-                            const mdNumber = p.headline.match(/\d+/) || "000";
-                            const mockImgUrl = isWpc 
-                                ? `https://www.wpc.ncep.noaa.gov/metwatch/metget.php?id=${mdNumber}` 
-                                : `https://www.spc.noaa.gov/products/md/2026/md${mdNumber.toString().padStart(4, '0')}.gif`;
-
-                            div.onclick = () => {
-                                document.getElementById('detail-output').innerHTML = `
-                                    <h3 style="color:var(--desert); margin:0 0 10px 0;">${label}</h3>
-                                    <img src="${mockImgUrl}" class="discussion-img" onerror="this.style.display='none';">
-                                    <p style="white-space:pre-wrap; margin-top:15px; background:rgba(0,0,0,0.4); padding:12px; font-size:0.8rem; line-height:1.4;">${p.description}</p>
-                                `;
-                            };
-                            discContainer.appendChild(div);
-                        });
-                    }
-                });
-        }
-
-        function fetchSecureWeatherCache() {
-            fetch('live_weather_cache.json')
-                .then(res => res.ok ? res.json() : null)
-                .then(secureData => {
-                    if(secureData) console.log("Secure Backend Secrets Frame Parsed.");
-                }).catch(() => {});
-        }
-
-        // Unified refresh looping pattern (Runs every 3 minutes ONLY if location is captured)
-        setInterval(() => {
-            if(userLat && userLon) {
-                syncNwsGridData();
-                fetchSecureWeatherCache();
-                fetchSpcWpcDiscussionsAndWatches();
+            } catch (error) {
+                console.error("Error updating synoptic loop:", error);
+                document.getElementById('weather-summary').innerText = "OFFLINE / FETCH ERR";
             }
-        }, 180000);
+        }
+
+        updateDashboard();
+        setInterval(updateDashboard, 60000);
     </script>
 </body>
 </html>
